@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LinkedIn + ATS Optimization Playbook (2026)</title>
+  <style>
+    :root {
+      --ink: #17212b;
+      --muted: #5f6b76;
+      --line: #d9e2ea;
+      --soft: #f5f8fb;
+      --brand: #0a66c2;
+      --good: #167c4f;
+      --warn: #9a6700;
+      --bad: #a12622;
+      --card: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.55;
+      color: var(--ink);
+      background: #eef3f7;
+    }
+    a { color: var(--brand); }
+    .page { max-width: 1180px; margin: 0 auto; background: var(--card); min-height: 100vh; }
+    header {
+      padding: 44px 50px 34px;
+      background: linear-gradient(135deg, #0a66c2, #004182);
+      color: #fff;
+    }
+    header h1 { margin: 0 0 10px; font-size: 34px; line-height: 1.15; }
+    header p { margin: 8px 0; max-width: 900px; }
+    .date { opacity: .88; font-size: 14px; }
+    .layout { display: grid; grid-template-columns: 250px 1fr; }
+    nav {
+      padding: 25px 20px;
+      border-right: 1px solid var(--line);
+      background: #fbfdff;
+      position: sticky;
+      top: 0;
+      align-self: start;
+      height: 100vh;
+      overflow: auto;
+    }
+    nav strong { display: block; margin-bottom: 12px; }
+    nav a { display: block; padding: 6px 4px; color: #314151; text-decoration: none; font-size: 14px; }
+    nav a:hover { color: var(--brand); }
+    main { padding: 32px 42px 60px; min-width: 0; }
+    section { margin-bottom: 42px; scroll-margin-top: 18px; }
+    h2 { font-size: 25px; margin: 0 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--line); }
+    h3 { font-size: 19px; margin: 24px 0 9px; }
+    h4 { margin: 18px 0 7px; }
+    p { margin: 8px 0 13px; }
+    ul, ol { margin-top: 8px; padding-left: 22px; }
+    li { margin: 6px 0; }
+    .callout, .warning, .good, .note {
+      border-left: 5px solid var(--brand);
+      background: #eef6ff;
+      padding: 14px 16px;
+      margin: 16px 0;
+      border-radius: 4px;
+    }
+    .warning { border-color: var(--warn); background: #fff8e8; }
+    .good { border-color: var(--good); background: #eefaf4; }
+    .note { border-color: #6b7280; background: #f6f7f9; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .card { border: 1px solid var(--line); border-radius: 10px; padding: 16px; background: #fff; }
+    .card h3, .card h4 { margin-top: 0; }
+    .pill { display: inline-block; font-size: 12px; padding: 3px 8px; border-radius: 999px; margin-right: 5px; background: #e8f2ff; color: #0a4f95; }
+    table { width: 100%; border-collapse: collapse; margin: 14px 0 22px; font-size: 14px; }
+    th, td { border: 1px solid var(--line); padding: 10px 11px; vertical-align: top; text-align: left; }
+    th { background: #f0f5f9; }
+    .priority { font-weight: bold; white-space: nowrap; }
+    .p1 { color: var(--bad); }
+    .p2 { color: var(--warn); }
+    .p3 { color: var(--good); }
+    code, .mono { font-family: Consolas, Menlo, monospace; background: #f3f5f7; padding: 2px 4px; border-radius: 4px; }
+    .example { background: #f7fafc; border: 1px dashed #b8c5d1; padding: 12px 14px; margin: 10px 0; border-radius: 6px; }
+    .checklist { list-style: none; padding: 0; }
+    .checklist li { border-bottom: 1px solid #edf1f4; padding: 8px 0; }
+    .checklist label { cursor: pointer; display: flex; gap: 9px; align-items: flex-start; }
+    .checklist input { margin-top: 4px; }
+    .scorebox { border: 1px solid var(--line); padding: 16px; border-radius: 10px; background: #fbfdff; margin: 16px 0 24px; }
+    .progress { height: 14px; background: #e8edf2; border-radius: 999px; overflow: hidden; }
+    .bar { height: 100%; width: 0%; background: var(--brand); transition: width .2s; }
+    .scoreline { display: flex; justify-content: space-between; gap: 15px; margin-top: 8px; font-size: 14px; }
+    button { padding: 8px 12px; border: 1px solid #b7c3ce; border-radius: 6px; background: #fff; cursor: pointer; }
+    button:hover { background: #f2f6f9; }
+    .small { font-size: 13px; color: var(--muted); }
+    .sources li { margin-bottom: 9px; }
+    .source-tag { color: #4b5563; font-size: 12px; font-weight: bold; }
+    .two-col-list { columns: 2; column-gap: 32px; }
+    .avoid { color: var(--bad); font-weight: bold; }
+    footer { padding: 24px 42px 40px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
+      nav { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+      nav a { display: inline-block; margin-right: 9px; }
+      main { padding: 28px 20px 50px; }
+      header { padding: 34px 22px 28px; }
+      .grid, .grid3 { grid-template-columns: 1fr; }
+      .two-col-list { columns: 1; }
+    }
+    @media print {
+      body { background: #fff; }
+      .page { max-width: none; }
+      nav, button { display: none !important; }
+      .layout { display: block; }
+      main { padding: 24px 32px; }
+      header { background: #fff !important; color: #000; padding: 24px 32px; border-bottom: 2px solid #000; }
+      a { color: #000; text-decoration: none; }
+      section { break-inside: avoid; }
+      .card { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+<header>
+  <h1>LinkedIn + ATS Optimization Playbook</h1>
+  <p>A practical 2026 guide to LinkedIn profile settings, recruiter discoverability, keyword strategy, resume ATS compatibility, job-search workflows, and measurement.</p>
+  <p class="date">Research checked: 4 September 2026. Primary LinkedIn Help / Recruiter documentation is prioritized; ATS guidance is supplemented with current Indeed and Jobscan material.</p>
+</header>
+<div class="layout">
+<nav>
+  <strong>Contents</strong>
+  <a href="#distinction">1. LinkedIn vs ATS</a>
+  <a href="#settings">2. LinkedIn settings</a>
+  <a href="#profile">3. Profile optimization</a>
+  <a href="#keywords">4. Keyword strategy</a>
+  <a href="#ats">5. ATS resume optimization</a>
+  <a href="#check">6. How to check ATS</a>
+  <a href="#apply">7. Application workflow</a>
+  <a href="#search">8. LinkedIn search tactics</a>
+  <a href="#measure">9. Measure results</a>
+  <a href="#checklist">10. Master checklist</a>
+  <a href="#sources">Sources</a>
+</nav>
+<main>
+
+<section id="distinction">
+  <h2>1. First: LinkedIn optimization is not the same as an ATS score</h2>
+  <div class="callout">
+    <strong>Key distinction:</strong> LinkedIn does not give your profile a universal public "ATS score." LinkedIn Recruiter uses search filters, profile data, skill signals, job preferences, and matching logic. A resume ATS checker score is normally a third-party diagnostic score, not a universal employer pass/fail number. <span class="source-tag">[L1][L2][A1]</span>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h3>LinkedIn objective</h3>
+      <p>Make your profile easy to discover for the correct recruiter searches and convincing after a recruiter opens it.</p>
+      <ul>
+        <li>Correct target job title / function</li>
+        <li>Correct location and work preferences</li>
+        <li>Explicit and contextual skills</li>
+        <li>Complete experience and education</li>
+        <li>Credible proof: achievements, projects, certifications, recommendations</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>ATS objective</h3>
+      <p>Make the submitted resume easy to parse and clearly aligned with the exact job requirements.</p>
+      <ul>
+        <li>Simple structure and standard headings</li>
+        <li>Truthful job-specific keywords</li>
+        <li>Evidence in work-experience bullets</li>
+        <li>Required credentials and screening answers</li>
+        <li>Correct file type requested by the employer</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="settings">
+  <h2>2. LinkedIn settings to configure</h2>
+  <table>
+    <thead><tr><th>Setting</th><th>Recommended setup for an active job seeker</th><th>Why it matters</th><th>Priority</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Public profile visibility</strong></td><td>Turn ON if you want external search engines and non-signed-in users to find eligible profile sections. Review exactly which sections are public.</td><td>Controls whether eligible profile information can appear outside LinkedIn, including search engines. <span class="source-tag">[L3]</span></td><td class="priority p1">P1</td></tr>
+      <tr><td><strong>Profile photo visibility</strong></td><td>Use <em>All LinkedIn Members</em> or <em>Anyone/Public</em> if comfortable.</td><td>LinkedIn says members with a profile photo receive up to 2x more profile views and 3x more connection requests. <span class="source-tag">[L4]</span></td><td class="priority p1">P1</td></tr>
+      <tr><td><strong>Custom public URL</strong></td><td>Use a clean name-based URL where available, e.g. <span class="mono">firstname-lastname</span>.</td><td>Makes the profile easier to identify and share. <span class="source-tag">[L5]</span></td><td class="priority p2">P2</td></tr>
+      <tr><td><strong>Open to Work</strong></td><td>Set target job titles, locations, workplace types, start timing, and employment types. If discretion matters, choose <em>Recruiters only</em>.</td><td>Recruiters can identify Open-to-Work candidates and filter for workplace preferences. LinkedIn notes recruiter-only privacy is not guaranteed. <span class="source-tag">[L6][L7]</span></td><td class="priority p1">P1</td></tr>
+      <tr><td><strong>Resume data sharing</strong></td><td>Under Jobs &gt; Preferences &gt; Resumes and application data, consider enabling <em>Share resume data with recruiters</em> if comfortable with the privacy trade-off.</td><td>LinkedIn can use skills, experience, education, and accomplishments from saved resumes to help recruiters discover you. <span class="source-tag">[L8]</span></td><td class="priority p1">P1</td></tr>
+      <tr><td><strong>Saved resumes</strong></td><td>Keep current, role-specific resume versions and remove outdated versions.</td><td>LinkedIn stores the four most recently uploaded resumes for reuse. <span class="source-tag">[L9]</span></td><td class="priority p2">P2</td></tr>
+      <tr><td><strong>Job alerts</strong></td><td>Create alerts for each target role/location combination; choose daily for priority searches.</td><td>LinkedIn supports daily or weekly alerts and currently allows up to 20 active job alerts. <span class="source-tag">[L10]</span></td><td class="priority p1">P1</td></tr>
+      <tr><td><strong>Verification</strong></td><td>Complete identity/workplace/education verification if available and appropriate.</td><td>LinkedIn reports verified members see 60% more profile views and 50% more engagement on average. Availability varies. <span class="source-tag">[L11]</span></td><td class="priority p2">P2</td></tr>
+      <tr><td><strong>Skill endorsements</strong></td><td>Keep endorsement settings enabled if you want social validation; ask credible colleagues to endorse skills they have actually observed.</td><td>LinkedIn says endorsements reinforce skill weighting and can increase discovery for opportunities tied to those skills. <span class="source-tag">[L12]</span></td><td class="priority p2">P2</td></tr>
+    </tbody>
+  </table>
+  <div class="warning"><strong>Privacy note:</strong> "Recruiters only" Open to Work and resume-sharing controls reduce visibility to your current employer, but LinkedIn explicitly says complete privacy cannot be guaranteed. Decide based on your employment situation. <span class="source-tag">[L6][L8]</span></div>
+</section>
+
+<section id="profile">
+  <h2>3. Optimize every important profile section</h2>
+  <div class="grid3">
+    <div class="card"><h3>Photo</h3><p>Use a recent, clear, professional-looking image with your face easy to recognize. Avoid group photos, heavy filters, and old photos.</p></div>
+    <div class="card"><h3>Banner</h3><p>Use it to reinforce your domain: function, industry, portfolio, certification theme, product area, or professional value proposition.</p></div>
+    <div class="card"><h3>Headline</h3><p>Do not rely only on "Job Title at Company." Put the target role/function and high-value skills early because the headline appears in search results. <span class="source-tag">[L13]</span></p></div>
+  </div>
+
+  <h3>Headline formulas</h3>
+  <div class="example"><strong>Formula A:</strong> Target Role | Skill 1 | Skill 2 | Skill 3 | Industry / outcome</div>
+  <div class="example"><strong>Formula B:</strong> Role specializing in [platform / capability] | [domain] | [measurable business outcome]</div>
+  <div class="example"><strong>Formula C:</strong> Current function | Target function | [2-3 transferable strengths]</div>
+  <p class="small">Use only terms you can support with real experience. Do not make the headline a keyword dump.</p>
+
+  <h3>About section</h3>
+  <p>LinkedIn describes About as the place for your mission, motivation, and skills. Use it to quickly answer: <em>Who are you? What do you do well? What evidence do you have? What roles/problems are you relevant for?</em> <span class="source-tag">[L14]</span></p>
+  <div class="card">
+    <h4>Recommended structure</h4>
+    <ol>
+      <li><strong>Opening:</strong> role identity + years/domain + strongest specialization.</li>
+      <li><strong>Evidence:</strong> 2-4 achievements with scale, outcomes, customers, systems, or business impact.</li>
+      <li><strong>Core capabilities:</strong> 8-15 natural keywords grouped by theme, not a spam list.</li>
+      <li><strong>Targeting:</strong> kinds of problems/roles where you add value.</li>
+      <li><strong>Contact/portfolio:</strong> where appropriate.</li>
+    </ol>
+  </div>
+
+  <h3>Experience section</h3>
+  <p>Recruiter filters use job title, years of experience, current company, and location; skills can also be inferred from experience descriptions. Therefore, each role should contain both <strong>scope</strong> and <strong>evidence</strong>. <span class="source-tag">[L1][L2]</span></p>
+  <div class="example"><strong>Strong bullet pattern:</strong> Action + what you owned + scale/context + tools/skills + measurable outcome.</div>
+  <div class="example"><strong>Weak:</strong> Responsible for cloud migration.<br><strong>Stronger:</strong> Led migration of 40+ workloads to AWS, standardized infrastructure with Terraform, and reduced deployment lead time by 35%.</div>
+  <p class="small">Numbers above are only a writing example. Never invent metrics.</p>
+
+  <h3>Skills</h3>
+  <ul>
+    <li>LinkedIn currently permits up to <strong>100 skills</strong>. <span class="source-tag">[L12]</span></li>
+    <li>Prioritize the 15-30 skills most relevant to your target roles rather than filling all 100 slots indiscriminately.</li>
+    <li>Add standardized skill names where LinkedIn suggests them.</li>
+    <li>Attach skills to the Experience/Education entries where you actually used them.</li>
+    <li>Repeat core skills naturally in headline, About, experience, certifications, and projects. Recruiter can detect both explicit and implicit skills. <span class="source-tag">[L1]</span></li>
+  </ul>
+
+  <h3>Education, certifications, projects, recommendations, Featured</h3>
+  <table>
+    <thead><tr><th>Section</th><th>What to do</th><th>Search / conversion role</th></tr></thead>
+    <tbody>
+      <tr><td>Education</td><td>Complete school, degree, field, and dates accurately.</td><td>Recruiter can filter by school, degree, field, year of graduation. <span class="source-tag">[L2]</span></td></tr>
+      <tr><td>Licenses & certifications</td><td>Add relevant, current credentials; include issuer and dates.</td><td>Strengthens evidence for skills and requirements.</td></tr>
+      <tr><td>Projects</td><td>Show work samples, scope, tools, and outcomes.</td><td>Proof after profile click; useful for career changers and technical roles.</td></tr>
+      <tr><td>Recommendations</td><td>Request specific recommendations from credible 1st-degree connections who directly observed your work.</td><td>Social proof; LinkedIn allows recommendations tied to positions. <span class="source-tag">[L15]</span></td></tr>
+      <tr><td>Featured</td><td>Show portfolio, presentations, case studies, posts, articles, media, or links.</td><td>Conversion/proof section. LinkedIn notes Featured content itself is not discoverable through search. <span class="source-tag">[L16]</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="keywords">
+  <h2>4. LinkedIn keyword strategy: rank for the right searches, not every search</h2>
+  <p>LinkedIn search is personalized; there is no single fixed rank for a person profile. LinkedIn also warns that adding more keywords does not automatically improve visibility and that excessive keyword stuffing can trigger spam-related visibility issues. <span class="source-tag">[L17]</span></p>
+  <div class="good"><strong>Best practice:</strong> build a small keyword architecture around your target role, then place those terms where they are genuinely supported by evidence.</div>
+
+  <h3>Build a keyword map from 10-20 target job descriptions</h3>
+  <table>
+    <thead><tr><th>Keyword bucket</th><th>Examples</th><th>Where to place</th></tr></thead>
+    <tbody>
+      <tr><td>Target titles</td><td>Product Manager, DevOps Engineer, Financial Analyst</td><td>Headline, Open to Work job titles, About, relevant experience</td></tr>
+      <tr><td>Hard skills / platforms</td><td>AWS, Kubernetes, Python, Power BI, SAP</td><td>Skills, experience bullets, certifications, About</td></tr>
+      <tr><td>Methods</td><td>Agile, CI/CD, forecasting, stakeholder management</td><td>Skills + contextual work examples</td></tr>
+      <tr><td>Domain</td><td>Fintech, healthcare, B2B SaaS, construction</td><td>Headline, About, experience</td></tr>
+      <tr><td>Credentials</td><td>PMP, CFA, AWS certification</td><td>Licenses & certifications + headline only if important</td></tr>
+      <tr><td>Outcome language</td><td>Cost reduction, revenue growth, availability, conversion</td><td>Experience achievements / About</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Keyword placement hierarchy</h3>
+  <ol>
+    <li><strong>Headline:</strong> target function + 2-4 high-value skills/domain terms.</li>
+    <li><strong>Current/recent job titles:</strong> keep official titles accurate; clarify function in descriptions when titles are ambiguous.</li>
+    <li><strong>Skills section:</strong> add standardized target skills explicitly.</li>
+    <li><strong>Experience:</strong> demonstrate the skills in context and attach achievements.</li>
+    <li><strong>About:</strong> synthesize your niche and supporting evidence.</li>
+    <li><strong>Certifications/projects:</strong> reinforce hard skills.</li>
+    <li><strong>Saved resume sharing:</strong> if enabled, LinkedIn can surface resume-based skills in Recruiter. <span class="source-tag">[L1][L8]</span></li>
+  </ol>
+</section>
+
+<section id="ats">
+  <h2>5. Raise ATS compatibility and job-match strength</h2>
+  <div class="warning">
+    <strong>Do not chase a magic number.</strong> ATS workflows differ by employer. Some parse, search, filter, rank, or use recruiter-configured screening questions. A third-party checker is best used as a diagnostic aid. <span class="source-tag">[A1][A2][A3]</span>
+  </div>
+
+  <h3>ATS-friendly resume structure</h3>
+  <ul class="two-col-list">
+    <li>Single-column layout</li>
+    <li>Standard section headings</li>
+    <li>Contact information in the body, not only header/footer</li>
+    <li>No text boxes for critical content</li>
+    <li>No charts, graphics, icons, or skill-rating bars for essential data</li>
+    <li>Simple bullets</li>
+    <li>Conventional date formats</li>
+    <li>Readable standard fonts</li>
+    <li>Use .docx unless employer requests another format</li>
+    <li>Follow the job posting's file-type instruction when specified</li>
+  </ul>
+  <p>Current Indeed guidance emphasizes standard headings, simple formatting, avoiding graphics/tables/columns, keyword alignment, and choosing a compatible file format. <span class="source-tag">[A2][A3]</span></p>
+
+  <h3>How to tailor the resume for each job</h3>
+  <ol>
+    <li><strong>Extract must-haves:</strong> required skills, tools, certifications, years/level, location/work authorization, degree, industry experience.</li>
+    <li><strong>Extract repeated role language:</strong> core duties and high-frequency terms.</li>
+    <li><strong>Separate qualification gaps from wording gaps:</strong> never add a skill or credential you do not have.</li>
+    <li><strong>Use exact terminology when truthful:</strong> if the JD says "Amazon Web Services (AWS)," include the full term and acronym naturally at least once if relevant.</li>
+    <li><strong>Put important keywords in evidence:</strong> experience bullets are stronger than a detached skill list.</li>
+    <li><strong>Quantify:</strong> volume, time, money, performance, users, systems, team size, geography, or reliability when real metrics exist.</li>
+    <li><strong>Reorder:</strong> bring the most relevant achievements to the top of each role.</li>
+    <li><strong>Remove noise:</strong> reduce unrelated content that obscures job fit.</li>
+  </ol>
+  <p>Indeed recommends deriving ATS keywords from the job description, matching important role/industry terminology, using acronyms correctly, and still writing for the human reviewer. <span class="source-tag">[A4]</span></p>
+
+  <h3>Do not use these "ATS hacks"</h3>
+  <ul>
+    <li><span class="avoid">Do not</span> paste the entire job description into the resume.</li>
+    <li><span class="avoid">Do not</span> use hidden/white text.</li>
+    <li><span class="avoid">Do not</span> add skills, certifications, degrees, titles, or years you cannot prove.</li>
+    <li><span class="avoid">Do not</span> repeat keywords mechanically to inflate a checker score.</li>
+    <li><span class="avoid">Do not</span> sacrifice human readability for a scanner.</li>
+  </ul>
+</section>
+
+<section id="check">
+  <h2>6. How to check your ATS readiness before applying</h2>
+  <div class="grid">
+    <div class="card">
+      <h3>Check 1: Plain-text parse test</h3>
+      <ol>
+        <li>Open the resume.</li>
+        <li>Select all text and copy it into a plain-text editor.</li>
+        <li>Verify name, contact info, headings, company, title, dates, bullets, education, and skills appear in correct reading order.</li>
+        <li>If text is missing or scrambled, simplify the formatting.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Check 2: Job-description comparison</h3>
+      <ol>
+        <li>Compare resume vs exact JD.</li>
+        <li>Mark each must-have: proven / partially proven / not proven.</li>
+        <li>Check whether proven requirements are visible in the top half or recent experience.</li>
+        <li>Fix wording gaps without fabricating qualifications.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Check 3: Third-party scanner</h3>
+      <p>Use a scanner such as Jobscan or another transparent resume-to-JD tool to identify missing terms or parse issues.</p>
+      <p><strong>Important:</strong> Jobscan currently recommends 75+ inside its own product, but explicitly says its match rate is a visualization and that the employer ATS does not simply receive that score. <span class="source-tag">[A1]</span></p>
+    </div>
+    <div class="card">
+      <h3>Check 4: Human 15-second scan</h3>
+      <p>Ask: Can someone immediately see your target role, most relevant skills, recent titles/companies, strongest measurable outcomes, and required credentials?</p>
+    </div>
+  </div>
+
+  <h3>A practical scoring model (not an official ATS score)</h3>
+  <table>
+    <thead><tr><th>Dimension</th><th>Weight</th><th>What "strong" means</th></tr></thead>
+    <tbody>
+      <tr><td>Hard requirements</td><td>30%</td><td>Required qualifications are genuinely met and visible.</td></tr>
+      <tr><td>Keyword / role-language alignment</td><td>25%</td><td>Core terms from the JD appear naturally in relevant experience.</td></tr>
+      <tr><td>Evidence & achievements</td><td>20%</td><td>Skills are supported by outcomes, scope, and metrics.</td></tr>
+      <tr><td>Parseability</td><td>15%</td><td>Simple structure; text extracts in correct order.</td></tr>
+      <tr><td>Human clarity</td><td>10%</td><td>Recruiter can understand fit quickly.</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="apply">
+  <h2>7. High-quality application workflow</h2>
+  <ol>
+    <li><strong>Define 1-3 role families.</strong> Do not optimize one profile for ten unrelated careers.</li>
+    <li><strong>Create a master keyword bank</strong> from 10-20 good job descriptions in each role family.</li>
+    <li><strong>Update LinkedIn baseline</strong> so headline, About, skills, and experience support those role families.</li>
+    <li><strong>Create 2-3 base resumes</strong> aligned to the major role families.</li>
+    <li><strong>For each application, tailor the top 20-30%</strong>: summary, skill emphasis, most relevant bullets, and keyword wording.</li>
+    <li><strong>Check screening questions carefully.</strong> Work authorization, location, salary, certification, and years-of-experience questions may be decisive.</li>
+    <li><strong>Run parse + JD checks.</strong> Fix real issues, not cosmetic score-chasing.</li>
+    <li><strong>Apply using the requested channel and file type.</strong> LinkedIn Easy Apply may send your full profile alongside application information. <span class="source-tag">[L18]</span></li>
+    <li><strong>Use the network intelligently.</strong> After applying, identify a relevant recruiter, hiring manager, or team member; send a concise, role-specific note when appropriate.</li>
+    <li><strong>Track outcomes.</strong> Measure recruiter replies, screens, interviews, and profile views by resume/profile version.</li>
+  </ol>
+</section>
+
+<section id="search">
+  <h2>8. LinkedIn search and job-finding techniques</h2>
+  <h3>Use filters to reduce competition and improve relevance</h3>
+  <p>LinkedIn job search supports filters including location, date posted, Easy Apply, company, experience level, employment type, "Under 10 applicants," and "In your network." <span class="source-tag">[L19]</span></p>
+  <ul>
+    <li>For high-priority searches, start with <strong>Past 24 hours</strong> and your target location.</li>
+    <li>Use <strong>Under 10 applicants</strong> as a prioritization filter, not a guarantee of success.</li>
+    <li>Use <strong>In your network</strong> to surface jobs where a warm path may exist.</li>
+    <li>Create company-specific job alerts for target employers.</li>
+  </ul>
+
+  <h3>Use Boolean search</h3>
+  <p>LinkedIn supports Boolean operators such as <strong>AND</strong>, <strong>OR</strong>, <strong>NOT</strong>, quotation marks, and parentheses. Operators should be uppercase. <span class="source-tag">[L20]</span></p>
+  <div class="example"><span class="mono">("DevOps Engineer" OR "Platform Engineer") AND (AWS OR Azure) AND Kubernetes NOT Intern</span></div>
+  <div class="example"><span class="mono">("Product Manager" OR "Technical Product Manager") AND fintech AND (payments OR banking)</span></div>
+
+  <h3>Use natural-language search too</h3>
+  <p>LinkedIn search now supports natural, conversational queries in addition to traditional keywords. Recruiter AI-assisted search can also work with titles, locations, years of experience, skills, companies, and industries. <span class="source-tag">[L21]</span></p>
+</section>
+
+<section id="measure">
+  <h2>9. Measure whether your changes are working</h2>
+  <p>Because LinkedIn people-search ordering is personalized, avoid testing your rank from one or two accounts. LinkedIn recommends profile views as a more useful overall visibility indicator, and Analytics also exposes search appearances. <span class="source-tag">[L17][L22]</span></p>
+  <table>
+    <thead><tr><th>Metric</th><th>What it diagnoses</th><th>If weak</th></tr></thead>
+    <tbody>
+      <tr><td>Search appearances</td><td>Discoverability</td><td>Review target titles, location, skills, industry, and keyword context.</td></tr>
+      <tr><td>Profile views</td><td>Search-to-click conversion / activity visibility</td><td>Improve headline, photo, current role clarity, and relevance.</td></tr>
+      <tr><td>Recruiter messages</td><td>Market relevance</td><td>Narrow target roles; increase evidence; review Open to Work and resume sharing.</td></tr>
+      <tr><td>Application to screen rate</td><td>Resume/job fit</td><td>Improve job selection, must-have match, resume tailoring, and screening answers.</td></tr>
+      <tr><td>Screen to interview rate</td><td>Story and qualification quality</td><td>Improve interview narrative and evidence; not primarily a LinkedIn/ATS problem.</td></tr>
+    </tbody>
+  </table>
+  <div class="good"><strong>Optimization rule:</strong> change one major variable at a time, observe results across a meaningful number of applications/views, and keep a simple log. Otherwise you will not know which change helped.</div>
+</section>
+
+<section id="checklist">
+  <h2>10. Master checklist</h2>
+  <p>This interactive score is only a self-audit. It is <strong>not</strong> a LinkedIn or ATS score.</p>
+  <div class="scorebox">
+    <div class="progress"><div class="bar" id="bar"></div></div>
+    <div class="scoreline"><span id="scoreText">0 of 0 complete</span><span id="percentText">0%</span></div>
+    <p><button type="button" id="resetBtn">Reset checklist</button></p>
+  </div>
+
+  <h3>LinkedIn discoverability</h3>
+  <ul class="checklist">
+    <li><label><input type="checkbox"> Public profile visibility reviewed and configured intentionally.</label></li>
+    <li><label><input type="checkbox"> Profile photo is current, clear, professional, and visible to the intended audience.</label></li>
+    <li><label><input type="checkbox"> Custom public URL is clean and shareable.</label></li>
+    <li><label><input type="checkbox"> Location is accurate for the market where I can genuinely work.</label></li>
+    <li><label><input type="checkbox"> Industry is accurate.</label></li>
+    <li><label><input type="checkbox"> Open to Work target titles are precise.</label></li>
+    <li><label><input type="checkbox"> Open to Work locations/workplace types/employment types are correct.</label></li>
+    <li><label><input type="checkbox"> Resume sharing with recruiters has been consciously enabled or disabled.</label></li>
+    <li><label><input type="checkbox"> Outdated saved resumes have been removed.</label></li>
+    <li><label><input type="checkbox"> Job alerts exist for priority role/location combinations.</label></li>
+    <li><label><input type="checkbox"> Verification is completed if available and appropriate.</label></li>
+  </ul>
+
+  <h3>LinkedIn profile content</h3>
+  <ul class="checklist">
+    <li><label><input type="checkbox"> Headline contains the target function and the strongest relevant capabilities.</label></li>
+    <li><label><input type="checkbox"> About section states role identity, evidence, capabilities, and target value clearly.</label></li>
+    <li><label><input type="checkbox"> Recent Experience entries have measurable achievements, not only responsibilities.</label></li>
+    <li><label><input type="checkbox"> Ambiguous internal job titles are clarified without falsifying the official title.</label></li>
+    <li><label><input type="checkbox"> Top skills reflect the target job family.</label></li>
+    <li><label><input type="checkbox"> Core skills appear in context inside Experience/About.</label></li>
+    <li><label><input type="checkbox"> Education is complete and accurate.</label></li>
+    <li><label><input type="checkbox"> Relevant certifications are present and current.</label></li>
+    <li><label><input type="checkbox"> Strong projects / portfolio evidence is included where relevant.</label></li>
+    <li><label><input type="checkbox"> Recommendations are specific, credible, and tied to real work.</label></li>
+    <li><label><input type="checkbox"> Featured section contains only high-value proof.</label></li>
+    <li><label><input type="checkbox"> Profile has no keyword stuffing or unsupported claims.</label></li>
+  </ul>
+
+  <h3>ATS resume</h3>
+  <ul class="checklist">
+    <li><label><input type="checkbox"> Resume uses a simple single-column layout.</label></li>
+    <li><label><input type="checkbox"> Standard headings are used: Summary, Skills, Experience, Education, Certifications.</label></li>
+    <li><label><input type="checkbox"> Critical information is not trapped in headers, footers, images, charts, or text boxes.</label></li>
+    <li><label><input type="checkbox"> File type matches employer instructions; otherwise a simple DOCX is available.</label></li>
+    <li><label><input type="checkbox"> Plain-text copy/paste test preserves correct reading order.</label></li>
+    <li><label><input type="checkbox"> Each job's must-have requirements have been checked explicitly.</label></li>
+    <li><label><input type="checkbox"> Core JD terminology is used naturally where truthful.</label></li>
+    <li><label><input type="checkbox"> Skills are demonstrated in experience bullets, not only listed.</label></li>
+    <li><label><input type="checkbox"> Acronyms/full names are handled clearly for important credentials/technologies.</label></li>
+    <li><label><input type="checkbox"> Achievements use genuine metrics where available.</label></li>
+    <li><label><input type="checkbox"> Third-party ATS checker feedback was treated as diagnostic, not as a universal pass score.</label></li>
+    <li><label><input type="checkbox"> Resume still reads naturally to a human.</label></li>
+  </ul>
+
+  <h3>Application process</h3>
+  <ul class="checklist">
+    <li><label><input type="checkbox"> I am targeting a narrow set of role families.</label></li>
+    <li><label><input type="checkbox"> I maintain a master keyword bank from real target JDs.</label></li>
+    <li><label><input type="checkbox"> I tailor the resume for the exact role instead of sending one generic resume everywhere.</label></li>
+    <li><label><input type="checkbox"> I review screening questions carefully before submitting.</label></li>
+    <li><label><input type="checkbox"> I use LinkedIn filters/alerts to prioritize relevant, recent openings.</label></li>
+    <li><label><input type="checkbox"> I use the network for warm introductions where appropriate.</label></li>
+    <li><label><input type="checkbox"> I track applications, recruiter responses, screens, interviews, and profile views.</label></li>
+  </ul>
+</section>
+
+<section id="sources">
+  <h2>Research sources</h2>
+  <p class="small">Links below were used to verify current functionality and recommendations. LinkedIn pages can change over time.</p>
+  <ol class="sources">
+    <li><strong>[L1]</strong> LinkedIn Recruiter Help - Skills filter in Recruiter and Recruiter Lite: <a href="https://www.linkedin.com/help/recruiter/answer/a593591">linkedin.com/help/recruiter/answer/a593591</a></li>
+    <li><strong>[L2]</strong> LinkedIn Recruiter Help - Recruiter search filters and definitions: <a href="https://www.linkedin.com/help/linkedin/answer/a414428">linkedin.com/help/linkedin/answer/a414428</a></li>
+    <li><strong>[L3]</strong> LinkedIn Help - Control your public LinkedIn profile: <a href="https://www.linkedin.com/help/linkedin/answer/a528138">linkedin.com/help/linkedin/answer/a528138</a></li>
+    <li><strong>[L4]</strong> LinkedIn Help - Settings for profile photo visibility: <a href="https://www.linkedin.com/help/linkedin/answer/a545557/settings-for-profile-photo-visibility">linkedin.com/help/linkedin/answer/a545557</a></li>
+    <li><strong>[L5]</strong> LinkedIn Help - Manage your public profile URL: <a href="https://www.linkedin.com/help/linkedin/answer/a542685/manage-your-public-profile-url?lang=en">linkedin.com/help/linkedin/answer/a542685</a></li>
+    <li><strong>[L6]</strong> LinkedIn Help - Let recruiters know you are Open to Work: <a href="https://www.linkedin.com/help/learning/answer/a507508">linkedin.com/help/learning/answer/a507508</a></li>
+    <li><strong>[L7]</strong> LinkedIn Recruiter Help - Filter candidates by workplace type: <a href="https://www.linkedin.com/help/recruiter/answer/a527316">linkedin.com/help/recruiter/answer/a527316</a></li>
+    <li><strong>[L8]</strong> LinkedIn Recruiter Help - Share and manage your resumes with recruiters: <a href="https://www.linkedin.com/help/recruiter/answer/a1327213">linkedin.com/help/recruiter/answer/a1327213</a></li>
+    <li><strong>[L9]</strong> LinkedIn Help - Upload your resume to LinkedIn: <a href="https://www.linkedin.com/help/linkedin/answer/a510363">linkedin.com/help/linkedin/answer/a510363</a></li>
+    <li><strong>[L10]</strong> LinkedIn Help - Job alerts: <a href="https://www.linkedin.com/help/linkedin/answer/a510380">linkedin.com/help/linkedin/answer/a510380</a></li>
+    <li><strong>[L11]</strong> LinkedIn Help - Verifications on your LinkedIn profile: <a href="https://www.linkedin.com/help/linkedin/answer/a1359065">linkedin.com/help/linkedin/answer/a1359065</a></li>
+    <li><strong>[L12]</strong> LinkedIn Help - Skill endorsements: <a href="https://www.linkedin.com/help/linkedin/answer/a565106?lang=en-US">linkedin.com/help/linkedin/answer/a565106</a></li>
+    <li><strong>[L13]</strong> LinkedIn Help - Edit your headline: <a href="https://www.linkedin.com/help/linkedin/answer/a542926/edit-your-headline?lang=en">linkedin.com/help/linkedin/answer/a542926</a></li>
+    <li><strong>[L14]</strong> LinkedIn Help - Edit the About section: <a href="https://www.linkedin.com/help/linkedin/answer/a553140/edit-the-about-section-in-your-profile?lang=en">linkedin.com/help/linkedin/answer/a553140</a></li>
+    <li><strong>[L15]</strong> LinkedIn Help - Recommendations overview: <a href="https://www.linkedin.com/help/linkedin/answer/a541653/recommendations-overview?lang=en">linkedin.com/help/linkedin/answer/a541653</a></li>
+    <li><strong>[L16]</strong> LinkedIn Help - Featured section FAQs: <a href="https://www.linkedin.com/help/linkedin/answer/a552452/featured-section-on-your-profile-faqs">linkedin.com/help/linkedin/answer/a552452</a></li>
+    <li><strong>[L17]</strong> LinkedIn Recruiter Help - LinkedIn Search relevance for people search: <a href="https://www.linkedin.com/help/recruiter/answer/a524188">linkedin.com/help/recruiter/answer/a524188</a></li>
+    <li><strong>[L18]</strong> LinkedIn Help - How LinkedIn uses your job application information: <a href="https://www.linkedin.com/help/linkedin/answer/a507694/save-your-job-application-information">linkedin.com/help/linkedin/answer/a507694</a></li>
+    <li><strong>[L19]</strong> LinkedIn Recruiter Help - Filter and sort job search results: <a href="https://www.linkedin.com/help/recruiter/answer/a507441/filter-and-sort-job-search-results?lang=en">linkedin.com/help/recruiter/answer/a507441</a></li>
+    <li><strong>[L20]</strong> LinkedIn Recruiter Help - Boolean search: <a href="https://www.linkedin.com/help/recruiter/answer/a524335">linkedin.com/help/recruiter/answer/a524335</a></li>
+    <li><strong>[L21]</strong> LinkedIn Recruiter Help - AI-Assisted Search: <a href="https://www.linkedin.com/help/recruiter/answer/a6509735">linkedin.com/help/recruiter/answer/a6509735</a></li>
+    <li><strong>[L22]</strong> LinkedIn Help - Who viewed your profile / Analytics: <a href="https://www.linkedin.com/help/linkedin/answer/a540651/access-the-who-viewed-your-profile-feature?lang=en">linkedin.com/help/linkedin/answer/a540651</a></li>
+    <li><strong>[A1]</strong> Jobscan - Resume Matcher / match rate explanation: <a href="https://www.jobscan.co/resume-matcher">jobscan.co/resume-matcher</a></li>
+    <li><strong>[A2]</strong> Indeed - How to Write an ATS-Friendly Resume (updated June 2026): <a href="https://www.indeed.com/career-advice/resumes-cover-letters/ats-resume">indeed.com/career-advice/resumes-cover-letters/ats-resume</a></li>
+    <li><strong>[A3]</strong> Indeed - ATS-Friendly Resume: 18 Tips (updated July 2026): <a href="https://www.indeed.com/career-advice/resumes-cover-letters/automated-screening-resume">indeed.com/career-advice/resumes-cover-letters/automated-screening-resume</a></li>
+    <li><strong>[A4]</strong> Indeed - Get Your Resume Seen With ATS Keywords (updated June 2026): <a href="https://www.indeed.com/career-advice/resumes-cover-letters/ats-resume-keywords">indeed.com/career-advice/resumes-cover-letters/ats-resume-keywords</a></li>
+  </ol>
+</section>
+
+</main>
+</div>
+<footer>
+  <strong>Use this as an operating checklist, not as a promise of ranking or interviews.</strong> Hiring outcomes also depend on actual qualifications, employer-specific screening rules, competition, timing, referrals, compensation/location constraints, and human judgment. Always keep profile and resume claims accurate.
+</footer>
+</div>
+<script>
+(function () {
+  const boxes = Array.from(document.querySelectorAll('.checklist input[type="checkbox"]'));
+  const bar = document.getElementById('bar');
+  const scoreText = document.getElementById('scoreText');
+  const percentText = document.getElementById('percentText');
+  const key = 'linkedinAtsChecklistV1';
+
+  function load() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(key) || '[]');
+      boxes.forEach((b, i) => { b.checked = !!saved[i]; });
+    } catch (e) {}
+    update(false);
+  }
+  function update(save = true) {
+    const done = boxes.filter(b => b.checked).length;
+    const pct = boxes.length ? Math.round((done / boxes.length) * 100) : 0;
+    bar.style.width = pct + '%';
+    scoreText.textContent = done + ' of ' + boxes.length + ' complete';
+    percentText.textContent = pct + '%';
+    if (save) localStorage.setItem(key, JSON.stringify(boxes.map(b => b.checked)));
+  }
+  boxes.forEach(b => b.addEventListener('change', () => update(true)));
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    boxes.forEach(b => { b.checked = false; });
+    update(true);
+  });
+  load();
+})();
+</script>
+</body>
+</html>
