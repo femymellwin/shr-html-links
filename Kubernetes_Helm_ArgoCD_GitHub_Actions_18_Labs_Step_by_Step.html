@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="A hands-on beginner learning path for Kubernetes, Helm, Argo CD GitOps, and GitHub Actions with 18 complete step-by-step labs." />
+<title>Cloud Native Delivery Lab Book — Kubernetes, Helm, Argo CD & GitHub Actions</title>
+<style>
+  :root {
+    --bg:#ffffff; --paper:#ffffff; --ink:#142033; --muted:#5c6b80; --line:#dfe6ef;
+    --soft:#f6f8fb; --soft2:#eef4ff; --accent:#2563eb; --accent2:#7c3aed; --green:#087f5b;
+    --orange:#c2410c; --red:#b42318; --shadow:0 16px 40px rgba(31,41,55,.08);
+    --radius:18px; --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    --sans:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.66}
+  a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+  code,kbd,pre{font-family:var(--mono)}
+  .shell{max-width:1240px;margin:auto;padding:0 24px}
+  .topbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  .topbar .inner{max-width:1240px;margin:auto;display:flex;align-items:center;gap:18px;padding:12px 24px}
+  .brand{font-weight:800;letter-spacing:-.02em;white-space:nowrap}.brand span{color:var(--accent)}
+  .toplinks{display:flex;gap:14px;overflow:auto;font-size:.92rem;white-space:nowrap;flex:1}
+  .toplinks a{color:#40506a}
+  .printbtn{border:1px solid var(--line);background:white;border-radius:999px;padding:8px 12px;cursor:pointer;font-weight:650}
+  .hero{padding:72px 0 32px;background:linear-gradient(180deg,#f7faff 0%,#fff 78%);border-bottom:1px solid var(--line)}
+  .hero-grid{display:grid;grid-template-columns:1.4fr .8fr;gap:40px;align-items:center}
+  .eyebrow{display:inline-flex;gap:8px;align-items:center;border:1px solid #cfe0ff;background:#f7fbff;color:#1d4ed8;padding:7px 11px;border-radius:999px;font-weight:750;font-size:.85rem}
+  h1{font-size:clamp(2.55rem,6vw,5.25rem);line-height:.98;letter-spacing:-.055em;margin:18px 0 22px;max-width:900px}
+  h2{font-size:clamp(1.8rem,3vw,2.8rem);line-height:1.08;letter-spacing:-.035em;margin:0 0 14px}
+  h3{font-size:1.3rem;line-height:1.25;margin:28px 0 10px}
+  h4{font-size:1rem;letter-spacing:.01em;margin:22px 0 8px}
+  .lead{font-size:1.16rem;color:var(--muted);max-width:820px}
+  .hero-card{background:white;border:1px solid var(--line);box-shadow:var(--shadow);border-radius:24px;padding:26px}
+  .hero-card .metric{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:16px}
+  .metric div{background:var(--soft);border-radius:14px;padding:14px}.metric b{font-size:1.55rem;display:block}.metric span{font-size:.82rem;color:var(--muted)}
+  .progress-wrap{margin-top:18px}.progress-label{display:flex;justify-content:space-between;font-size:.86rem;color:var(--muted)}
+  .progress-track{height:10px;background:#e9eef5;border-radius:99px;overflow:hidden;margin-top:6px}.progress-bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .25s}
+  .section{padding:64px 0;border-bottom:1px solid var(--line)}
+  .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:28px;margin-bottom:28px}.section-head p{max-width:720px;color:var(--muted);margin:0}
+  .grid{display:grid;gap:18px}.grid-4{grid-template-columns:repeat(4,1fr)}.grid-3{grid-template-columns:repeat(3,1fr)}.grid-2{grid-template-columns:repeat(2,1fr)}
+  .card{border:1px solid var(--line);background:white;border-radius:var(--radius);padding:22px;box-shadow:0 8px 24px rgba(31,41,55,.04)}
+  .card.soft{background:var(--soft)}
+  .num{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:11px;background:#e8f0ff;color:#1d4ed8;font-weight:850;margin-bottom:13px}
+  .muted{color:var(--muted)}.small{font-size:.9rem}.tiny{font-size:.8rem}
+  .tag{display:inline-block;background:#eef2f7;color:#344054;padding:4px 9px;border-radius:999px;font-size:.77rem;font-weight:720;margin:2px 4px 2px 0}
+  .tag.k8s{background:#eaf2ff;color:#175cd3}.tag.helm{background:#eaf8ff;color:#026aa2}.tag.argo{background:#fff0e7;color:#c4320a}.tag.gha{background:#f3efff;color:#6938ef}.tag.git{background:#eef9f4;color:#067647}
+  .callout{border-left:4px solid var(--accent);background:#f6f9ff;padding:16px 18px;border-radius:0 14px 14px 0;margin:18px 0}.callout.warn{border-left-color:var(--orange);background:#fff8f3}.callout.good{border-left-color:var(--green);background:#f2fbf7}.callout.danger{border-left-color:var(--red);background:#fff5f4}
+  .flow{display:grid;grid-template-columns:repeat(7,auto);gap:9px;align-items:center;justify-content:start;overflow:auto;padding:16px 0}.flow .node{min-width:130px;padding:14px;border:1px solid var(--line);border-radius:14px;background:white;font-weight:760;text-align:center}.flow .arrow{color:#98a2b3;font-size:1.35rem}
+  .roadmap{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}.phase{padding:18px;border-radius:16px;border:1px solid var(--line);background:linear-gradient(180deg,#fff,#f8fafc)}.phase strong{display:block;margin-bottom:4px}.phase .bar{height:4px;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--accent2));margin-bottom:14px}
+  .lab-table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:16px;overflow:hidden;font-size:.92rem}.lab-table th,.lab-table td{padding:13px 14px;border-bottom:1px solid var(--line);vertical-align:top}.lab-table th{background:#f8fafc;text-align:left}.lab-table tr:last-child td{border-bottom:none}
+  details.lab{border:1px solid var(--line);border-radius:18px;background:white;margin:16px 0;box-shadow:0 6px 20px rgba(31,41,55,.035);overflow:hidden}
+  details.lab[open]{box-shadow:0 14px 34px rgba(31,41,55,.07)}
+  details.lab > summary{cursor:pointer;list-style:none;padding:22px 24px;display:grid;grid-template-columns:auto 1fr auto;gap:16px;align-items:center}
+  details.lab > summary::-webkit-details-marker{display:none}.lab-index{display:grid;place-items:center;width:44px;height:44px;background:#eff4ff;color:#1d4ed8;border-radius:13px;font-weight:850}.lab-title b{display:block;font-size:1.08rem}.lab-title span{color:var(--muted);font-size:.88rem}.lab-meta{text-align:right;font-size:.78rem;color:var(--muted)}
+  .lab-body{padding:0 24px 28px;border-top:1px solid var(--line)}
+  .lab-goals{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:22px 0}.lab-goals > div{background:var(--soft);padding:16px;border-radius:14px}.lab-goals strong{display:block;margin-bottom:5px}
+  ol.steps{counter-reset:step;list-style:none;padding:0;margin:20px 0}ol.steps>li{counter-increment:step;position:relative;padding-left:54px;margin:26px 0}ol.steps>li:before{content:counter(step);position:absolute;left:0;top:0;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:#15284a;color:#fff;font-weight:800}
+  pre{position:relative;background:#0f172a;color:#e5edf8;border-radius:14px;padding:18px 18px 18px;overflow:auto;line-height:1.5;font-size:.87rem;border:1px solid #1e293b;margin:12px 0 18px}
+  pre code{white-space:pre}.copy{position:absolute;right:9px;top:9px;border:1px solid #334155;background:#18243a;color:#dbeafe;border-radius:8px;padding:5px 8px;font-size:.72rem;cursor:pointer}
+  code.inline{background:#f0f3f7;color:#344054;padding:2px 6px;border-radius:6px}
+  .check{display:flex;gap:10px;align-items:flex-start;background:#f3faf7;border:1px solid #d1fadf;border-radius:12px;padding:12px 14px;margin:10px 0}.check:before{content:"✓";font-weight:900;color:var(--green)}
+  .failure{display:grid;grid-template-columns:1fr 1fr;gap:12px}.failure div{border:1px solid #fedf89;background:#fffcf5;border-radius:12px;padding:14px}.failure b{display:block;color:#93370d}
+  .complete{margin-top:22px;display:flex;align-items:center;gap:10px;border-top:1px dashed var(--line);padding-top:18px}.complete input{width:19px;height:19px}.complete label{font-weight:740}
+  .repo-tree{background:#f8fafc;border:1px solid var(--line);border-radius:16px;padding:20px;font-family:var(--mono);font-size:.88rem;overflow:auto;white-space:pre}
+  .compare{display:grid;grid-template-columns:1fr 1fr;gap:16px}.compare .side{border:1px solid var(--line);border-radius:16px;padding:18px}.compare h4{margin-top:0}
+  .quiz{border:1px dashed #a7b4c6;background:#fbfcfe;border-radius:14px;padding:16px;margin:14px 0}.quiz summary{cursor:pointer;font-weight:760}.quiz p{margin:10px 0 0;color:var(--muted)}
+  .scorecard{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.score{border:1px solid var(--line);border-radius:14px;padding:16px}.score b{font-size:1.25rem}
+  .sources li{margin:8px 0}.footer{padding:38px 0 60px;color:var(--muted);font-size:.9rem}
+  .pillrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.pill{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 10px;font-size:.82rem}
+
+  .expected{border:1px solid #cfe0ff;background:#f7faff;border-radius:12px;padding:12px 14px;margin:10px 0 16px;color:#344054}.expected strong{color:#175cd3}
+  .verify{display:flex;gap:10px;align-items:flex-start;background:#f7fbff;border:1px solid #cfe0ff;border-radius:12px;padding:13px 15px;margin:16px 0}.verify strong{white-space:nowrap;color:#175cd3}.verify code{font-family:var(--mono)}
+  .os-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0 20px}.os-card{border:1px solid var(--line);border-radius:14px;padding:15px;background:#fbfcfe}.os-card>strong{display:block;margin-bottom:6px}.os-card pre{font-size:.78rem;margin-bottom:8px}
+  .micro-step{display:inline-grid;place-items:center;width:27px;height:27px;border-radius:9px;background:#e8f0ff;color:#1d4ed8;font-weight:850;margin-right:8px}.lab-contract{margin:0 0 26px}.concept-grid>div{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}.mini-flow{grid-template-columns:repeat(11,auto)}
+  .architecture{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:16px 0}.architecture>div{border:1px solid var(--line);border-radius:14px;padding:15px;background:linear-gradient(180deg,#fff,#f8fafc)}.architecture b{display:block;margin-bottom:5px}.architecture span{font-size:.88rem;color:var(--muted)}
+  @media (max-width:960px){.hero-grid,.grid-4,.grid-3,.roadmap,.scorecard{grid-template-columns:1fr 1fr}.grid-2,.compare{grid-template-columns:1fr}.section-head{align-items:flex-start;flex-direction:column}.lab-table{font-size:.84rem}.lab-goals{grid-template-columns:1fr}.flow{grid-template-columns:repeat(7,130px)}.failure{grid-template-columns:1fr}.os-grid,.architecture{grid-template-columns:1fr 1fr}}
+  @media (max-width:640px){.shell{padding:0 16px}.topbar .inner{padding:10px 16px}.toplinks{display:none}.hero{padding-top:46px}.hero-grid,.grid-4,.grid-3,.roadmap,.scorecard,.os-grid,.architecture{grid-template-columns:1fr}h1{font-size:2.7rem}.lab-meta{display:none}details.lab>summary{grid-template-columns:auto 1fr}.lab-body{padding:0 16px 22px}.lab-table{display:block;overflow:auto}.hero-card{padding:19px}}
+  @media print{.topbar,.copy,.printbtn,.complete{display:none!important}.hero{padding:30px 0}.section{padding:30px 0}details.lab{break-inside:avoid}details.lab .lab-body{display:block!important}pre{white-space:pre-wrap}.shell{max-width:none}.card,details.lab{box-shadow:none}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="inner">
+    <div class="brand">Cloud Native <span>Lab Book</span></div>
+    <nav class="toplinks" aria-label="Document navigation">
+      <a href="#start">Start</a><a href="#map">Mental model</a><a href="#roadmap">Roadmap</a><a href="#labs">18 labs</a><a href="#capstone">Capstone</a><a href="#cheatsheet">Cheat sheet</a><a href="#sources">Sources</a>
+    </nav>
+    <button class="printbtn" onclick="window.print()">Print / PDF</button>
+  </div>
+</header>
+
+<section class="hero" id="start">
+  <div class="shell hero-grid">
+    <div>
+      <span class="eyebrow">Hands-on curriculum · September 2026 edition</span>
+      <h1>Kubernetes → Helm → Argo CD → GitHub Actions</h1>
+      <p class="lead">A practical beginner lab book for learning modern Kubernetes delivery by building the same application four different ways. Every lab now includes the exact setup, files, commands, expected observations, verification, failure drills, recovery, and cleanup needed to learn by doing rather than by copying.</p>
+      <div class="pillrow">
+        <span class="pill">18 guided labs</span><span class="pill">Raw YAML + Helm</span><span class="pill">CI + GitOps</span><span class="pill">Failure drills</span><span class="pill">One capstone project</span>
+      </div>
+    </div>
+    <aside class="hero-card">
+      <strong>Learning contract</strong>
+      <p class="small muted">Do not paste a whole lab at once. Predict → run → observe → explain → break → fix.</p>
+      <div class="metric"><div><b>18</b><span>Labs</span></div><div><b>5</b><span>Phases</span></div><div><b>1</b><span>Sample app</span></div><div><b>100%</b><span>Hands-on</span></div></div>
+      <div class="progress-wrap">
+        <div class="progress-label"><span>Your progress</span><span id="progressText">0 / 18 labs</span></div>
+        <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section class="section">
+<div class="shell">
+  <div class="section-head"><div><h2>How to use this lab book</h2><p>Use a local Kubernetes cluster first. A managed cloud cluster is useful later, but it adds IAM, networking, billing, and provider-specific concepts before the Kubernetes fundamentals are stable.</p></div></div>
+  <div class="grid grid-4">
+    <article class="card"><div class="num">1</div><strong>Predict</strong><p class="muted small">Before each command, say what resource or state you expect to change.</p></article>
+    <article class="card"><div class="num">2</div><strong>Observe</strong><p class="muted small">Use <code class="inline">get</code>, <code class="inline">describe</code>, logs, events, Helm history, and Argo CD status.</p></article>
+    <article class="card"><div class="num">3</div><strong>Break it</strong><p class="muted small">Use a bad image, wrong port, bad value, or manual drift. Troubleshooting is part of the lab.</p></article>
+    <article class="card"><div class="num">4</div><strong>Explain back</strong><p class="muted small">Do not mark a lab complete until you can explain the control flow without reading the steps.</p></article>
+  </div>
+  <div class="callout good"><strong>Recommended environment:</strong> Docker + minikube + kubectl + Git + GitHub account. The Docker driver keeps the first cluster setup simple. Helm is installed only when the curriculum reaches Helm, and Argo CD is installed only after raw Kubernetes feels comfortable.</div>
+</div>
+</section>
+
+<section class="section" id="map">
+<div class="shell">
+  <div class="section-head"><div><h2>The mental model before the commands</h2><p>The tools overlap, but they are not interchangeable. Learn the responsibility boundary first.</p></div></div>
+  <div class="flow" aria-label="CI and GitOps flow">
+    <div class="node">Developer</div><div class="arrow">→</div><div class="node">GitHub</div><div class="arrow">→</div><div class="node">GitHub Actions<br><span class="tiny muted">build + test</span></div><div class="arrow">→</div><div class="node">Registry<br><span class="tiny muted">image</span></div>
+  </div>
+  <div class="flow">
+    <div class="node">Git desired state</div><div class="arrow">→</div><div class="node">Argo CD<br><span class="tiny muted">reconcile</span></div><div class="arrow">→</div><div class="node">Kubernetes API</div><div class="arrow">→</div><div class="node">Deployment / Service / Pods</div>
+  </div>
+  <div class="grid grid-4" style="margin-top:18px">
+    <article class="card"><span class="tag k8s">Kubernetes</span><h3>Runs desired workloads</h3><p class="small muted">You submit API objects. Controllers continuously try to make cluster reality match those objects.</p></article>
+    <article class="card"><span class="tag helm">Helm</span><h3>Packages and renders manifests</h3><p class="small muted">A chart is a parameterized package of Kubernetes resources. Helm can install, upgrade, inspect history, and roll back releases.</p></article>
+    <article class="card"><span class="tag argo">Argo CD</span><h3>Continuously reconciles Git</h3><p class="small muted">Argo CD compares Git's desired state with live Kubernetes state and can sync, prune, and self-heal.</p></article>
+    <article class="card"><span class="tag gha">GitHub Actions</span><h3>Automates CI workflows</h3><p class="small muted">Actions can test, lint, build a container, push it to a registry, and update the GitOps desired state.</p></article>
+  </div>
+  <div class="callout"><strong>Important Argo CD + Helm idea:</strong> when Argo CD deploys a Helm chart, Argo CD uses Helm to render templates; Argo CD owns the application lifecycle and reconciliation. Treat Git as the source of truth rather than running <code class="inline">helm upgrade</code> manually against the same Argo-managed application.</div>
+</div>
+</section>
+
+<section class="section" id="roadmap">
+<div class="shell">
+  <div class="section-head"><div><h2>Roadmap</h2><p>Each phase answers a different question. If a phase is unclear, repeat it before continuing.</p></div></div>
+  <div class="roadmap">
+    <div class="phase"><div class="bar"></div><strong>Phase 1 · Kubernetes</strong><span class="small muted">Labs 1–5<br>What does the cluster actually do?</span></div>
+    <div class="phase"><div class="bar"></div><strong>Phase 2 · Helm</strong><span class="small muted">Labs 6–10<br>How do we package repeated YAML?</span></div>
+    <div class="phase"><div class="bar"></div><strong>Phase 3 · CI</strong><span class="small muted">Labs 11–12<br>How do commits become tested images?</span></div>
+    <div class="phase"><div class="bar"></div><strong>Phase 4 · GitOps</strong><span class="small muted">Labs 13–15<br>How does Git continuously control the cluster?</span></div>
+    <div class="phase"><div class="bar"></div><strong>Phase 5 · Integration</strong><span class="small muted">Labs 16–18<br>How does the full delivery loop work?</span></div>
+  </div>
+
+  <h3 style="margin-top:34px">Lab index</h3>
+  <table class="lab-table">
+    <thead><tr><th>#</th><th>Lab</th><th>Primary tools</th><th>Outcome</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td>Build the local lab environment</td><td><span class="tag k8s">Kubernetes</span></td><td>Healthy minikube cluster and working kubectl context</td></tr>
+      <tr><td>2</td><td>First deployment without YAML</td><td><span class="tag k8s">Kubernetes</span></td><td>Understand Deployment → ReplicaSet → Pod</td></tr>
+      <tr><td>3</td><td>Declarative YAML and Service</td><td><span class="tag k8s">Kubernetes</span><span class="tag git">Git</span></td><td>Reproducible Kubernetes manifests</td></tr>
+      <tr><td>4</td><td>Config, Secret, probes, scaling</td><td><span class="tag k8s">Kubernetes</span></td><td>Operational application configuration</td></tr>
+      <tr><td>5</td><td>Rollout, rollback, and debugging</td><td><span class="tag k8s">Kubernetes</span></td><td>Troubleshoot bad releases using evidence</td></tr>
+      <tr><td>6</td><td>Install Helm and inspect a chart</td><td><span class="tag helm">Helm</span></td><td>Chart/release/repository vocabulary</td></tr>
+      <tr><td>7</td><td>Convert raw YAML into a Helm chart</td><td><span class="tag helm">Helm</span><span class="tag k8s">Kubernetes</span></td><td>Your first reusable chart</td></tr>
+      <tr><td>8</td><td>Values for dev and staging</td><td><span class="tag helm">Helm</span></td><td>One chart, multiple configurations</td></tr>
+      <tr><td>9</td><td>Helm upgrade, history, rollback</td><td><span class="tag helm">Helm</span></td><td>Manage release revisions safely</td></tr>
+      <tr><td>10</td><td>Helm validation and packaging</td><td><span class="tag helm">Helm</span></td><td>Lint, render, package, and inspect charts</td></tr>
+      <tr><td>11</td><td>GitHub Actions CI for Kubernetes + Helm</td><td><span class="tag gha">GitHub Actions</span></td><td>Pull requests validate manifests/charts</td></tr>
+      <tr><td>12</td><td>Build and publish a container to GHCR</td><td><span class="tag gha">GitHub Actions</span></td><td>Commit SHA becomes immutable image tag</td></tr>
+      <tr><td>13</td><td>Install and explore Argo CD</td><td><span class="tag argo">Argo CD</span></td><td>UI/CLI access and GitOps controller basics</td></tr>
+      <tr><td>14</td><td>Argo CD deploys raw manifests</td><td><span class="tag argo">Argo CD</span><span class="tag git">Git</span></td><td>First Git-managed application</td></tr>
+      <tr><td>15</td><td>Argo CD deploys your Helm chart</td><td><span class="tag argo">Argo CD</span><span class="tag helm">Helm</span></td><td>Helm rendering under GitOps control</td></tr>
+      <tr><td>16</td><td>Full CI → image → GitOps automation</td><td><span class="tag gha">Actions</span><span class="tag argo">Argo CD</span></td><td>Push code and watch deployment converge</td></tr>
+      <tr><td>17</td><td>Drift, self-heal, prune, failure recovery</td><td><span class="tag argo">Argo CD</span><span class="tag k8s">Kubernetes</span></td><td>Understand reconciliation by breaking it</td></tr>
+      <tr><td>18</td><td>Capstone: dev → stage promotion</td><td><span class="tag git">Git</span><span class="tag helm">Helm</span><span class="tag argo">Argo CD</span><span class="tag gha">Actions</span></td><td>Portfolio-ready GitOps delivery project</td></tr>
+    </tbody>
+  </table>
+</div>
+</section>
+
+<section class="section">
+<div class="shell">
+  <div class="section-head"><div><h2>Reference repository layout</h2><p>Create one repository named <code class="inline">cloud-native-labs</code>. Keep the raw manifests even after you add Helm; comparing both forms is part of the learning.</p></div></div>
+  <div class="repo-tree">cloud-native-labs/
+├── app/
+│   ├── Dockerfile
+│   └── index.html
+├── k8s/
+│   ├── namespace.yaml
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   └── configmap.yaml
+├── helm/
+│   └── cloud-lab/
+│       ├── Chart.yaml
+│       ├── values.yaml
+│       ├── values-dev.yaml
+│       ├── values-stage.yaml
+│       └── templates/
+│           ├── deployment.yaml
+│           ├── service.yaml
+│           └── configmap.yaml
+├── argocd/
+│   ├── raw-app.yaml
+│   ├── helm-dev.yaml
+│   └── helm-stage.yaml
+└── .github/
+    └── workflows/
+        ├── validate.yaml
+        └── build-promote-dev.yaml</div>
+</div>
+</section>
+
+<section class="section" id="labs">
+<div class="shell">
+  <div class="section-head"><div><h2>18 complete hands-on labs</h2><p>Every lab is written as a guided exercise: prepare, perform, observe, verify, explain, break/fix, and clean up. Do not skip the observation steps; that is where the understanding is built.</p></div></div>
+
+  <div class="callout good"><strong>Recommended terminal:</strong> the lab commands use Bash syntax. On macOS/Linux, use Terminal. On Windows, use WSL2 Ubuntu or Git Bash for the labs; use PowerShell only where a Windows installation command is explicitly shown. Keep Docker Desktop running whenever minikube is running.</div>
+  <div class="card lab-contract">
+    <h3 style="margin-top:0">How to perform each lab</h3>
+    <div class="grid grid-4">
+      <div><span class="micro-step">1</span><strong>Type it</strong><p class="small muted">Prefer typing important commands instead of blindly pasting.</p></div>
+      <div><span class="micro-step">2</span><strong>Observe it</strong><p class="small muted">Read STATUS, READY, events, rendered YAML, and Git diffs.</p></div>
+      <div><span class="micro-step">3</span><strong>Explain it</strong><p class="small muted">Say what changed and which controller caused it.</p></div>
+      <div><span class="micro-step">4</span><strong>Break it</strong><p class="small muted">Intentional failures teach troubleshooting and reconciliation.</p></div>
+    </div>
+  </div>
+
+  <details class="lab" open>
+    <summary><span class="lab-index">01</span><span class="lab-title"><b>Build the local Kubernetes workbench</b><span>Install the tools, create the repository, start minikube, and prove kubectl is connected.</span></span><span class="lab-meta">Kubernetes &middot; setup</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>You are learning</strong><span class="small muted">Docker vs minikube vs Kubernetes vs kubectl, kubeconfig, context, node, and namespace.</span></div><div><strong>Success evidence</strong><span class="small muted"><code class="inline">kubectl get nodes</code> shows one Ready minikube node and <code class="inline">kubectl config current-context</code> prints minikube.</span></div></div>
+      <div class="callout warn"><strong>Machine requirements:</strong> use a machine with at least 2 CPUs, 2 GB free RAM, roughly 20 GB free disk, Internet access, and Docker or another supported minikube driver. Docker Desktop is the simplest path for this guide.</div>
+
+      <h3>Step 1 &mdash; install and start Docker</h3>
+      <p>Install Docker Desktop on macOS/Windows, or Docker Engine/Desktop on Linux, using Docker's official installer. Start Docker and wait until its engine reports that it is running. Then verify:</p>
+<pre><code>docker version
+docker info</code></pre>
+      <div class="expected"><strong>Expected:</strong> <code>docker version</code> shows both a Client and Server section. If the Server section is missing, Docker is installed but the engine is not running.</div>
+
+      <h3>Step 2 &mdash; install Git, kubectl, and minikube</h3>
+      <p>Choose <strong>one</strong> operating-system block. The rest of the labs assume the commands are available on your PATH.</p>
+      <div class="os-grid">
+        <div class="os-card"><strong>macOS with Homebrew</strong><pre><code>brew install git kubectl minikube</code></pre></div>
+        <div class="os-card"><strong>Windows PowerShell with winget</strong><pre><code>winget install -e --id Git.Git
+winget install -e --id Kubernetes.kubectl
+winget install Kubernetes.minikube</code></pre><p class="tiny muted">Close and reopen the terminal after installation so PATH changes are picked up.</p></div>
+        <div class="os-card"><strong>Ubuntu / Debian / WSL2</strong><pre><code>sudo apt-get update
+sudo apt-get install -y git curl ca-certificates
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+rm kubectl
+curl -LO https://github.com/kubernetes/minikube/releases/latest/download/minikube-linux-amd64
+sudo install minikube-linux-amd64 /usr/local/bin/minikube
+rm minikube-linux-amd64</code></pre><p class="tiny muted">If your Linux machine is ARM64, use the ARM64 downloads from the official Kubernetes/minikube pages.</p></div>
+      </div>
+
+      <h3>Step 3 &mdash; verify the binaries before creating a cluster</h3>
+<pre><code>git --version
+docker --version
+kubectl version --client
+minikube version</code></pre>
+      <p><strong>Understand:</strong> kubectl is only a client. A successful <code>kubectl version --client</code> does not mean a Kubernetes cluster exists yet.</p>
+
+      <h3>Step 4 &mdash; create the lab repository folder</h3>
+<pre><code>mkdir -p cloud-native-labs
+cd cloud-native-labs
+git init
+git branch -M main
+mkdir -p app k8s helm argocd .github/workflows</code></pre>
+      <p>If Git asks for identity later, configure it once with your own name/email:</p>
+<pre><code>git config --global user.name "YOUR NAME"
+git config --global user.email "YOUR_EMAIL@example.com"</code></pre>
+
+      <h3>Step 5 &mdash; start a local Kubernetes cluster</h3>
+<pre><code>minikube start --driver=docker</code></pre>
+      <div class="expected"><strong>Expected:</strong> minikube creates or reuses a cluster named <code>minikube</code>, enables core components, and configures kubectl to use that cluster.</div>
+
+      <h3>Step 6 &mdash; prove kubectl is connected to the correct cluster</h3>
+<pre><code>kubectl config current-context
+kubectl cluster-info
+kubectl get nodes -o wide
+kubectl get namespaces
+kubectl get pods -A</code></pre>
+      <div class="expected"><strong>Look for:</strong> current context <code>minikube</code>; node STATUS <code>Ready</code>; system Pods in namespaces such as <code>kube-system</code>.</div>
+
+      <h3>Step 7 &mdash; inspect context information</h3>
+<pre><code>kubectl config get-contexts
+kubectl config view --minify</code></pre>
+      <p><strong>Understand:</strong> kubeconfig stores cluster, user/credential, and context information. A context is the combination kubectl uses to decide <em>which cluster</em> and <em>which identity</em> to use.</p>
+
+      <h3>Step 8 &mdash; intentional connectivity failure</h3>
+<pre><code>minikube stop
+kubectl get nodes</code></pre>
+      <div class="expected"><strong>Expected failure:</strong> kubectl cannot reach the API server. This is a connectivity/cluster problem, not a Deployment YAML problem.</div>
+      <p>Recover:</p>
+<pre><code>minikube start --driver=docker
+kubectl get nodes</code></pre>
+
+      <details class="quiz"><summary>Explain before continuing</summary><p>What is the difference between Docker, minikube, Kubernetes, and kubectl? If kubectl reports connection refused, why should you check cluster/context connectivity before editing application YAML?</p></details>
+      <div class="verify"><strong>Lab verification</strong><code>kubectl get nodes</code> = Ready; <code>kubectl config current-context</code> = minikube; you are inside the <code>cloud-native-labs</code> directory.</div>
+      <div class="complete"><input type="checkbox" id="lab1" data-lab="1"><label for="lab1">Lab 1 complete &mdash; local Kubernetes workbench is healthy.</label></div>
+    </div>
+  </details>
+
+  <details class="lab">
+    <summary><span class="lab-index">02</span><span class="lab-title"><b>Deploy Nginx without YAML</b><span>Use imperative commands once so you can see Deployment, ReplicaSet, Pod, labels, Service, and reconciliation.</span></span><span class="lab-meta">Kubernetes &middot; no Helm</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>You are learning</strong><span class="small muted">Deployment &rarr; ReplicaSet &rarr; Pod ownership, selectors, Service routing, scaling, and controller reconciliation.</span></div><div><strong>Success evidence</strong><span class="small muted">Nginx is reachable through a Service and a deleted Pod is automatically replaced.</span></div></div>
+
+      <ol class="steps">
+        <li><strong>Confirm you are on minikube.</strong><pre><code>kubectl config current-context
+kubectl get nodes</code></pre><p>Do not continue if the node is not Ready.</p></li>
+        <li><strong>Create your first Deployment imperatively.</strong><pre><code>kubectl create deployment web --image=nginx:alpine
+kubectl scale deployment web --replicas=2</code></pre><p><strong>Understand:</strong> you asked the Deployment controller for two Pod replicas. You did not create the Pods one by one.</p></li>
+        <li><strong>Trace the ownership chain.</strong><pre><code>kubectl get deployments
+kubectl get replicasets
+kubectl get pods -o wide
+kubectl describe deployment web</code></pre><div class="expected"><strong>Look for:</strong> Deployment READY <code>2/2</code>; one ReplicaSet; two Pods whose names start with the ReplicaSet name.</div></li>
+        <li><strong>Inspect labels and selectors.</strong><pre><code>kubectl get pods --show-labels
+kubectl get deployment web -o jsonpath='{.spec.selector.matchLabels}' ; echo
+kubectl get deployment web -o yaml</code></pre><p>Find the Deployment selector and the same label on the Pod template. Controllers use these labels to determine which Pods belong to them.</p></li>
+        <li><strong>Create a ClusterIP Service.</strong><pre><code>kubectl expose deployment web --name=web --type=ClusterIP --port=80 --target-port=80
+kubectl get services
+kubectl describe service web
+kubectl get endpointslices -l kubernetes.io/service-name=web</code></pre><p>The Service selector finds Pods by label. The EndpointSlice should contain Pod IP addresses.</p></li>
+        <li><strong>Reach the Service from your laptop.</strong><p>Run this command and leave it running:</p><pre><code>kubectl port-forward service/web 8080:80</code></pre><p>Open <code>http://localhost:8080</code> in a browser, or in a second terminal run:</p><pre><code>curl -I http://localhost:8080</code></pre><div class="expected"><strong>Expected:</strong> HTTP 200 and the standard Nginx welcome page.</div></li>
+        <li><strong>Scale to four replicas and watch convergence.</strong><pre><code>kubectl scale deployment web --replicas=4
+kubectl get pods -w</code></pre><p>Press <kbd>Ctrl</kbd>+<kbd>C</kbd> after four Pods are Running and Ready.</p></li>
+        <li><strong>Delete one Pod and watch Kubernetes replace it.</strong><pre><code>kubectl get pods
+kubectl delete pod &lt;PASTE_ONE_WEB_POD_NAME&gt;
+kubectl get pods -w</code></pre><p>The old Pod disappears and a new Pod appears because the Deployment still desires four replicas.</p></li>
+        <li><strong>Inspect the controller relationship directly.</strong><pre><code>kubectl get pods -o custom-columns=NAME:.metadata.name,OWNER_KIND:.metadata.ownerReferences[0].kind,OWNER:.metadata.ownerReferences[0].name
+kubectl get rs -o custom-columns=NAME:.metadata.name,OWNER_KIND:.metadata.ownerReferences[0].kind,OWNER:.metadata.ownerReferences[0].name</code></pre></li>
+        <li><strong>Clean up the imperative resources.</strong><pre><code>kubectl delete service web
+kubectl delete deployment web
+kubectl get all</code></pre><p>Leave minikube running.</p></li>
+      </ol>
+
+      <div class="callout"><strong>Core model:</strong> Deployment declares desired Pods; ReplicaSet maintains the count; Service provides a stable virtual endpoint for matching Pods. Kubernetes continuously compares desired state with observed state and acts to close the gap.</div>
+      <details class="quiz"><summary>Knowledge check</summary><p>If a Pod dies, which object should you normally repair or change: the Pod, the ReplicaSet, or the Deployment? Why? How does the Service decide which Pods receive traffic?</p></details>
+      <div class="complete"><input type="checkbox" id="lab2" data-lab="2"><label for="lab2">Lab 2 complete &mdash; I can trace Deployment &rarr; ReplicaSet &rarr; Pod and Service &rarr; Pod.</label></div>
+    </div>
+  </details>
+
+  <details class="lab">
+    <summary><span class="lab-index">03</span><span class="lab-title"><b>Move to declarative Kubernetes YAML</b><span>Create reproducible manifests, apply them, diff them, change desired state, and commit them to Git.</span></span><span class="lab-meta">Kubernetes &middot; Git</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>You are learning</strong><span class="small muted">apiVersion, kind, metadata, spec, namespace, selector, Pod template, declarative apply, and Git as a history of desired state.</span></div><div><strong>Success evidence</strong><span class="small muted">Deleting the namespace and re-applying the files can reconstruct the same workload.</span></div></div>
+
+      <h3>Step 1 &mdash; create <code class="inline">k8s/namespace.yaml</code></h3>
+<pre><code>apiVersion: v1
+kind: Namespace
+metadata:
+  name: raw-lab</code></pre>
+      <h3>Step 2 &mdash; create <code class="inline">k8s/deployment.yaml</code></h3>
+<pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: raw-lab
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: nginx:alpine
+          ports:
+            - name: http
+              containerPort: 80</code></pre>
+      <h3>Step 3 &mdash; create <code class="inline">k8s/service.yaml</code></h3>
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  namespace: raw-lab
+spec:
+  type: ClusterIP
+  selector:
+    app: web
+  ports:
+    - name: http
+      port: 80
+      targetPort: http</code></pre>
+
+      <ol class="steps">
+        <li><strong>Ask kubectl to parse the files locally.</strong><pre><code>kubectl create --dry-run=client -f k8s/namespace.yaml -o yaml > /tmp/namespace-check.yaml
+kubectl create --dry-run=client -f k8s/deployment.yaml -o yaml > /tmp/deployment-check.yaml
+kubectl create --dry-run=client -f k8s/service.yaml -o yaml > /tmp/service-check.yaml</code></pre><p>If YAML indentation or field names are invalid, fix them before touching the cluster.</p></li>
+        <li><strong>Apply the namespace first, then the namespaced objects.</strong><pre><code>kubectl apply -f k8s/namespace.yaml
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml</code></pre></li>
+        <li><strong>Verify desired and observed state.</strong><pre><code>kubectl get all -n raw-lab
+kubectl get deployment web -n raw-lab
+kubectl get pods -n raw-lab --show-labels
+kubectl get endpointslices -n raw-lab -l kubernetes.io/service-name=web</code></pre><div class="expected"><strong>Expected:</strong> Deployment <code>2/2</code>, two Running Pods, one Service, and endpoints for both Pods.</div></li>
+        <li><strong>Test the Service.</strong><pre><code>kubectl port-forward service/web -n raw-lab 8080:80</code></pre><p>In another terminal run <code>curl -I http://localhost:8080</code>, then stop port-forward with <kbd>Ctrl</kbd>+<kbd>C</kbd>.</p></li>
+        <li><strong>Change desired state in the file.</strong><p>Edit <code>k8s/deployment.yaml</code> and change <code>replicas: 2</code> to <code>replicas: 3</code>. Before applying, ask Kubernetes what would change:</p><pre><code>kubectl diff -f k8s/deployment.yaml || true</code></pre><p>Then apply and verify:</p><pre><code>kubectl apply -f k8s/deployment.yaml
+kubectl get deployment web -n raw-lab
+kubectl get pods -n raw-lab</code></pre></li>
+        <li><strong>Inspect the live object and compare it with your source file.</strong><pre><code>kubectl get deployment web -n raw-lab -o yaml > /tmp/live-deployment.yaml
+kubectl describe deployment web -n raw-lab</code></pre><p>The live YAML contains status and server-generated metadata that your source manifest does not need to store.</p></li>
+        <li><strong>Commit the desired-state files.</strong><pre><code>git status
+git add k8s
+git diff --cached
+git commit -m "lab 03: add raw kubernetes manifests"
+git log --oneline -3</code></pre></li>
+        <li><strong>Prove the files are reproducible.</strong><pre><code>kubectl delete namespace raw-lab
+kubectl get namespace raw-lab || true
+kubectl apply -f k8s/namespace.yaml
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+kubectl get all -n raw-lab</code></pre><p>You reconstructed the application from versioned desired state instead of remembering imperative commands.</p></li>
+      </ol>
+
+      <details class="quiz"><summary>Knowledge check</summary><p>What is the difference between the <code>spec</code> you submit and the <code>status</code> Kubernetes records? Why is source YAML usually stored in Git while live-object YAML is not copied back wholesale?</p></details>
+      <div class="complete"><input type="checkbox" id="lab3" data-lab="3"><label for="lab3">Lab 3 complete &mdash; I can recreate the workload from declarative YAML and Git.</label></div>
+    </div>
+  </details>
+
+  <details class="lab">
+    <summary><span class="lab-index">04</span><span class="lab-title"><b>Add ConfigMap, Secret, health probes, resources, and scaling</b><span>Make the raw Kubernetes workload operational instead of merely Running.</span></span><span class="lab-meta">Kubernetes &middot; operations</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>You are learning</strong><span class="small muted">Configuration injection, Secret handling, readiness vs liveness, requests/limits, and declarative scaling.</span></div><div><strong>Success evidence</strong><span class="small muted">A Pod exposes the configured environment variables, reports healthy probes, and has explicit resources.</span></div></div>
+
+      <h3>Step 1 &mdash; create <code class="inline">k8s/configmap.yaml</code></h3>
+<pre><code>apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: web-config
+  namespace: raw-lab
+data:
+  APP_MESSAGE: "Hello from a Kubernetes ConfigMap"
+  APP_ENV: "raw-lab"</code></pre>
+
+      <h3>Step 2 &mdash; create a training Secret from the CLI</h3>
+      <p>Do <strong>not</strong> create a real credential for this exercise.</p>
+<pre><code>kubectl create secret generic demo-secret \
+  --from-literal=API_TOKEN='training-only-value' \
+  -n raw-lab
+kubectl get secret demo-secret -n raw-lab
+kubectl get secret demo-secret -n raw-lab -o yaml</code></pre>
+      <p><strong>Understand:</strong> the YAML displays base64-encoded data. Base64 is encoding, not encryption. Do not commit real secrets into this public learning repository.</p>
+
+      <h3>Step 3 &mdash; replace <code class="inline">k8s/deployment.yaml</code> with the operational version</h3>
+<pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: raw-lab
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: nginx:alpine
+          ports:
+            - name: http
+              containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: web-config
+          env:
+            - name: API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: demo-secret
+                  key: API_TOKEN
+                  optional: true
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 50m
+              memory: 32Mi
+            limits:
+              cpu: 200m
+              memory: 128Mi</code></pre>
+
+      <ol class="steps">
+        <li><strong>Apply configuration before the Deployment that consumes it.</strong><pre><code>kubectl apply -f k8s/configmap.yaml
+kubectl apply -f k8s/deployment.yaml
+kubectl rollout status deployment/web -n raw-lab --timeout=120s</code></pre></li>
+        <li><strong>Verify Pod readiness and resource configuration.</strong><pre><code>kubectl get pods -n raw-lab
+kubectl describe deployment web -n raw-lab</code></pre><p>In the describe output, find Environment, Readiness, Liveness, Requests, and Limits.</p></li>
+        <li><strong>Read the injected ConfigMap and Secret values inside a Pod.</strong><pre><code>POD=$(kubectl get pods -n raw-lab -l app=web -o jsonpath='{.items[0].metadata.name}')
+echo "$POD"
+kubectl exec -n raw-lab "$POD" -- printenv APP_MESSAGE
+kubectl exec -n raw-lab "$POD" -- printenv APP_ENV
+kubectl exec -n raw-lab "$POD" -- printenv API_TOKEN</code></pre><div class="expected"><strong>Expected:</strong> the Pod prints the ConfigMap strings and the training-only token.</div></li>
+        <li><strong>Inspect probe state.</strong><pre><code>kubectl describe pod -n raw-lab "$POD"</code></pre><p>Look for <code>Ready: True</code>, readiness/liveness configuration, and restart count.</p></li>
+        <li><strong>Break readiness intentionally.</strong><p>Edit only the readiness path in <code>k8s/deployment.yaml</code> from <code>/</code> to <code>/does-not-exist</code>, then apply:</p><pre><code>kubectl apply -f k8s/deployment.yaml
+kubectl rollout status deployment/web -n raw-lab --timeout=45s || true
+kubectl get pods -n raw-lab
+kubectl describe pod -n raw-lab $(kubectl get pods -n raw-lab -l app=web -o jsonpath='{.items[0].metadata.name}')</code></pre><p><strong>Observe:</strong> the container can be Running while the Pod is not Ready. Readiness determines whether it should receive Service traffic.</p></li>
+        <li><strong>Repair readiness.</strong><p>Change the path back to <code>/</code>, apply, and verify:</p><pre><code>kubectl apply -f k8s/deployment.yaml
+kubectl rollout status deployment/web -n raw-lab --timeout=120s
+kubectl get pods -n raw-lab</code></pre></li>
+        <li><strong>Commit non-secret configuration.</strong><pre><code>git add k8s/configmap.yaml k8s/deployment.yaml
+git diff --cached
+git commit -m "lab 04: add config probes and resources"</code></pre><p>The CLI-created Secret is intentionally <strong>not</strong> committed.</p></li>
+      </ol>
+
+      <div class="callout danger"><strong>Security boundary:</strong> for real environments, use a dedicated secret-management pattern such as External Secrets, Sealed Secrets, SOPS, or a cloud secret manager. A public Git repository and a normal Helm values file are not secret stores.</div>
+      <details class="quiz"><summary>Knowledge check</summary><p>Can a container be Running while its Pod is not Ready? What is the consequence? What does a liveness failure cause? Why are CPU/memory requests different from limits?</p></details>
+      <div class="complete"><input type="checkbox" id="lab4" data-lab="4"><label for="lab4">Lab 4 complete &mdash; I can inspect configuration, probes, and resources inside a live Pod.</label></div>
+    </div>
+  </details>
+
+  <details class="lab">
+    <summary><span class="lab-index">05</span><span class="lab-title"><b>Perform rollout, failure diagnosis, and rollback</b><span>Learn a repeatable Kubernetes troubleshooting ladder before automation hides the mechanics.</span></span><span class="lab-meta">Kubernetes &middot; failure drill</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>You are learning</strong><span class="small muted">RollingUpdate behavior, rollout status/history, ImagePullBackOff evidence, events, logs, undo, and the difference between live rollback and source-of-truth repair.</span></div><div><strong>Success evidence</strong><span class="small muted">You intentionally create a broken image rollout, identify the exact cause, and recover.</span></div></div>
+
+      <ol class="steps">
+        <li><strong>Record the current baseline.</strong><pre><code>kubectl get deployment web -n raw-lab -o wide
+kubectl get pods -n raw-lab
+kubectl rollout history deployment/web -n raw-lab</code></pre></li>
+        <li><strong>Create a healthy new revision declaratively.</strong><p>Edit <code>k8s/deployment.yaml</code>, change <code>image: nginx:alpine</code> to <code>image: nginx:1.27-alpine</code>, then:</p><pre><code>kubectl diff -f k8s/deployment.yaml || true
+kubectl apply -f k8s/deployment.yaml
+kubectl rollout status deployment/web -n raw-lab --timeout=120s
+kubectl rollout history deployment/web -n raw-lab
+kubectl get pods -n raw-lab -o wide</code></pre><p>Watch old Pods disappear gradually while new Pods become Ready.</p></li>
+        <li><strong>Commit the healthy desired state.</strong><pre><code>git add k8s/deployment.yaml
+git commit -m "lab 05: roll nginx to 1.27-alpine"</code></pre></li>
+        <li><strong>Introduce a bad image tag in the YAML.</strong><p>Change the image to <code>nginx:this-tag-does-not-exist</code>, then apply:</p><pre><code>kubectl apply -f k8s/deployment.yaml
+kubectl rollout status deployment/web -n raw-lab --timeout=45s || true
+kubectl get pods -n raw-lab</code></pre></li>
+        <li><strong>Diagnose systematically; do not guess.</strong><pre><code>BAD_POD=$(kubectl get pods -n raw-lab -l app=web --sort-by=.metadata.creationTimestamp -o jsonpath='{.items[-1:].metadata.name}')
+echo "$BAD_POD"
+kubectl describe pod -n raw-lab "$BAD_POD"
+kubectl get events -n raw-lab --sort-by=.lastTimestamp | tail -n 20</code></pre><div class="expected"><strong>Look for:</strong> <code>ErrImagePull</code>, <code>ImagePullBackOff</code>, and an event saying the image/tag could not be pulled.</div></li>
+        <li><strong>Try logs and learn when logs are unavailable.</strong><pre><code>kubectl logs -n raw-lab "$BAD_POD" || true</code></pre><p>If the image never starts, there may be no container logs. In that case, <code>describe</code> and Events are more useful than logs.</p></li>
+        <li><strong>Roll back the live Deployment.</strong><pre><code>kubectl rollout undo deployment/web -n raw-lab
+kubectl rollout status deployment/web -n raw-lab --timeout=120s
+kubectl get pods -n raw-lab
+kubectl get deployment web -n raw-lab -o jsonpath='{.spec.template.spec.containers[0].image}' ; echo</code></pre><p>This repairs the cluster, but your local YAML still contains the bad tag.</p></li>
+        <li><strong>Repair the source of truth too.</strong><p>Change <code>k8s/deployment.yaml</code> back to <code>nginx:1.27-alpine</code>, then:</p><pre><code>kubectl apply -f k8s/deployment.yaml
+git add k8s/deployment.yaml
+git commit -m "lab 05: restore valid image after failure drill"
+git status</code></pre></li>
+        <li><strong>Practice the troubleshooting ladder once more.</strong><pre><code>kubectl get all -n raw-lab
+kubectl describe deployment web -n raw-lab
+kubectl get events -n raw-lab --sort-by=.lastTimestamp | tail -n 15</code></pre></li>
+        <li><strong>Clean the live raw-lab environment for later GitOps labs.</strong><pre><code>kubectl delete namespace raw-lab
+kubectl get namespace raw-lab || true</code></pre><p>Do <strong>not</strong> delete the <code>k8s/</code> files from Git; Argo CD will deploy them later.</p></li>
+      </ol>
+
+      <div class="callout good"><strong>Troubleshooting ladder:</strong> workload status &rarr; Pod list &rarr; describe &rarr; events &rarr; logs &rarr; configuration/manifests &rarr; Service/network. Start with evidence and narrow the failure domain.</div>
+      <details class="quiz"><summary>Knowledge check</summary><p>Why can an image-pull failure produce no useful application logs? Why was <code>kubectl rollout undo</code> not enough until the YAML was corrected as well?</p></details>
+      <div class="complete"><input type="checkbox" id="lab5" data-lab="5"><label for="lab5">Lab 5 complete &mdash; I can diagnose and recover a bad Kubernetes rollout.</label></div>
+    </div>
+  </details>
+
+  <details class="lab">
+    <summary><span class="lab-index">06</span><span class="lab-title"><b>Install Helm 4 and learn chart anatomy</b><span>Install Helm only after understanding the Kubernetes YAML that Helm will render.</span></span><span class="lab-meta">Helm &middot; setup</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>You are learning</strong><span class="small muted">Helm client installation, chart vs release, values, templates, rendering, and the difference between generating YAML and installing it.</span></div><div><strong>Success evidence</strong><span class="small muted"><code>helm version</code> works and you can render a starter chart without modifying the cluster.</span></div></div>
+      <div class="callout"><strong>Version note:</strong> the official Helm documentation currently serves Helm 4.x. The beginner commands used in this guide &mdash; <code>lint</code>, <code>template</code>, <code>install</code>, <code>upgrade</code>, <code>history</code>, <code>rollback</code>, and <code>package</code> &mdash; are the workflow you need to understand.</div>
+
+      <h3>Step 1 &mdash; install Helm</h3>
+      <div class="os-grid">
+        <div class="os-card"><strong>macOS</strong><pre><code>brew install helm</code></pre></div>
+        <div class="os-card"><strong>Windows PowerShell</strong><pre><code>winget install Helm.Helm</code></pre></div>
+        <div class="os-card"><strong>Linux / WSL</strong><pre><code>curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
+chmod 700 get_helm.sh
+./get_helm.sh
+rm get_helm.sh</code></pre><p class="tiny muted">The official Helm project publishes this installer script. Read scripts before executing them in sensitive environments.</p></div>
+      </div>
+
+      <ol class="steps">
+        <li><strong>Verify Helm and its local configuration.</strong><pre><code>helm version
+helm env</code></pre></li>
+        <li><strong>Verify Kubernetes is still available.</strong><pre><code>minikube status
+kubectl get nodes</code></pre><p>Helm uses your Kubernetes configuration when installing releases.</p></li>
+        <li><strong>Create a temporary starter chart.</strong><pre><code>mkdir -p helm
+helm create helm/anatomy-demo
+find helm/anatomy-demo -maxdepth 2 -type f | sort</code></pre><p>If <code>find</code> is unavailable on your shell, open the folder in your editor and inspect the same files.</p></li>
+        <li><strong>Read the four most important pieces.</strong><div class="grid grid-2 concept-grid"><div><strong>Chart.yaml</strong><p class="small muted">Package metadata such as chart name and version.</p></div><div><strong>values.yaml</strong><p class="small muted">Default input data for templates.</p></div><div><strong>templates/</strong><p class="small muted">Kubernetes manifests containing Go-template expressions.</p></div><div><strong>Release</strong><p class="small muted">An installed instance of a chart plus configuration and revision history.</p></div></div></li>
+        <li><strong>Lint the chart.</strong><pre><code>helm lint helm/anatomy-demo</code></pre><div class="expected"><strong>Expected:</strong> no chart failures. Warnings can be read and understood separately from errors.</div></li>
+        <li><strong>Render the chart without installing it.</strong><pre><code>helm template demo helm/anatomy-demo > /tmp/anatomy-rendered.yaml
+head -n 60 /tmp/anatomy-rendered.yaml</code></pre><p><strong>Understand:</strong> <code>helm template</code> is local rendering. It does not create resources in Kubernetes.</p></li>
+        <li><strong>Prove rendering did not create a release.</strong><pre><code>helm list -A
+kubectl get namespaces</code></pre></li>
+        <li><strong>Delete the generated demo so the next lab starts from a tiny chart.</strong><pre><code>rm -rf helm/anatomy-demo</code></pre><p>Windows users in PowerShell can use <code>Remove-Item -Recurse -Force helm/anatomy-demo</code>.</p></li>
+      </ol>
+
+      <details class="quiz"><summary>Knowledge check</summary><p>What is the difference between a chart and a release? What does <code>helm template</code> do that <code>helm install</code> does not?</p></details>
+      <div class="complete"><input type="checkbox" id="lab6" data-lab="6"><label for="lab6">Lab 6 complete &mdash; Helm is installed and chart/release/rendering concepts are clear.</label></div>
+    </div>
+  </details>
+
+  <details class="lab">
+    <summary><span class="lab-index">07</span><span class="lab-title"><b>Build a Helm chart from the raw Kubernetes ideas</b><span>Create a deliberately small chart, render it, install it, and inspect the Kubernetes objects Helm created.</span></span><span class="lab-meta">Helm &middot; Kubernetes</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>You are learning</strong><span class="small muted">How values flow into templates, how release names affect resources, and that Helm still submits ordinary Kubernetes objects.</span></div><div><strong>Success evidence</strong><span class="small muted">A Helm release named <code>cloud-lab</code> runs in namespace <code>helm-lab</code> and serves Nginx.</span></div></div>
+
+      <h3>Step 1 &mdash; create the chart folders</h3>
+<pre><code>mkdir -p helm/cloud-lab/templates</code></pre>
+
+      <h3>Step 2 &mdash; create <code class="inline">helm/cloud-lab/Chart.yaml</code></h3>
+<pre><code>apiVersion: v2
+name: cloud-lab
+description: Beginner Kubernetes Helm GitOps lab chart
+type: application
+version: 0.1.0
+appVersion: "1.0.0"</code></pre>
+
+      <h3>Step 3 &mdash; create <code class="inline">helm/cloud-lab/values.yaml</code></h3>
+<pre><code>replicaCount: 2
+
+image:
+  repository: nginx
+  tag: alpine
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+
+config:
+  message: "Hello from Helm values"
+  environment: "base"
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 32Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi</code></pre>
+
+      <h3>Step 4 &mdash; create <code class="inline">helm/cloud-lab/templates/configmap.yaml</code></h3>
+<pre><code>apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-config
+  labels:
+    app: {{ .Release.Name }}
+data:
+  APP_MESSAGE: {{ .Values.config.message | quote }}
+  APP_ENV: {{ .Values.config.environment | quote }}</code></pre>
+
+      <h3>Step 5 &mdash; create <code class="inline">helm/cloud-lab/templates/deployment.yaml</code></h3>
+<pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: web
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+          envFrom:
+            - configMapRef:
+                name: {{ .Release.Name }}-config
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+{{ toYaml .Values.resources | nindent 12 }}</code></pre>
+
+      <h3>Step 6 &mdash; create <code class="inline">helm/cloud-lab/templates/service.yaml</code></h3>
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    app: {{ .Release.Name }}
+spec:
+  type: {{ .Values.service.type }}
+  selector:
+    app: {{ .Release.Name }}
+  ports:
+    - name: http
+      port: {{ .Values.service.port }}
+      targetPort: http</code></pre>
+
+      <ol class="steps">
+        <li><strong>Lint before rendering.</strong><pre><code>helm lint helm/cloud-lab</code></pre><p>Fix any template/YAML error before moving on.</p></li>
+        <li><strong>Render and save the exact Kubernetes YAML.</strong><pre><code>helm template cloud-lab helm/cloud-lab --namespace helm-lab > /tmp/cloud-lab-rendered.yaml
+cat /tmp/cloud-lab-rendered.yaml</code></pre><p>Find the Deployment, Service, and ConfigMap. Notice that template expressions are gone.</p></li>
+        <li><strong>Predict values before checking.</strong><p>Before searching the rendered file, answer: How many replicas? What image? What resource names? What ConfigMap name?</p><pre><code>grep -E '^(kind:|  name:|  replicas:|          image:)' /tmp/cloud-lab-rendered.yaml</code></pre></li>
+        <li><strong>Install the chart as a release.</strong><pre><code>helm install cloud-lab helm/cloud-lab -n helm-lab --create-namespace</code></pre><div class="expected"><strong>Expected:</strong> Helm reports STATUS <code>deployed</code> for release <code>cloud-lab</code>.</div></li>
+        <li><strong>Verify the release and Kubernetes resources.</strong><pre><code>helm list -n helm-lab
+helm status cloud-lab -n helm-lab
+kubectl get all -n helm-lab
+kubectl get configmap -n helm-lab</code></pre></li>
+        <li><strong>Inspect what Helm stored and submitted.</strong><pre><code>helm get values cloud-lab -n helm-lab
+helm get values cloud-lab -n helm-lab -a
+helm get manifest cloud-lab -n helm-lab</code></pre><p><code>-a</code> shows computed values including chart defaults.</p></li>
+        <li><strong>Verify the ConfigMap value reached the Pod.</strong><pre><code>POD=$(kubectl get pods -n helm-lab -l app=cloud-lab -o jsonpath='{.items[0].metadata.name}')
+kubectl exec -n helm-lab "$POD" -- printenv APP_MESSAGE
+kubectl exec -n helm-lab "$POD" -- printenv APP_ENV</code></pre></li>
+        <li><strong>Test the Helm-deployed Service.</strong><pre><code>kubectl port-forward service/cloud-lab -n helm-lab 8081:80</code></pre><p>Open <code>http://localhost:8081</code>, then stop the port-forward.</p></li>
+        <li><strong>Commit the chart.</strong><pre><code>git add helm/cloud-lab
+git diff --cached
+git commit -m "lab 07: create cloud-lab helm chart"</code></pre></li>
+      </ol>
+
+      <div class="callout good"><strong>Key idea:</strong> Helm did not invent a new runtime object called a "Helm Pod." It rendered templates into normal Kubernetes manifests, sent them to the Kubernetes API, and recorded release metadata so it can manage revisions.</div>
+      <details class="quiz"><summary>Knowledge check</summary><p>If the release name changed from <code>cloud-lab</code> to <code>demo</code>, which resource names and labels would change in this simple chart? Why?</p></details>
+      <div class="complete"><input type="checkbox" id="lab7" data-lab="7"><label for="lab7">Lab 7 complete &mdash; I can trace a value from values.yaml to rendered Kubernetes YAML.</label></div>
+    </div>
+  </details>
+
+  <details class="lab">
+    <summary><span class="lab-index">08</span><span class="lab-title"><b>Reuse one Helm chart for dev and stage</b><span>Create environment values, compare rendered output, install two releases, and prove values precedence.</span></span><span class="lab-meta">Helm &middot; environments</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>You are learning</strong><span class="small muted">Base values, environment overrides, multiple releases, namespaces, and precedence.</span></div><div><strong>Success evidence</strong><span class="small muted">Dev has one replica and STAGE has three replicas from the same chart templates.</span></div></div>
+
+      <h3>Create <code class="inline">helm/cloud-lab/values-dev.yaml</code></h3>
+<pre><code>replicaCount: 1
+
+config:
+  message: "Hello from DEV"
+  environment: "dev"
+
+resources:
+  requests:
+    cpu: 25m
+    memory: 16Mi</code></pre>
+
+      <h3>Create <code class="inline">helm/cloud-lab/values-stage.yaml</code></h3>
+<pre><code>replicaCount: 3
+
+config:
+  message: "Hello from STAGE"
+  environment: "stage"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 64Mi</code></pre>
+
+      <ol class="steps">
+        <li><strong>Lint with each environment file.</strong><pre><code>helm lint helm/cloud-lab -f helm/cloud-lab/values-dev.yaml
+helm lint helm/cloud-lab -f helm/cloud-lab/values-stage.yaml</code></pre></li>
+        <li><strong>Render both environments without installing.</strong><pre><code>helm template cloud-lab-dev helm/cloud-lab -n helm-dev -f helm/cloud-lab/values-dev.yaml > /tmp/dev.yaml
+helm template cloud-lab-stage helm/cloud-lab -n helm-stage -f helm/cloud-lab/values-stage.yaml > /tmp/stage.yaml
+diff -u /tmp/dev.yaml /tmp/stage.yaml || true</code></pre><p>Read the diff. Expected differences include release/resource names, replica count, ConfigMap content, and resource requests.</p></li>
+        <li><strong>Demonstrate precedence with a CLI override, render-only.</strong><pre><code>helm template precedence-demo helm/cloud-lab \
+  -f helm/cloud-lab/values-dev.yaml \
+  --set replicaCount=4 \
+  | grep -A2 'replicas:'</code></pre><p><code>--set replicaCount=4</code> is more specific than the file and therefore wins for this render.</p></li>
+        <li><strong>Install the dev release into its own namespace.</strong><pre><code>helm install cloud-lab-dev helm/cloud-lab \
+  -n helm-dev --create-namespace \
+  -f helm/cloud-lab/values-dev.yaml</code></pre></li>
+        <li><strong>Install the stage release into another namespace.</strong><pre><code>helm install cloud-lab-stage helm/cloud-lab \
+  -n helm-stage --create-namespace \
+  -f helm/cloud-lab/values-stage.yaml</code></pre></li>
+        <li><strong>Compare live environments.</strong><pre><code>helm list -A
+kubectl get deployments -n helm-dev
+kubectl get deployments -n helm-stage
+kubectl get pods -n helm-dev
+kubectl get pods -n helm-stage</code></pre><div class="expected"><strong>Expected:</strong> dev desired replicas = 1; stage desired replicas = 3.</div></li>
+        <li><strong>Inspect effective values from each release.</strong><pre><code>helm get values cloud-lab-dev -n helm-dev -a
+helm get values cloud-lab-stage -n helm-stage -a</code></pre></li>
+        <li><strong>Inspect environment variables inside each environment.</strong><pre><code>DEV_POD=$(kubectl get pods -n helm-dev -l app=cloud-lab-dev -o jsonpath='{.items[0].metadata.name}')
+STAGE_POD=$(kubectl get pods -n helm-stage -l app=cloud-lab-stage -o jsonpath='{.items[0].metadata.name}')
+kubectl exec -n helm-dev "$DEV_POD" -- printenv APP_MESSAGE
+kubectl exec -n helm-stage "$STAGE_POD" -- printenv APP_MESSAGE</code></pre></li>
+        <li><strong>Commit the environment values.</strong><pre><code>git add helm/cloud-lab/values-dev.yaml helm/cloud-lab/values-stage.yaml
+git commit -m "lab 08: add dev and stage helm values"</code></pre></li>
+      </ol>
+
+      <div class="callout"><strong>Design lesson:</strong> prefer one reusable chart plus small environment-specific value files over copying the same Deployment/Service templates into separate dev and stage folders.</div>
+      <div class="complete"><input type="checkbox" id="lab8" data-lab="8"><label for="lab8">Lab 8 complete &mdash; one chart successfully drives two differently configured environments.</label></div>
+    </div>
+  </details>
+
+  <details class="lab">
+    <summary><span class="lab-index">09</span><span class="lab-title"><b>Upgrade, inspect history, roll back, and uninstall Helm releases</b><span>Understand Helm's release lifecycle before Argo CD becomes the lifecycle owner.</span></span><span class="lab-meta">Helm &middot; release lifecycle</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>You are learning</strong><span class="small muted">Revision numbers, upgrade inputs, release history, rollback semantics, and clean handoff away from manual Helm.</span></div><div><strong>Success evidence</strong><span class="small muted">You create multiple dev revisions, roll back, inspect history, then remove all manual Helm workloads.</span></div></div>
+
+      <ol class="steps">
+        <li><strong>Record revision 1.</strong><pre><code>helm status cloud-lab-dev -n helm-dev
+helm history cloud-lab-dev -n helm-dev
+kubectl get deployment cloud-lab-dev -n helm-dev</code></pre></li>
+        <li><strong>Create revision 2 by changing a value.</strong><p>Edit <code>values-dev.yaml</code> and change <code>replicaCount: 1</code> to <code>replicaCount: 2</code>. Then:</p><pre><code>helm upgrade cloud-lab-dev helm/cloud-lab \
+  -n helm-dev \
+  -f helm/cloud-lab/values-dev.yaml
+kubectl rollout status deployment/cloud-lab-dev -n helm-dev --timeout=120s
+helm history cloud-lab-dev -n helm-dev</code></pre></li>
+        <li><strong>Create revision 3 with a temporary message override.</strong><pre><code>helm upgrade cloud-lab-dev helm/cloud-lab \
+  -n helm-dev \
+  -f helm/cloud-lab/values-dev.yaml \
+  --set config.message="Temporary revision three"
+helm history cloud-lab-dev -n helm-dev</code></pre></li>
+        <li><strong>Verify the revision-3 value inside a Pod.</strong><pre><code>POD=$(kubectl get pods -n helm-dev -l app=cloud-lab-dev -o jsonpath='{.items[0].metadata.name}')
+kubectl exec -n helm-dev "$POD" -- printenv APP_MESSAGE</code></pre></li>
+        <li><strong>Roll back to revision 2.</strong><pre><code>helm rollback cloud-lab-dev 2 -n helm-dev
+helm history cloud-lab-dev -n helm-dev
+kubectl rollout status deployment/cloud-lab-dev -n helm-dev --timeout=120s</code></pre><p>A rollback itself creates another revision; inspect the history and notice the new entry.</p></li>
+        <li><strong>Inspect the current release state.</strong><pre><code>helm status cloud-lab-dev -n helm-dev
+helm get values cloud-lab-dev -n helm-dev -a
+helm get manifest cloud-lab-dev -n helm-dev | head -n 80</code></pre></li>
+        <li><strong>Restore the Git value file to the intended dev baseline.</strong><p>Keep <code>replicaCount: 2</code> or choose <code>1</code>, but make the decision explicit. This guide uses <code>replicaCount: 1</code> for dev going forward. Edit it back to 1 and commit:</p><pre><code>git add helm/cloud-lab/values-dev.yaml
+git commit -m "lab 09: restore dev baseline after helm revision exercise"</code></pre></li>
+        <li><strong>Uninstall all manual Helm releases before GitOps.</strong><pre><code>helm uninstall cloud-lab -n helm-lab
+helm uninstall cloud-lab-dev -n helm-dev
+helm uninstall cloud-lab-stage -n helm-stage
+helm list -A</code></pre></li>
+        <li><strong>Remove the now-empty practice namespaces.</strong><pre><code>kubectl delete namespace helm-lab helm-dev helm-stage
+kubectl get namespaces</code></pre><p>This creates a clean boundary: Labs 7-9 were manually Helm-owned. Later environments will be Argo CD-owned.</p></li>
+      </ol>
+
+      <div class="callout warn"><strong>Ownership rule:</strong> after Argo CD manages a Helm-rendered application, do not also run manual <code>helm upgrade</code> against the same resources. Two independent lifecycle owners create conflicting desired states.</div>
+      <div class="complete"><input type="checkbox" id="lab9" data-lab="9"><label for="lab9">Lab 9 complete &mdash; I understand Helm revisions, rollback, and clean ownership handoff.</label></div>
+    </div>
+  </details>
+
+  <details class="lab">
+    <summary><span class="lab-index">10</span><span class="lab-title"><b>Build a Helm quality gate: lint, render, server-check, package</b><span>Create the exact local checks that CI will automate in the next lab.</span></span><span class="lab-meta">Helm &middot; validation</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>You are learning</strong><span class="small muted">Static chart validation, deterministic rendering, server-side Kubernetes validation, packaging, and deliberate template failure.</span></div><div><strong>Success evidence</strong><span class="small muted">Both environment renders pass validation and a packaged <code>.tgz</code> chart is created.</span></div></div>
+
+      <ol class="steps">
+        <li><strong>Run chart lint with all intended value combinations.</strong><pre><code>helm lint helm/cloud-lab
+helm lint helm/cloud-lab -f helm/cloud-lab/values-dev.yaml
+helm lint helm/cloud-lab -f helm/cloud-lab/values-stage.yaml</code></pre></li>
+        <li><strong>Render dev and stage to files.</strong><pre><code>helm template ci-dev helm/cloud-lab \
+  --namespace validation \
+  -f helm/cloud-lab/values-dev.yaml \
+  > /tmp/rendered-dev.yaml
+
+helm template ci-stage helm/cloud-lab \
+  --namespace validation \
+  -f helm/cloud-lab/values-stage.yaml \
+  > /tmp/rendered-stage.yaml</code></pre></li>
+        <li><strong>Inspect rendered object kinds and images.</strong><pre><code>grep '^kind:' /tmp/rendered-dev.yaml
+grep 'image:' /tmp/rendered-dev.yaml
+grep '^kind:' /tmp/rendered-stage.yaml</code></pre></li>
+        <li><strong>Create a temporary namespace for server-side validation.</strong><pre><code>kubectl create namespace validation --dry-run=client -o yaml | kubectl apply -f -</code></pre></li>
+        <li><strong>Ask the live Kubernetes API to validate the rendered manifests without persisting them.</strong><pre><code>kubectl apply --dry-run=server -n validation -f /tmp/rendered-dev.yaml
+kubectl apply --dry-run=server -n validation -f /tmp/rendered-stage.yaml</code></pre><p>This catches errors that require API-server schema/admission knowledge, while <code>helm lint</code> focuses on chart/template quality.</p></li>
+        <li><strong>Package the chart.</strong><pre><code>mkdir -p dist
+helm package helm/cloud-lab --destination dist
+ls -lh dist</code></pre><div class="expected"><strong>Expected:</strong> a file similar to <code>cloud-lab-0.1.0.tgz</code>.</div></li>
+        <li><strong>Inspect the package contents.</strong><pre><code>tar -tzf dist/cloud-lab-0.1.0.tgz | head -n 40</code></pre></li>
+        <li><strong>Break a template intentionally.</strong><p>In <code>templates/deployment.yaml</code>, temporarily remove the final <code>}}</code> from one template expression. Then run:</p><pre><code>helm lint helm/cloud-lab || true
+helm template broken helm/cloud-lab --debug || true</code></pre><p>Read the line/file in the error rather than scanning blindly.</p></li>
+        <li><strong>Fix the template and rerun all important checks.</strong><pre><code>helm lint helm/cloud-lab
+helm template ci-dev helm/cloud-lab -f helm/cloud-lab/values-dev.yaml > /tmp/rendered-dev.yaml
+kubectl apply --dry-run=server -n validation -f /tmp/rendered-dev.yaml</code></pre></li>
+        <li><strong>Remove the temporary validation namespace.</strong><pre><code>kubectl delete namespace validation</code></pre></li>
+      </ol>
+
+      <div class="failure"><div><b>What lint can catch</b>Broken template syntax, chart structure problems, many malformed render issues.</div><div><b>What lint cannot prove</b>That an image exists, an application is healthy at runtime, or an external dependency is reachable.</div></div>
+      <div class="complete"><input type="checkbox" id="lab10" data-lab="10"><label for="lab10">Lab 10 complete &mdash; I have a repeatable local validation pipeline.</label></div>
+    </div>
+  </details>
+
+  <details class="lab">
+    <summary><span class="lab-index">11</span><span class="lab-title"><b>Push to GitHub and automate validation with GitHub Actions</b><span>Create the remote repository, workflow, pull-request failure test, and passing CI gate.</span></span><span class="lab-meta">GitHub Actions &middot; CI</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>You are learning</strong><span class="small muted">Repository remote, push, workflow triggers, runners, actions, jobs, steps, read-only token permissions, and pull-request quality gates.</span></div><div><strong>Success evidence</strong><span class="small muted">A pull request shows the validation workflow failing on a deliberate error, then passing after the fix.</span></div></div>
+
+      <h3>Step 1 &mdash; create the GitHub repository</h3>
+      <ol class="steps">
+        <li><strong>In GitHub, choose New repository.</strong><p>Name it <code>cloud-native-labs</code>. For the easiest Argo CD labs, make it <strong>Public</strong>. Do not initialize it with README, .gitignore, or license because the local repository already has history.</p></li>
+        <li><strong>Connect the local repository.</strong><p>Replace <code>YOUR_GITHUB_USERNAME</code>:</p><pre><code>git remote add origin https://github.com/YOUR_GITHUB_USERNAME/cloud-native-labs.git
+git remote -v
+git push -u origin main</code></pre><p>If GitHub asks for authentication, use Git Credential Manager/browser authentication or your configured GitHub CLI/SSH method; do not paste account passwords into scripts.</p></li>
+      </ol>
+
+      <h3>Step 2 &mdash; create <code class="inline">.github/workflows/validate.yaml</code></h3>
+<pre><code>name: Validate Kubernetes and Helm
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install Helm
+        uses: azure/setup-helm@v5
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v5
+
+      - name: Validate raw Kubernetes YAML locally
+        run: |
+          kubectl create --dry-run=client -f k8s/namespace.yaml -o yaml > /tmp/ns.yaml
+          kubectl create --dry-run=client -f k8s/configmap.yaml -o yaml > /tmp/cm.yaml
+          kubectl create --dry-run=client -f k8s/deployment.yaml -o yaml > /tmp/deploy.yaml
+          kubectl create --dry-run=client -f k8s/service.yaml -o yaml > /tmp/svc.yaml
+
+      - name: Helm lint
+        run: |
+          helm lint helm/cloud-lab
+          helm lint helm/cloud-lab -f helm/cloud-lab/values-dev.yaml
+          helm lint helm/cloud-lab -f helm/cloud-lab/values-stage.yaml
+
+      - name: Render Helm environments
+        run: |
+          helm template ci-dev helm/cloud-lab -f helm/cloud-lab/values-dev.yaml > /tmp/dev.yaml
+          helm template ci-stage helm/cloud-lab -f helm/cloud-lab/values-stage.yaml > /tmp/stage.yaml
+
+      - name: Show rendered Kubernetes kinds
+        run: |
+          echo "DEV objects"
+          grep '^kind:' /tmp/dev.yaml
+          echo "STAGE objects"
+          grep '^kind:' /tmp/stage.yaml</code></pre>
+
+      <ol class="steps" start="3">
+        <li><strong>Commit and push the workflow.</strong><pre><code>git add .github/workflows/validate.yaml
+git commit -m "lab 11: add kubernetes and helm validation workflow"
+git push</code></pre></li>
+        <li><strong>Open GitHub &rarr; Actions.</strong><p>Open the workflow run. Expand each step. Do not settle for a green checkmark; read what was actually executed.</p></li>
+        <li><strong>Create a branch for a failure exercise.</strong><pre><code>git switch -c lab11-break-ci</code></pre></li>
+        <li><strong>Break a Helm template on purpose.</strong><p>For example, remove a closing <code>}}</code> in <code>helm/cloud-lab/templates/service.yaml</code>. Commit and push:</p><pre><code>git add helm/cloud-lab/templates/service.yaml
+git commit -m "lab 11: intentionally break helm template"
+git push -u origin lab11-break-ci</code></pre></li>
+        <li><strong>Open a pull request in GitHub.</strong><p>Base = <code>main</code>, compare = <code>lab11-break-ci</code>. Watch the validation check fail. Open the failed log and identify the file/line.</p></li>
+        <li><strong>Repair the template locally.</strong><pre><code>helm lint helm/cloud-lab</code></pre><p>Once it passes locally, commit and push the fix:</p><pre><code>git add helm/cloud-lab/templates/service.yaml
+git commit -m "lab 11: fix template and restore CI"
+git push</code></pre></li>
+        <li><strong>Observe the same pull request turn green.</strong><p>Merge it from GitHub, then update your local branch:</p><pre><code>git switch main
+git pull --ff-only</code></pre></li>
+      </ol>
+
+      <div class="callout"><strong>CI vs CD:</strong> this workflow validates source and rendered configuration. It does not deploy anything to minikube. CI answers "is this change buildable/valid enough to merge?"; later Argo CD handles continuous deployment from Git desired state.</div>
+      <div class="complete"><input type="checkbox" id="lab11" data-lab="11"><label for="lab11">Lab 11 complete &mdash; I can read a GitHub Actions failure and fix the source that caused it.</label></div>
+    </div>
+  </details>
+
+  <details class="lab">
+    <summary><span class="lab-index">12</span><span class="lab-title"><b>Build a real container image and publish it to GHCR</b><span>Create the application, test Docker locally, then use GitHub Actions to publish an immutable commit-SHA image.</span></span><span class="lab-meta">GitHub Actions &middot; GHCR</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>You are learning</strong><span class="small muted">Docker build context, image tags, GHCR authentication with GITHUB_TOKEN, package visibility, immutable SHA tags, and registry vs cluster responsibilities.</span></div><div><strong>Success evidence</strong><span class="small muted">GitHub Packages contains <code>ghcr.io/OWNER/cloud-native-labs:&lt;commit-sha&gt;</code> and the image can be pulled.</span></div></div>
+
+      <h3>Step 1 &mdash; create <code class="inline">app/index.html</code></h3>
+<pre><code>&lt;!doctype html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="utf-8"&gt;
+  &lt;title&gt;Cloud Native Lab&lt;/title&gt;
+  &lt;style&gt;
+    body { font-family: system-ui; max-width: 760px; margin: 80px auto; padding: 24px; }
+    .badge { display:inline-block; padding:6px 10px; border-radius:999px; background:#eef4ff; }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;span class="badge"&gt;Version 1&lt;/span&gt;
+  &lt;h1&gt;Hello from the Cloud Native Delivery Lab&lt;/h1&gt;
+  &lt;p&gt;Built by GitHub Actions, stored in GHCR, deployed by Argo CD.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+      <h3>Step 2 &mdash; create <code class="inline">app/Dockerfile</code></h3>
+<pre><code>FROM nginx:alpine
+COPY index.html /usr/share/nginx/html/index.html
+EXPOSE 80</code></pre>
+
+      <ol class="steps">
+        <li><strong>Build the image locally first.</strong><pre><code>docker build -t cloud-native-labs:local ./app</code></pre></li>
+        <li><strong>Run and test it locally.</strong><pre><code>docker run --rm -d --name cloud-native-local -p 8090:80 cloud-native-labs:local
+curl http://localhost:8090
+docker logs cloud-native-local
+docker rm -f cloud-native-local</code></pre><div class="expected"><strong>Expected:</strong> the curl output contains "Cloud Native Delivery Lab".</div></li>
+        <li><strong>Commit the application.</strong><pre><code>git add app
+git commit -m "lab 12: add containerized web application"
+git push</code></pre></li>
+      </ol>
+
+      <h3>Step 3 &mdash; create <code class="inline">.github/workflows/publish-image.yaml</code></h3>
+<pre><code>name: Publish Application Image
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "app/**"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push immutable SHA image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./app
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}</code></pre>
+
+      <ol class="steps" start="4">
+        <li><strong>Commit and push the image workflow.</strong><pre><code>git add .github/workflows/publish-image.yaml
+git commit -m "lab 12: publish app image to GHCR"
+git push</code></pre><p>The workflow itself does not run yet if only workflow files changed because its path filter is <code>app/**</code>.</p></li>
+        <li><strong>Trigger the workflow with an application change.</strong><p>Edit the badge in <code>app/index.html</code> from <code>Version 1</code> to <code>Version 1.1</code>:</p><pre><code>git add app/index.html
+git commit -m "lab 12: trigger first ghcr image build"
+git push</code></pre></li>
+        <li><strong>Open GitHub &rarr; Actions &rarr; Publish Application Image.</strong><p>Inspect login, build, and push steps. Copy the full commit SHA from the run or locally:</p><pre><code>git rev-parse HEAD</code></pre></li>
+        <li><strong>Open the package page.</strong><p>On GitHub, open your profile/organization &rarr; Packages &rarr; <code>cloud-native-labs</code>. Confirm a tag equal to the commit SHA exists.</p></li>
+        <li><strong>For this learning lab, make the GHCR package public.</strong><p>Open the package &rarr; Package settings &rarr; Change visibility &rarr; Public. This lets the local Kubernetes cluster pull the image without an imagePullSecret. Do not assume this public-access model is appropriate for production.</p></li>
+        <li><strong>Pull the published image from your machine.</strong><p>Replace placeholders with your actual owner and SHA:</p><pre><code>docker pull ghcr.io/YOUR_GITHUB_USERNAME/cloud-native-labs:YOUR_FULL_COMMIT_SHA</code></pre></li>
+        <li><strong>Record the image reference.</strong><p>You will need the owner and SHA in Lab 15. The image reference format is:</p><pre><code>ghcr.io/YOUR_GITHUB_USERNAME/cloud-native-labs:YOUR_FULL_COMMIT_SHA</code></pre></li>
+      </ol>
+
+      <div class="callout good"><strong>Why SHA tags?</strong> a commit SHA is immutable identity for the source revision that produced the image. Avoid using a mutable deployment tag such as <code>latest</code> when you want auditable GitOps promotion and rollback.</div>
+      <div class="complete"><input type="checkbox" id="lab12" data-lab="12"><label for="lab12">Lab 12 complete &mdash; a Git commit now produces a pullable GHCR image.</label></div>
+    </div>
+  </details>
+
+  <details class="lab">
+    <summary><span class="lab-index">13</span><span class="lab-title"><b>Install Argo CD and explore the GitOps control plane</b><span>Install upstream Argo CD, install the CLI, log in, inspect components, and optionally repeat installation with the Argo Helm chart.</span></span><span class="lab-meta">Argo CD &middot; installation</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>You are learning</strong><span class="small muted">Argo CD server, repo-server, application controller, CRDs, CLI/UI access, initial admin authentication, and two installation approaches.</span></div><div><strong>Success evidence</strong><span class="small muted">The Argo CD UI opens locally and <code>argocd app list</code> authenticates successfully.</span></div></div>
+      <div class="callout warn"><strong>Lab installation vs production:</strong> the upstream non-HA install is appropriate for learning/evaluation. Production installations should pin a tested version and follow your organization's HA, RBAC, SSO, TLS, backup, and upgrade standards.</div>
+
+      <h3>Method A &mdash; main path: install the upstream stable manifests</h3>
+      <ol class="steps">
+        <li><strong>Confirm minikube is healthy.</strong><pre><code>minikube status
+kubectl get nodes</code></pre></li>
+        <li><strong>Create the Argo CD namespace.</strong><pre><code>kubectl create namespace argocd</code></pre></li>
+        <li><strong>Apply the official stable installation.</strong><pre><code>kubectl apply -n argocd --server-side --force-conflicts \
+  -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml</code></pre><p>The server-side flags are important for current Argo CD CRDs.</p></li>
+        <li><strong>Watch the Argo CD Pods start.</strong><pre><code>kubectl get pods -n argocd -w</code></pre><p>Wait until the core Pods are Running/Ready, then press <kbd>Ctrl</kbd>+<kbd>C</kbd>.</p></li>
+        <li><strong>Inspect what was installed.</strong><pre><code>kubectl get deployments,statefulsets,services -n argocd
+kubectl get crds | grep argoproj.io</code></pre><p>Find components such as the API server, repo server, application controller, Redis, and Argo CD custom resources.</p></li>
+      </ol>
+
+      <h3>Install the Argo CD CLI</h3>
+      <div class="os-grid">
+        <div class="os-card"><strong>macOS / Homebrew</strong><pre><code>brew install argocd</code></pre></div>
+        <div class="os-card"><strong>Linux / WSL x86-64</strong><pre><code>curl -sSL -o argocd-linux-amd64 https://github.com/argoproj/argo-cd/releases/latest/download/argocd-linux-amd64
+sudo install -m 555 argocd-linux-amd64 /usr/local/bin/argocd
+rm argocd-linux-amd64</code></pre></div>
+        <div class="os-card"><strong>Windows PowerShell</strong><pre><code>$version = (Invoke-RestMethod https://api.github.com/repos/argoproj/argo-cd/releases/latest).tag_name
+$url = "https://github.com/argoproj/argo-cd/releases/download/" + $version + "/argocd-windows-amd64.exe"
+Invoke-WebRequest -Uri $url -OutFile argocd.exe</code></pre><p class="tiny muted">Move <code>argocd.exe</code> into a directory on PATH, then reopen PowerShell.</p></div>
+      </div>
+
+      <ol class="steps" start="6">
+        <li><strong>Verify the CLI.</strong><pre><code>argocd version --client</code></pre></li>
+        <li><strong>Read the initial admin password.</strong><pre><code>argocd admin initial-password -n argocd</code></pre><p>Copy the password temporarily. The username is <code>admin</code>.</p></li>
+        <li><strong>Expose the Argo CD API/UI only to your local machine.</strong><p>Run and leave this terminal open:</p><pre><code>kubectl port-forward svc/argocd-server -n argocd 8080:443</code></pre></li>
+        <li><strong>Open the UI.</strong><p>Browse to <code>https://localhost:8080</code>. Your browser may warn about the local self-signed certificate; for this local lab only, continue to the site. Log in as <code>admin</code> with the initial password.</p></li>
+        <li><strong>Log in with the CLI from a second terminal.</strong><pre><code>argocd login localhost:8080 --username admin --insecure</code></pre><p>Enter the password when prompted. Keeping the password out of shell history is better than putting it directly on the command line.</p></li>
+        <li><strong>Explore before creating applications.</strong><pre><code>argocd account get-user-info
+argocd app list
+kubectl get applications.argoproj.io -n argocd</code></pre><div class="expected"><strong>Expected:</strong> authentication works and the application list is empty.</div></li>
+        <li><strong>Inspect logs from one Argo component.</strong><pre><code>kubectl logs -n argocd deployment/argocd-repo-server --tail=30</code></pre><p>The repo-server is responsible for fetching repository content and generating manifests from sources such as Helm.</p></li>
+      </ol>
+
+      <h3>Optional Method B &mdash; install Argo CD with Helm in a separate practice cluster</h3>
+      <div class="callout warn"><strong>Keep Method A intact.</strong> A second minikube profile avoids mixing Helm ownership with resources/CRDs already created by the upstream manifests. Skip this optional exercise if your machine is short on RAM/CPU.</div>
+      <ol class="steps">
+        <li><strong>Stop the Argo CD port-forward, then create a second minikube profile.</strong><pre><code>minikube start -p argocd-helm --driver=docker
+kubectl config current-context</code></pre><p>The current context should now be <code>argocd-helm</code>.</p></li>
+        <li><strong>Add the Argo Helm repository and inspect the chart.</strong><pre><code>helm repo add argo https://argoproj.github.io/argo-helm
+helm repo update
+helm search repo argo/argo-cd</code></pre></li>
+        <li><strong>Install Argo CD with Helm.</strong><pre><code>helm install argocd argo/argo-cd -n argocd --create-namespace</code></pre></li>
+        <li><strong>Verify Helm release and Argo Pods.</strong><pre><code>helm list -n argocd
+kubectl get pods -n argocd
+kubectl get services -n argocd</code></pre></li>
+        <li><strong>See that the Helm release owns this installation.</strong><pre><code>helm status argocd -n argocd
+helm get values argocd -n argocd</code></pre></li>
+        <li><strong>Stop the optional cluster and return to the main lab cluster.</strong><pre><code>minikube stop -p argocd-helm
+kubectl config use-context minikube
+kubectl get pods -n argocd</code></pre><p>Lab 14 continues on the original <code>minikube</code> cluster with the Method A installation.</p></li>
+      </ol>
+
+      <details class="quiz"><summary>Knowledge check</summary><p>What is the difference between installing Argo CD itself with Helm and using Argo CD later to render your application's Helm chart? Which Argo component fetches source repositories and which controller reconciles Applications?</p></details>
+      <div class="complete"><input type="checkbox" id="lab13" data-lab="13"><label for="lab13">Lab 13 complete &mdash; Argo CD UI/CLI are working and I understand the installed components.</label></div>
+    </div>
+  </details>
+
+  <details class="lab">
+    <summary><span class="lab-index">14</span><span class="lab-title"><b>Deploy raw Kubernetes YAML through Argo CD</b><span>Let Git become the desired-state source before combining Argo CD with Helm.</span></span><span class="lab-meta">Argo CD &middot; raw YAML</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>You are learning</strong><span class="small muted">Application CRD, repoURL, targetRevision, path, destination, sync status, health, manual sync, refresh, and drift.</span></div><div><strong>Success evidence</strong><span class="small muted">Argo CD reconstructs <code>raw-lab</code> from the <code>k8s/</code> directory and detects both Git changes and manual drift.</span></div></div>
+      <div class="callout warn"><strong>Repository access:</strong> this beginner path assumes the GitHub repository is public. Private repository authentication is intentionally deferred so repository credentials do not distract from the GitOps model.</div>
+
+      <h3>Step 1 &mdash; create <code class="inline">argocd/raw-app.yaml</code></h3>
+      <p>Replace <code>YOUR_GITHUB_USERNAME</code> exactly.</p>
+<pre><code>apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cloud-lab-raw
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/YOUR_GITHUB_USERNAME/cloud-native-labs.git
+    targetRevision: main
+    path: k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: raw-lab
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true</code></pre>
+
+      <ol class="steps">
+        <li><strong>Commit and push the Argo CD Application definition.</strong><pre><code>git add argocd/raw-app.yaml
+git commit -m "lab 14: define raw yaml argocd application"
+git push</code></pre></li>
+        <li><strong>Create the Application CR in the cluster.</strong><pre><code>kubectl apply -f argocd/raw-app.yaml
+kubectl get applications -n argocd
+argocd app get cloud-lab-raw --refresh</code></pre><p>At first, the app may be OutOfSync because Git contains resources that are not yet live.</p></li>
+        <li><strong>Preview the difference.</strong><pre><code>argocd app diff cloud-lab-raw || true</code></pre><p>Read which resources Argo CD wants to create.</p></li>
+        <li><strong>Perform the first sync manually.</strong><pre><code>argocd app sync cloud-lab-raw
+argocd app wait cloud-lab-raw --sync --health --timeout 180
+kubectl get all -n raw-lab
+kubectl get configmap -n raw-lab</code></pre><div class="expected"><strong>Expected:</strong> Argo CD reports Synced + Healthy; the raw manifests are live again.</div></li>
+        <li><strong>Verify Argo CD is the application owner operationally.</strong><pre><code>argocd app resources cloud-lab-raw
+argocd app manifests cloud-lab-raw | head -n 100</code></pre></li>
+        <li><strong>Change Git desired state.</strong><p>Edit <code>k8s/deployment.yaml</code> and change replicas from 3 to 2. Commit and push:</p><pre><code>git add k8s/deployment.yaml
+git commit -m "lab 14: change raw desired replicas to two"
+git push</code></pre></li>
+        <li><strong>Force a refresh instead of waiting for the normal polling interval.</strong><pre><code>argocd app get cloud-lab-raw --refresh
+argocd app diff cloud-lab-raw || true</code></pre><p>Observe OutOfSync. Because automated sync is not enabled yet, Argo CD detects the difference but waits for you.</p></li>
+        <li><strong>Sync the Git change.</strong><pre><code>argocd app sync cloud-lab-raw
+argocd app wait cloud-lab-raw --sync --health --timeout 180
+kubectl get deployment web -n raw-lab</code></pre></li>
+        <li><strong>Create manual live drift.</strong><pre><code>kubectl scale deployment web -n raw-lab --replicas=6
+kubectl get deployment web -n raw-lab
+argocd app get cloud-lab-raw --refresh</code></pre><p>Argo CD should report OutOfSync because live state no longer matches Git.</p></li>
+        <li><strong>Repair drift by syncing Git desired state.</strong><pre><code>argocd app sync cloud-lab-raw
+kubectl get deployment web -n raw-lab</code></pre><div class="expected"><strong>Expected:</strong> replicas returns to 2 because Git says 2.</div></li>
+        <li><strong>Delete the raw Application before the Helm GitOps labs.</strong><pre><code>argocd app delete cloud-lab-raw --cascade
+kubectl get namespace raw-lab || true</code></pre><p>If the namespace remains, delete it with <code>kubectl delete namespace raw-lab</code>. The Git files remain intact.</p></li>
+      </ol>
+
+      <div class="callout good"><strong>GitOps shift:</strong> you are no longer using Git merely as backup for YAML. Argo CD continuously compares a Git revision with live cluster state and reports/reconciles the difference.</div>
+      <details class="quiz"><summary>Knowledge check</summary><p>What is the difference between OutOfSync and Degraded? Why did Argo CD notice the manual scale even though the Git repository did not change?</p></details>
+      <div class="complete"><input type="checkbox" id="lab14" data-lab="14"><label for="lab14">Lab 14 complete &mdash; raw Kubernetes desired state is now understandable as a GitOps application.</label></div>
+    </div>
+  </details>
+
+  <details class="lab">
+    <summary><span class="lab-index">15</span><span class="lab-title"><b>Deploy the Helm chart with Argo CD</b><span>Use GHCR image values, automated sync, self-heal, and prove Argo CD renders Helm without creating a normal Helm release.</span></span><span class="lab-meta">Argo CD &middot; Helm</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>You are learning</strong><span class="small muted">Argo CD Helm valueFiles, release naming, automated sync, prune, self-heal, and the division of responsibility between Helm rendering and Argo reconciliation.</span></div><div><strong>Success evidence</strong><span class="small muted"><code>dev</code> runs your GHCR image and changes to <code>values-dev.yaml</code> auto-sync without manual <code>helm upgrade</code>.</span></div></div>
+
+      <h3>Step 1 &mdash; update dev values to your GHCR image</h3>
+      <p>Open <code>helm/cloud-lab/values-dev.yaml</code>. Keep the existing dev settings and add this <code>image</code> block. Replace both placeholders using Lab 12:</p>
+<pre><code>image:
+  repository: ghcr.io/YOUR_GITHUB_USERNAME/cloud-native-labs
+  tag: "YOUR_FULL_COMMIT_SHA"
+  pullPolicy: IfNotPresent</code></pre>
+      <p>The full file should now contain dev replica/config/resources plus this image override.</p>
+
+      <h3>Step 2 &mdash; prepare staging values too, but keep it independently pinned</h3>
+      <p>Add the same repository and the current known-good SHA to <code>values-stage.yaml</code>:</p>
+<pre><code>image:
+  repository: ghcr.io/YOUR_GITHUB_USERNAME/cloud-native-labs
+  tag: "YOUR_FULL_COMMIT_SHA"
+  pullPolicy: IfNotPresent</code></pre>
+      <div class="callout"><strong>Why duplicate only the tag in environment values?</strong> Later CI will update <code>values-dev.yaml</code> automatically. <code>values-stage.yaml</code> remains unchanged until a reviewed promotion. That separation is the gate between dev and stage.</div>
+
+      <ol class="steps">
+        <li><strong>Lint and render before committing.</strong><pre><code>helm lint helm/cloud-lab -f helm/cloud-lab/values-dev.yaml
+helm template cloud-lab-dev helm/cloud-lab -f helm/cloud-lab/values-dev.yaml | grep 'image:'</code></pre><p>Confirm the rendered image is your GHCR SHA, not <code>nginx:alpine</code>.</p></li>
+        <li><strong>Commit and push image values.</strong><pre><code>git add helm/cloud-lab/values-dev.yaml helm/cloud-lab/values-stage.yaml
+git commit -m "lab 15: point environments at ghcr application image"
+git push</code></pre></li>
+      </ol>
+
+      <h3>Step 3 &mdash; create <code class="inline">argocd/helm-dev.yaml</code></h3>
+<pre><code>apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cloud-lab-dev
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/YOUR_GITHUB_USERNAME/cloud-native-labs.git
+    targetRevision: main
+    path: helm/cloud-lab
+    helm:
+      valueFiles:
+        - values-dev.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dev
+  syncPolicy:
+    automated:
+      enabled: true
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true</code></pre>
+
+      <ol class="steps" start="3">
+        <li><strong>Commit/push the Application, then create it.</strong><pre><code>git add argocd/helm-dev.yaml
+git commit -m "lab 15: add argocd helm dev application"
+git push
+kubectl apply -f argocd/helm-dev.yaml</code></pre></li>
+        <li><strong>Refresh and wait for automated sync.</strong><pre><code>argocd app get cloud-lab-dev --refresh
+argocd app wait cloud-lab-dev --sync --health --timeout 180</code></pre></li>
+        <li><strong>Verify Kubernetes resources and image.</strong><pre><code>kubectl get all -n dev
+kubectl get configmap -n dev
+kubectl get deployment cloud-lab-dev -n dev -o jsonpath='{.spec.template.spec.containers[0].image}' ; echo</code></pre><div class="expected"><strong>Expected:</strong> the image begins <code>ghcr.io/...</code> and ends with your commit SHA.</div></li>
+        <li><strong>Test the deployed application.</strong><pre><code>kubectl port-forward service/cloud-lab-dev -n dev 8082:80</code></pre><p>Open <code>http://localhost:8082</code>. You should see your custom Cloud Native Lab page from the container image. Stop port-forward afterward.</p></li>
+        <li><strong>Inspect Argo CD's rendered manifests.</strong><pre><code>argocd app manifests cloud-lab-dev | head -n 120</code></pre><p>These are ordinary Kubernetes manifests generated from the chart and values.</p></li>
+        <li><strong>Ask Helm whether it owns a normal release in the dev namespace.</strong><pre><code>helm list -n dev</code></pre><p>For an Argo CD Helm source, Helm is used as a template engine; Argo CD owns application reconciliation. You should not expect the same manual Helm release lifecycle you practiced in Labs 7-9.</p></li>
+        <li><strong>Prove automated Git sync.</strong><p>Change dev <code>replicaCount</code> from 1 to 2 in <code>values-dev.yaml</code>, then:</p><pre><code>git add helm/cloud-lab/values-dev.yaml
+git commit -m "lab 15: scale dev through gitops"
+git push
+argocd app get cloud-lab-dev --refresh
+argocd app wait cloud-lab-dev --sync --health --timeout 180
+kubectl get deployment cloud-lab-dev -n dev</code></pre></li>
+        <li><strong>Restore dev to one replica for the remaining labs.</strong><p>Edit <code>replicaCount: 1</code>, commit, push, refresh, and wait:</p><pre><code>git add helm/cloud-lab/values-dev.yaml
+git commit -m "lab 15: restore dev replica baseline"
+git push
+argocd app get cloud-lab-dev --refresh
+argocd app wait cloud-lab-dev --sync --health --timeout 180</code></pre></li>
+      </ol>
+
+      <div class="callout good"><strong>Responsibility boundary:</strong> Helm defines how values become manifests. Argo CD decides when live state must be reconciled to the Git-rendered manifests. Git remains the desired-state source.</div>
+      <div class="complete"><input type="checkbox" id="lab15" data-lab="15"><label for="lab15">Lab 15 complete &mdash; Argo CD is automatically deploying the Helm-rendered dev application.</label></div>
+    </div>
+  </details>
+
+  <details class="lab">
+    <summary><span class="lab-index">16</span><span class="lab-title"><b>Connect GitHub Actions &rarr; GHCR &rarr; Git &rarr; Argo CD &rarr; Kubernetes</b><span>Build a full GitOps delivery loop without giving GitHub Actions direct Kubernetes credentials.</span></span><span class="lab-meta">Actions &middot; Helm &middot; Argo CD</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>You are learning</strong><span class="small muted">CI artifact creation, Git-based promotion, GITHUB_TOKEN write permissions, path-filter loop prevention, Argo refresh, and why CI does not need kubeconfig in this design.</span></div><div><strong>Success evidence</strong><span class="small muted">One edit to <code>app/index.html</code> causes a new image SHA, a bot Git commit to dev values, and an Argo CD deployment of that SHA.</span></div></div>
+
+      <h3>Step 1 &mdash; remove the image-only workflow from Lab 12</h3>
+      <p>Lab 16 replaces it. Leaving both workflows active would build the same image twice.</p>
+<pre><code>git rm .github/workflows/publish-image.yaml</code></pre>
+
+      <h3>Step 2 &mdash; allow the workflow token to update repository content</h3>
+      <p>In GitHub open <strong>Repository &rarr; Settings &rarr; Actions &rarr; General &rarr; Workflow permissions</strong>. Select <strong>Read and write permissions</strong> if your repository/organization policy allows it. For this learning repo, keep <code>main</code> unprotected until the lab works. Production repositories should use reviewed PR-based promotion rather than broad bot writes to a protected deployment branch.</p>
+
+      <h3>Step 3 &mdash; create <code class="inline">.github/workflows/build-promote-dev.yaml</code></h3>
+<pre><code>name: Build Image and Promote Dev
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "app/**"
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-promote-dev:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push immutable SHA image
+        uses: docker/build-push-action@v6
+        with:
+          context: ./app
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
+
+      - name: Update the dev image tag in Git
+        env:
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import os, re
+
+          path = Path("helm/cloud-lab/values-dev.yaml")
+          text = path.read_text()
+          new_tag = os.environ["IMAGE_TAG"]
+          updated, count = re.subn(
+              r'(?m)^(  tag:\s*).+$',
+              rf'\1"{new_tag}"',
+              text,
+              count=1,
+          )
+          if count != 1:
+              raise SystemExit("Could not find exactly one image tag in values-dev.yaml")
+          path.write_text(updated)
+          PY
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add helm/cloud-lab/values-dev.yaml
+          git diff --cached --quiet && exit 0
+          git commit -m "promote dev image ${GITHUB_SHA} [skip ci]"
+          git push</code></pre>
+
+      <div class="callout"><strong>Why no infinite loop?</strong> the workflow triggers only when <code>app/**</code> changes. The bot commit changes only <code>helm/cloud-lab/values-dev.yaml</code>, so it does not start another image build.</div>
+
+      <ol class="steps">
+        <li><strong>Commit the replacement workflow.</strong><pre><code>git add .github/workflows/build-promote-dev.yaml
+git commit -m "lab 16: add build and gitops dev promotion workflow"
+git push</code></pre></li>
+        <li><strong>Change the application to Version 2.</strong><p>Edit <code>app/index.html</code>: change the badge to <code>Version 2</code> and change any sentence so the deployment is visually obvious.</p></li>
+        <li><strong>Commit and push the application change.</strong><pre><code>git add app/index.html
+git commit -m "lab 16: release application version 2"
+git push</code></pre></li>
+        <li><strong>Observe GitHub Actions in order.</strong><p>Open Actions and confirm: checkout &rarr; GHCR login &rarr; build/push &rarr; update dev values &rarr; bot commit/push.</p></li>
+        <li><strong>Pull the bot commit locally.</strong><pre><code>git pull --ff-only
+git log --oneline -5
+grep -A3 '^image:' helm/cloud-lab/values-dev.yaml</code></pre><p>The dev image tag should equal the SHA of the application commit that triggered the build.</p></li>
+        <li><strong>Force Argo CD to check Git immediately.</strong><pre><code>argocd app get cloud-lab-dev --refresh
+argocd app wait cloud-lab-dev --sync --health --timeout 180</code></pre></li>
+        <li><strong>Verify the image in Kubernetes.</strong><pre><code>kubectl get deployment cloud-lab-dev -n dev -o jsonpath='{.spec.template.spec.containers[0].image}' ; echo
+kubectl get pods -n dev</code></pre></li>
+        <li><strong>Verify the new page.</strong><pre><code>kubectl port-forward service/cloud-lab-dev -n dev 8082:80</code></pre><p>Open <code>http://localhost:8082</code> and confirm <code>Version 2</code>. Stop the port-forward.</p></li>
+        <li><strong>Narrate the chain without commands.</strong><div class="flow mini-flow"><div class="node">Developer push</div><div class="arrow">&rarr;</div><div class="node">GitHub Actions</div><div class="arrow">&rarr;</div><div class="node">GHCR SHA image</div><div class="arrow">&rarr;</div><div class="node">values-dev Git commit</div><div class="arrow">&rarr;</div><div class="node">Argo CD</div><div class="arrow">&rarr;</div><div class="node">Kubernetes</div></div></li>
+      </ol>
+
+      <div class="callout good"><strong>Important architecture result:</strong> GitHub Actions has registry and repository permissions but no kubeconfig and no Argo CD admin token. CI publishes an artifact and changes Git desired state; the in-cluster GitOps controller performs deployment.</div>
+      <details class="quiz"><summary>Knowledge check</summary><p>Which commit identifies the container image? Which later commit updates desired deployment state? Why is it useful that these are separate events? What security benefit comes from not storing cluster-admin credentials in GitHub Actions?</p></details>
+      <div class="complete"><input type="checkbox" id="lab16" data-lab="16"><label for="lab16">Lab 16 complete &mdash; the full CI-to-GitOps loop works from one application commit.</label></div>
+    </div>
+  </details>
+
+  <details class="lab">
+    <summary><span class="lab-index">17</span><span class="lab-title"><b>Prove drift correction, self-heal, prune, degraded health, and Git recovery</b><span>Break the GitOps system in controlled ways so reconciliation behavior becomes obvious.</span></span><span class="lab-meta">Argo CD &middot; failure drill</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>You are learning</strong><span class="small muted">Live drift vs desired state, selfHeal, prune, Synced vs Healthy, runtime image failure, and Git revert as durable recovery.</span></div><div><strong>Success evidence</strong><span class="small muted">Argo CD automatically reverses manual scaling, prunes a removed resource, shows a bad image as unhealthy, and recovers after a Git revert.</span></div></div>
+
+      <h3>Exercise A &mdash; self-heal manual drift</h3>
+      <ol class="steps">
+        <li><strong>Read the desired replica count from Git.</strong><pre><code>grep -n 'replicaCount' helm/cloud-lab/values-dev.yaml
+kubectl get deployment cloud-lab-dev -n dev</code></pre></li>
+        <li><strong>Manually scale the live Deployment to seven.</strong><pre><code>kubectl scale deployment cloud-lab-dev -n dev --replicas=7
+kubectl get deployment cloud-lab-dev -n dev -w</code></pre><p>Keep watching. With <code>selfHeal: true</code>, Argo CD should return the Deployment to the Git-defined replica count. Press <kbd>Ctrl</kbd>+<kbd>C</kbd> after it heals.</p></li>
+        <li><strong>Confirm Git did not change.</strong><pre><code>git status
+argocd app get cloud-lab-dev</code></pre></li>
+      </ol>
+
+      <h3>Exercise B &mdash; prune a resource removed from Git</h3>
+      <p>Create <code class="inline">helm/cloud-lab/templates/prune-demo.yaml</code>:</p>
+<pre><code>apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-prune-demo
+data:
+  purpose: "temporary resource used to demonstrate Argo CD prune"</code></pre>
+      <ol class="steps" start="4">
+        <li><strong>Commit the temporary resource.</strong><pre><code>git add helm/cloud-lab/templates/prune-demo.yaml
+git commit -m "lab 17: add temporary prune demo resource"
+git push
+argocd app get cloud-lab-dev --refresh
+argocd app wait cloud-lab-dev --sync --health --timeout 180
+kubectl get configmap cloud-lab-dev-prune-demo -n dev</code></pre></li>
+        <li><strong>Remove the resource from desired state.</strong><pre><code>git rm helm/cloud-lab/templates/prune-demo.yaml
+git commit -m "lab 17: remove temporary resource to test prune"
+git push
+argocd app get cloud-lab-dev --refresh
+argocd app wait cloud-lab-dev --sync --health --timeout 180
+kubectl get configmap cloud-lab-dev-prune-demo -n dev || true</code></pre><div class="expected"><strong>Expected:</strong> the ConfigMap no longer exists because automated prune removed a resource deleted from Git.</div></li>
+      </ol>
+
+      <h3>Exercise C &mdash; Git can be Synced while the application is unhealthy</h3>
+      <ol class="steps" start="6">
+        <li><strong>Record the current good dev image tag.</strong><pre><code>GOOD_TAG=$(grep -A3 '^image:' helm/cloud-lab/values-dev.yaml | awk '/tag:/{gsub(/"/,"",$2); print $2; exit}')
+echo "$GOOD_TAG"</code></pre></li>
+        <li><strong>Change only the dev image tag to a nonexistent value.</strong><p>Edit <code>values-dev.yaml</code> so its tag is:</p><pre><code>tag: "this-image-tag-does-not-exist"</code></pre><p>Then commit/push. The build workflow does not trigger because <code>app/**</code> did not change.</p><pre><code>git add helm/cloud-lab/values-dev.yaml
+git commit -m "lab 17: intentionally deploy nonexistent image tag"
+git push</code></pre></li>
+        <li><strong>Refresh Argo and observe both sync and health.</strong><pre><code>argocd app get cloud-lab-dev --refresh
+sleep 10
+argocd app get cloud-lab-dev
+kubectl get pods -n dev</code></pre><p>Argo CD may be <strong>Synced</strong> because live specs match Git, while health is <strong>Degraded/Progressing</strong> because the new Pod cannot pull its image.</p></li>
+        <li><strong>Diagnose from Kubernetes evidence.</strong><pre><code>BAD_POD=$(kubectl get pods -n dev --sort-by=.metadata.creationTimestamp -o jsonpath='{.items[-1:].metadata.name}')
+kubectl describe pod -n dev "$BAD_POD"
+kubectl get events -n dev --sort-by=.lastTimestamp | tail -n 20</code></pre><p>Find <code>ImagePullBackOff</code> and the failed image reference.</p></li>
+        <li><strong>Recover by reverting Git.</strong><pre><code>git log --oneline -5</code></pre><p>Copy the SHA of the intentional bad-image commit and run:</p><pre><code>git revert &lt;BAD_IMAGE_COMMIT_SHA&gt;
+git push
+argocd app get cloud-lab-dev --refresh
+argocd app wait cloud-lab-dev --sync --health --timeout 180
+kubectl get pods -n dev</code></pre></li>
+        <li><strong>Verify the good image returned.</strong><pre><code>kubectl get deployment cloud-lab-dev -n dev -o jsonpath='{.spec.template.spec.containers[0].image}' ; echo</code></pre></li>
+      </ol>
+
+      <div class="callout good"><strong>GitOps recovery principle:</strong> a manual live fix is temporary when Git still contains the broken desired state. Durable recovery changes or reverts the source of truth so reconciliation works with you, not against you.</div>
+      <details class="quiz"><summary>Knowledge check</summary><p>How can an Application be Synced but unhealthy? What exactly does prune do? What exactly does self-heal do? Which one responded to manual scaling and which one responded to deleting a template from Git?</p></details>
+      <div class="complete"><input type="checkbox" id="lab17" data-lab="17"><label for="lab17">Lab 17 complete &mdash; I have personally observed reconciliation, prune, runtime failure, and Git-based recovery.</label></div>
+    </div>
+  </details>
+
+  <details class="lab" id="capstone">
+    <summary><span class="lab-index">18</span><span class="lab-title"><b>Capstone: promote the same image from dev to stage by pull request</b><span>Use one chart, two Argo CD Applications, independent image pins, CI validation, and reviewed Git promotion.</span></span><span class="lab-meta">Kubernetes &middot; Helm &middot; Argo CD &middot; Actions</span></summary>
+    <div class="lab-body">
+      <div class="lab-goals"><div><strong>Goal</strong><span class="small muted">New application commits deploy automatically to dev; stage changes only when a reviewed PR updates the stage image tag.</span></div><div><strong>Success evidence</strong><span class="small muted">Dev and stage run the same promoted immutable SHA after merge, and stage never received the image merely because dev did.</span></div></div>
+
+      <h3>Step 1 &mdash; create <code class="inline">argocd/helm-stage.yaml</code></h3>
+<pre><code>apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cloud-lab-stage
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/YOUR_GITHUB_USERNAME/cloud-native-labs.git
+    targetRevision: main
+    path: helm/cloud-lab
+    helm:
+      valueFiles:
+        - values-stage.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: stage
+  syncPolicy:
+    automated:
+      enabled: true
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true</code></pre>
+
+      <ol class="steps">
+        <li><strong>Commit and create the stage Application.</strong><pre><code>git add argocd/helm-stage.yaml
+git commit -m "lab 18: add argocd stage application"
+git push
+kubectl apply -f argocd/helm-stage.yaml
+argocd app get cloud-lab-stage --refresh
+argocd app wait cloud-lab-stage --sync --health --timeout 180</code></pre></li>
+        <li><strong>Record dev and stage image references.</strong><pre><code>DEV_IMAGE=$(kubectl get deployment cloud-lab-dev -n dev -o jsonpath='{.spec.template.spec.containers[0].image}')
+STAGE_IMAGE=$(kubectl get deployment cloud-lab-stage -n stage -o jsonpath='{.spec.template.spec.containers[0].image}')
+echo "DEV   = $DEV_IMAGE"
+echo "STAGE = $STAGE_IMAGE"</code></pre><p>At this moment they may be equal because stage was initially bootstrapped from the known-good image. The next release demonstrates independent promotion.</p></li>
+        <li><strong>Create application Version 3 and let it deploy only to dev.</strong><p>Edit <code>app/index.html</code>, change the badge to <code>Version 3</code>, then:</p><pre><code>git add app/index.html
+git commit -m "lab 18: release application version 3"
+git push</code></pre><p>Wait for GitHub Actions to build the new image and commit the new dev tag. Then:</p><pre><code>git pull --ff-only
+argocd app get cloud-lab-dev --refresh
+argocd app wait cloud-lab-dev --sync --health --timeout 180</code></pre></li>
+        <li><strong>Prove stage did not automatically receive Version 3.</strong><pre><code>DEV_IMAGE=$(kubectl get deployment cloud-lab-dev -n dev -o jsonpath='{.spec.template.spec.containers[0].image}')
+STAGE_IMAGE=$(kubectl get deployment cloud-lab-stage -n stage -o jsonpath='{.spec.template.spec.containers[0].image}')
+echo "DEV   = $DEV_IMAGE"
+echo "STAGE = $STAGE_IMAGE"</code></pre><div class="expected"><strong>Expected:</strong> dev and stage tags differ. This is the promotion boundary.</div></li>
+        <li><strong>Extract the dev tag to promote.</strong><pre><code>DEV_TAG=${DEV_IMAGE##*:}
+echo "$DEV_TAG"</code></pre></li>
+        <li><strong>Create a promotion branch.</strong><pre><code>git switch -c "promote-stage-${DEV_TAG:0:8}"</code></pre></li>
+        <li><strong>Change only the stage image tag.</strong><p>Edit <code>helm/cloud-lab/values-stage.yaml</code> and replace its <code>image.tag</code> with the full value printed by <code>$DEV_TAG</code>. Then validate:</p><pre><code>helm lint helm/cloud-lab -f helm/cloud-lab/values-stage.yaml
+helm template cloud-lab-stage helm/cloud-lab -f helm/cloud-lab/values-stage.yaml | grep 'image:'
+git diff</code></pre></li>
+        <li><strong>Commit and push the promotion branch.</strong><pre><code>git add helm/cloud-lab/values-stage.yaml
+git commit -m "promote stage to image ${DEV_TAG}"
+git push -u origin HEAD</code></pre></li>
+        <li><strong>Open a GitHub pull request.</strong><p>Base = <code>main</code>; compare = your promotion branch. Verify the validation workflow passes. In <strong>Files changed</strong>, confirm the intended promotion changes only the stage image tag.</p></li>
+        <li><strong>Merge the pull request after review.</strong><p>Then update your local repository:</p><pre><code>git switch main
+git pull --ff-only</code></pre></li>
+        <li><strong>Force stage to refresh and wait for deployment.</strong><pre><code>argocd app get cloud-lab-stage --refresh
+argocd app wait cloud-lab-stage --sync --health --timeout 180</code></pre></li>
+        <li><strong>Prove dev and stage now run the same immutable image SHA.</strong><pre><code>DEV_IMAGE=$(kubectl get deployment cloud-lab-dev -n dev -o jsonpath='{.spec.template.spec.containers[0].image}')
+STAGE_IMAGE=$(kubectl get deployment cloud-lab-stage -n stage -o jsonpath='{.spec.template.spec.containers[0].image}')
+echo "DEV   = $DEV_IMAGE"
+echo "STAGE = $STAGE_IMAGE"
+test "$DEV_IMAGE" = "$STAGE_IMAGE" && echo "PROMOTION VERIFIED"</code></pre></li>
+        <li><strong>Verify stage from the browser.</strong><pre><code>kubectl port-forward service/cloud-lab-stage -n stage 8083:80</code></pre><p>Open <code>http://localhost:8083</code> and confirm <code>Version 3</code>. Stop port-forward afterward.</p></li>
+      </ol>
+
+      <h3>Final capstone explanation</h3>
+      <div class="architecture"><div><b>1. Source change</b><span>Developer merges app code to main.</span></div><div><b>2. CI</b><span>GitHub Actions builds and pushes a SHA-tagged image to GHCR.</span></div><div><b>3. Dev promotion</b><span>Workflow updates only values-dev.yaml in Git.</span></div><div><b>4. Dev CD</b><span>Argo CD renders Helm and reconciles Kubernetes dev.</span></div><div><b>5. Stage gate</b><span>A PR explicitly copies the tested SHA into values-stage.yaml.</span></div><div><b>6. Stage CD</b><span>After merge, Argo CD reconciles stage to the reviewed SHA.</span></div></div>
+
+      <h3>Capstone acceptance checklist</h3>
+      <div class="check">I can explain every resource in the raw <code>k8s/</code> folder.</div>
+      <div class="check">I can render the Helm chart and predict the image, replicas, resource names, and ConfigMap values.</div>
+      <div class="check">I can distinguish a Helm chart, a manual Helm release, and an Argo CD Application using Helm rendering.</div>
+      <div class="check">I can show a GitHub Actions validation failure and its successful fix.</div>
+      <div class="check">I can trace one Git application commit to its GHCR SHA image.</div>
+      <div class="check">I can show the later Git desired-state commit that promoted that image to dev.</div>
+      <div class="check">I can demonstrate Argo CD self-heal and prune instead of only describing them.</div>
+      <div class="check">I can diagnose ImagePullBackOff using Pod describe/events and recover by reverting Git.</div>
+      <div class="check">I can prove a new dev image does not enter stage until the stage values PR is merged.</div>
+      <div class="check">I can explain why this GitOps model does not require GitHub Actions to hold direct cluster credentials.</div>
+
+      <h3>Optional cleanup after the full course</h3>
+<pre><code>kubectl delete application cloud-lab-dev cloud-lab-stage -n argocd
+kubectl delete namespace dev stage --ignore-not-found
+minikube stop</code></pre>
+      <p>If you want to destroy the local cluster completely instead of pausing it, run <code>minikube delete</code>. Keep the GitHub repository: it is your portfolio evidence.</p>
+
+      <div class="complete"><input type="checkbox" id="lab18" data-lab="18"><label for="lab18">Lab 18 complete &mdash; full dev-to-stage GitOps promotion capstone finished.</label></div>
+    </div>
+  </details>
+</div>
+</section>
+
+
+<section class="section">
+<div class="shell">
+  <div class="section-head"><div><h2>What “understanding” looks like</h2><p>A beginner is ready to move beyond this guide when these questions can be answered without memorized scripts.</p></div></div>
+  <div class="grid grid-3">
+    <div class="card"><strong>Kubernetes</strong><ul class="small muted"><li>Why does a Deployment create a ReplicaSet?</li><li>How does a Service find Pods?</li><li>What creates ImagePullBackOff?</li><li>What is the difference between desired and observed state?</li></ul></div>
+    <div class="card"><strong>Helm</strong><ul class="small muted"><li>What is rendered from values?</li><li>Chart vs release?</li><li>Why run lint/template before install?</li><li>What changes in an upgrade revision?</li></ul></div>
+    <div class="card"><strong>Argo CD + Actions</strong><ul class="small muted"><li>CI vs CD vs GitOps?</li><li>Why can Synced still be unhealthy?</li><li>Why use immutable image tags?</li><li>Why does self-heal revert kubectl drift?</li></ul></div>
+  </div>
+</div>
+</section>
+
+<section class="section" id="cheatsheet">
+<div class="shell">
+  <div class="section-head"><div><h2>Command cheat sheet</h2><p>Use this only after the labs. A cheat sheet is useful for recall, not as a substitute for the mental model.</p></div></div>
+  <div class="grid grid-2">
+    <div class="card"><h3>Kubernetes</h3><pre><code>kubectl get pods -A
+kubectl get all -n dev
+kubectl describe pod &lt;pod&gt; -n dev
+kubectl logs &lt;pod&gt; -n dev
+kubectl get events -n dev --sort-by=.lastTimestamp
+kubectl rollout status deployment/&lt;name&gt; -n dev
+kubectl rollout history deployment/&lt;name&gt; -n dev
+kubectl port-forward svc/&lt;name&gt; 8080:80 -n dev</code></pre></div>
+    <div class="card"><h3>Helm</h3><pre><code>helm create &lt;chart&gt;
+helm lint &lt;chart&gt;
+helm template &lt;release&gt; &lt;chart&gt; -f values.yaml
+helm install &lt;release&gt; &lt;chart&gt; -n &lt;ns&gt;
+helm upgrade &lt;release&gt; &lt;chart&gt; -n &lt;ns&gt;
+helm list -A
+helm history &lt;release&gt; -n &lt;ns&gt;
+helm rollback &lt;release&gt; &lt;revision&gt; -n &lt;ns&gt;
+helm get manifest &lt;release&gt; -n &lt;ns&gt;</code></pre></div>
+    <div class="card"><h3>Argo CD</h3><pre><code>argocd app list
+argocd app get &lt;app&gt;
+argocd app sync &lt;app&gt;
+argocd app diff &lt;app&gt;
+argocd app manifests &lt;app&gt;
+kubectl get applications -n argocd
+kubectl port-forward svc/argocd-server -n argocd 8080:443</code></pre></div>
+    <div class="card"><h3>Git / delivery</h3><pre><code>git status
+git diff
+git log --oneline -10
+git switch -c feature/my-change
+git add .
+git commit -m "describe desired-state change"
+git push -u origin feature/my-change
+git revert &lt;commit&gt;</code></pre></div>
+  </div>
+</div>
+</section>
+
+<section class="section">
+<div class="shell">
+  <div class="section-head"><div><h2>Production concepts to learn next</h2><p>Do not overload the beginner labs with these. Add them after the capstone works reliably.</p></div></div>
+  <div class="scorecard">
+    <div class="score"><b>01</b><p class="small"><strong>Ingress / Gateway API</strong><br><span class="muted">External traffic, TLS, routing.</span></p></div>
+    <div class="score"><b>02</b><p class="small"><strong>Secrets management</strong><br><span class="muted">External Secrets, Sealed Secrets, cloud vaults.</span></p></div>
+    <div class="score"><b>03</b><p class="small"><strong>RBAC + least privilege</strong><br><span class="muted">ServiceAccounts, Roles, Argo projects.</span></p></div>
+    <div class="score"><b>04</b><p class="small"><strong>Observability</strong><br><span class="muted">Metrics, logs, tracing, alerts.</span></p></div>
+    <div class="score"><b>05</b><p class="small"><strong>Policy / supply chain</strong><br><span class="muted">Image scanning, signing, SBOM, admission policy.</span></p></div>
+    <div class="score"><b>06</b><p class="small"><strong>ApplicationSet</strong><br><span class="muted">Generate many Argo CD Applications.</span></p></div>
+    <div class="score"><b>07</b><p class="small"><strong>Managed Kubernetes</strong><br><span class="muted">EKS, AKS, GKE; identity and networking.</span></p></div>
+    <div class="score"><b>08</b><p class="small"><strong>Progressive delivery</strong><br><span class="muted">Canary/blue-green with Argo Rollouts.</span></p></div>
+  </div>
+</div>
+</section>
+
+<section class="section" id="sources">
+<div class="shell">
+  <div class="section-head"><div><h2>Official references</h2><p>The lab flow favors stable concepts and points installation/version-sensitive steps back to official project documentation.</p></div></div>
+  <ul class="sources">
+    <li><a href="https://kubernetes.io/docs/tasks/tools/" target="_blank" rel="noreferrer">Kubernetes — Install tools / kubectl</a></li>
+    <li><a href="https://minikube.sigs.k8s.io/docs/start/" target="_blank" rel="noreferrer">minikube — Start a local Kubernetes cluster</a></li>
+    <li><a href="https://kubernetes.io/docs/tutorials/kubernetes-basics/deploy-app/deploy-intro/" target="_blank" rel="noreferrer">Kubernetes — Using kubectl to create a Deployment</a></li>
+    <li><a href="https://helm.sh/docs/" target="_blank" rel="noreferrer">Helm — Official documentation</a></li>
+    <li><a href="https://helm.sh/docs/intro/install/" target="_blank" rel="noreferrer">Helm — Installation</a></li>
+    <li><a href="https://argo-cd.readthedocs.io/en/stable/getting_started/" target="_blank" rel="noreferrer">Argo CD — Getting started</a></li>
+    <li><a href="https://argo-cd.readthedocs.io/en/latest/user-guide/helm/" target="_blank" rel="noreferrer">Argo CD — Helm integration</a></li>
+    <li><a href="https://argo-cd.readthedocs.io/en/latest/user-guide/auto_sync/" target="_blank" rel="noreferrer">Argo CD — Automated sync policy</a></li>
+    <li><a href="https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd" target="_blank" rel="noreferrer">argo-helm — Community Helm chart for Argo CD</a></li>
+    <li><a href="https://docs.github.com/en/actions" target="_blank" rel="noreferrer">GitHub Actions — Documentation</a></li>
+    <li><a href="https://docs.github.com/en/actions/tutorials/publish-packages/publish-docker-images" target="_blank" rel="noreferrer">GitHub Actions — Publish Docker images / GHCR</a></li>
+    <li><a href="https://argo-cd.readthedocs.io/en/latest/cli_installation/" target="_blank" rel="noreferrer">Argo CD — CLI installation</a></li>
+    <li><a href="https://github.com/argoproj/argo-helm/tree/main/charts/argo-cd" target="_blank" rel="noreferrer">Argo CD — Helm chart installation option</a></li>
+  </ul>
+  <div class="callout warn"><strong>Version note:</strong> cloud-native tools evolve quickly. Before using this guide months later, re-check the official install pages, supported Kubernetes versions, and major versions of GitHub Actions used in workflows.</div>
+</div>
+</section>
+
+<footer class="footer"><div class="shell"><strong>Cloud Native Delivery Lab Book</strong><br>Designed as a learn-by-doing path: raw Kubernetes first, abstraction second, automation third. Keep the repository history—it becomes evidence of progression, not just a final working state.</div></footer>
+
+<script>
+(function(){
+  const boxes=[...document.querySelectorAll('input[data-lab]')];
+  const key='cloud-native-lab-progress-v2';
+  let saved={}; try{saved=JSON.parse(localStorage.getItem(key)||'{}')}catch(e){}
+  boxes.forEach(b=>{b.checked=!!saved[b.dataset.lab];b.addEventListener('change',()=>{saved[b.dataset.lab]=b.checked;localStorage.setItem(key,JSON.stringify(saved));update();});});
+  function update(){const done=boxes.filter(b=>b.checked).length;document.getElementById('progressText').textContent=`${done} / ${boxes.length} labs`;document.getElementById('progressBar').style.width=`${(done/boxes.length)*100}%`;}
+  update();
+  document.querySelectorAll('pre').forEach(pre=>{
+    const btn=document.createElement('button');btn.className='copy';btn.type='button';btn.textContent='Copy';
+    btn.addEventListener('click',async()=>{const code=pre.querySelector('code')?.innerText||pre.innerText;try{await navigator.clipboard.writeText(code);btn.textContent='Copied';setTimeout(()=>btn.textContent='Copy',1200)}catch(e){btn.textContent='Select + copy'}});
+    pre.appendChild(btn);
+  });
+})();
+</script>
+</body>
+</html>
