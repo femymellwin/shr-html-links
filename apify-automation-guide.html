@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Automated Job Discovery & Application Pipeline - Apify + n8n</title>
+<style>
+  :root{--bg:#f6f8fb;--paper:#fff;--ink:#172033;--muted:#5f6b7a;--accent:#2457d6;--accent2:#163c96;--line:#dfe5ee;--good:#0f7b55;--warn:#a35b00;--bad:#a2252c;--code:#0f172a}
+  *{box-sizing:border-box} html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.58 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  header{background:linear-gradient(135deg,#142a64,#2457d6);color:#fff;padding:54px 24px 44px}
+  header .wrap,.wrap{max-width:1040px;margin:auto} h1{font-size:36px;line-height:1.15;margin:0 0 12px}
+  h2{font-size:25px;margin:38px 0 12px;color:#132653} h3{font-size:18px;margin:24px 0 8px} p{margin:8px 0 14px}
+  .lede{font-size:18px;max-width:860px;color:#eef4ff}.pill{display:inline-block;background:#eaf0ff;color:#1f49b0;border-radius:999px;padding:4px 10px;font-weight:650;margin:2px 4px 2px 0}
+  main{padding:26px 24px 70px} nav{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:0 0 26px;box-shadow:0 3px 12px #1620400d}
+  nav a{color:var(--accent2);text-decoration:none;margin-right:18px;white-space:nowrap} section{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:24px 28px;margin:18px 0;box-shadow:0 3px 12px #1620400d}
+  .callout{border-left:5px solid var(--accent);background:#f2f6ff;padding:14px 16px;border-radius:8px;margin:14px 0}.callout.good{border-left-color:var(--good);background:#effaf5}.callout.warn{border-left-color:var(--warn);background:#fff8eb}.callout.bad{border-left-color:var(--bad);background:#fff1f2}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:15px 0}.card{border:1px solid var(--line);border-radius:12px;padding:15px;background:#fbfcfe}.card b{display:block;margin-bottom:4px}
+  .flow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:18px 0}.flow .node{padding:9px 12px;border:1px solid #b9c7e8;background:#f4f7ff;border-radius:9px;font-weight:700}.flow .arrow{font-weight:900;color:#6b7890}
+  table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}th,td{border:1px solid var(--line);padding:10px 11px;vertical-align:top;text-align:left}th{background:#eef3fb;color:#19315f}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:#edf1f6;padding:1px 5px;border-radius:5px}pre{background:var(--code);color:#e7eefc;border-radius:12px;padding:16px;overflow:auto;font-size:13px;line-height:1.5}pre code{background:transparent;padding:0;color:inherit}
+  ol li,ul li{margin:5px 0}.step{display:grid;grid-template-columns:36px 1fr;gap:12px;margin:14px 0}.stepno{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:#fff;font-weight:800}.small{font-size:13px;color:var(--muted)}.check{color:var(--good);font-weight:700}.stop{color:var(--bad);font-weight:700}footer{color:var(--muted);text-align:center;padding:25px}
+  @media (max-width:650px){h1{font-size:29px}section{padding:20px}table{font-size:13px}}
+  @media print{body{background:#fff}.wrap{max-width:none}section,nav{box-shadow:none;break-inside:avoid}a{color:#000;text-decoration:none}header{background:#fff;color:#111;border-bottom:2px solid #2457d6}.lede{color:#333}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Automated Job Discovery & Application Pipeline</h1>
+  <p class="lede">A practical implementation guide using Apify + n8n + a CV-matching step + a controlled application worker. Designed to automate discovery and preparation, while only auto-submitting on sites where automation is permitted.</p>
+  <div><span class="pill">Apify</span><span class="pill">n8n</span><span class="pill">CV Matching</span><span class="pill">Playwright</span><span class="pill">Human Approval</span></div>
+</div></header>
+<main class="wrap">
+<nav><b>Jump to:</b> <a href="#architecture">Architecture</a><a href="#setup">Setup</a><a href="#n8n">n8n workflow</a><a href="#scoring">Matching</a><a href="#apply">Application worker</a><a href="#rules">Safety rules</a><a href="#launch">Launch checklist</a></nav>
+
+<section>
+  <h2>1. The recommended operating model</h2>
+  <p>The reliable version is <b>not</b> "scrape every job and blindly click Apply." It is a controlled funnel:</p>
+  <div class="flow"><div class="node">Scrape jobs</div><div class="arrow">-&gt;</div><div class="node">Normalize</div><div class="arrow">-&gt;</div><div class="node">Deduplicate</div><div class="arrow">-&gt;</div><div class="node">CV match</div><div class="arrow">-&gt;</div><div class="node">Prepare answers</div><div class="arrow">-&gt;</div><div class="node">Approval / policy gate</div><div class="arrow">-&gt;</div><div class="node">Apply</div><div class="arrow">-&gt;</div><div class="node">Log outcome</div></div>
+  <div class="callout good"><b>Recommended default:</b> automate everything up to the final submission. Auto-submit only for an allowlist of employer/ATS sites whose terms permit it and where every required answer is known with high confidence.</div>
+  <div class="callout bad"><b>LinkedIn:</b> do not build a LinkedIn scraping or auto-application bot. LinkedIn's current User Agreement prohibits software/scripts/robots used to scrape or copy its services and prohibits bypassing security/access controls. Keep LinkedIn in manual/review mode.</div>
+</section>
+
+<section id="architecture">
+  <h2>2. Architecture</h2>
+  <div class="grid">
+    <div class="card"><b>1. Job collectors</b>Apify Naukri/public-job Actors, company career pages, or other permitted public sources.</div>
+    <div class="card"><b>2. Orchestrator</b>n8n receives the Apify webhook, processes each row, calls scoring services, and controls the workflow.</div>
+    <div class="card"><b>3. Job database</b>PostgreSQL, SQLite, Airtable, or Google Sheets for duplicate prevention and application history.</div>
+    <div class="card"><b>4. Candidate profile</b>A structured JSON file containing your real experience, skills, notice period, locations, salary preferences, and standard answers.</div>
+    <div class="card"><b>5. Matching engine</b>Rules + optional LLM score each role against your CV and reject jobs outside your constraints.</div>
+    <div class="card"><b>6. Apply worker</b>Playwright or an ATS/API integration. It must fail closed on CAPTCHA, unknown questions, login challenges, or unsupported domains.</div>
+  </div>
+  <h3>Suggested deployment</h3>
+  <pre><code>Apify Schedule
+      |
+      v
+Naukri/Public Job Actor
+      |
+      | Actor finished webhook
+      v
+n8n Webhook
+      |
+      +--&gt; Fetch Apify Dataset
+      |
+      +--&gt; Normalize + Deduplicate
+      |
+      +--&gt; Hard Filters
+      |
+      +--&gt; CV / Job Match Score
+      |
+      +--&gt; Generate Application Packet
+      |
+      +--&gt; Domain / Terms Allowlist
+              |
+        +-----+------+
+        |            |
+        v            v
+   Manual Review   Auto-Apply Worker
+        |            |
+        +-----+------+
+              v
+        Application Log</code></pre>
+</section>
+
+<section id="setup">
+  <h2>3. Set up Apify</h2>
+  <div class="step"><div class="stepno">1</div><div><b>Create a job-search Actor task.</b><p>Choose a Naukri/public jobs Actor from Apify Store, test it manually, then use <b>Save as a new task</b>. Apify tasks are reusable Actor configurations that can be run manually, by schedule, or by API.</p></div></div>
+  <div class="step"><div class="stepno">2</div><div><b>Use narrow searches.</b><p>Create separate searches for your main target titles instead of one extremely broad query.</p><pre><code>{
+  "searchQueries": [
+    "DevOps Engineer",
+    "Cloud Engineer",
+    "Platform Engineer",
+    "Site Reliability Engineer"
+  ],
+  "locations": ["Dubai", "Abu Dhabi", "United Arab Emirates"],
+  "maxJobs": 50,
+  "freshness": "7",
+  "scrapeJobDetails": true
+}</code></pre><p class="small">Actor input field names differ by Actor. Copy the actual JSON schema from the Actor's Input/API tab.</p></div></div>
+  <div class="step"><div class="stepno">3</div><div><b>Schedule the task.</b><p>In Apify Console: <code>Schedules -&gt; Create new -&gt; Add -&gt; Actor task</code>. Start with twice daily rather than every few minutes. Apify supports cron schedules and timezone settings.</p><pre><code># Example: 08:00 and 18:00 every day
+0 8,18 * * *</code></pre></div></div>
+  <div class="step"><div class="stepno">4</div><div><b>Create an n8n Webhook URL.</b><p>In n8n, add a Webhook node, use POST, and copy its production URL.</p></div></div>
+  <div class="step"><div class="stepno">5</div><div><b>Add the Apify webhook.</b><p>Configure the Actor/task so <code>ACTOR.RUN.SUCCEEDED</code> posts to the n8n Webhook URL. Apify webhooks are intended for triggering downstream HTTP actions when a run succeeds or fails.</p></div></div>
+</section>
+
+<section id="n8n">
+  <h2>4. Build the n8n workflow</h2>
+  <table><thead><tr><th>#</th><th>Node</th><th>Purpose</th></tr></thead><tbody>
+    <tr><td>1</td><td>Webhook</td><td>Receives the Apify Actor completion event.</td></tr>
+    <tr><td>2</td><td>HTTP Request</td><td>Fetches items from the run's default Apify dataset.</td></tr>
+    <tr><td>3</td><td>Split Out / Loop</td><td>Processes one job at a time.</td></tr>
+    <tr><td>4</td><td>Code</td><td>Normalizes title, company, URL, location, skills and job ID.</td></tr>
+    <tr><td>5</td><td>Database lookup</td><td>Rejects jobs already seen/applied to.</td></tr>
+    <tr><td>6</td><td>IF</td><td>Hard filters: location, role, experience, salary, age of posting.</td></tr>
+    <tr><td>7</td><td>AI / HTTP Request</td><td>Scores CV fit and extracts required skills / gaps.</td></tr>
+    <tr><td>8</td><td>IF</td><td>Only continue if score is above your threshold.</td></tr>
+    <tr><td>9</td><td>Code / AI</td><td>Builds a truthful application packet and questionnaire answers.</td></tr>
+    <tr><td>10</td><td>Policy gate</td><td>Checks application domain against an explicit auto-submit allowlist.</td></tr>
+    <tr><td>11A</td><td>HTTP Request / Execute Workflow</td><td>Calls the apply worker on permitted domains.</td></tr>
+    <tr><td>11B</td><td>Email/Teams/Telegram</td><td>Sends a review link for manual/restricted domains.</td></tr>
+    <tr><td>12</td><td>Database insert/update</td><td>Stores status, timestamp, score, source, URL, and failure reason.</td></tr>
+  </tbody></table>
+  <h3>Recommended database fields</h3>
+  <pre><code>job_key
+source
+source_job_id
+title
+company
+location
+job_url
+posted_at
+scraped_at
+match_score
+matched_skills
+missing_skills
+application_mode       # manual | assisted | auto
+application_status     # new | rejected | review | submitted | failed
+submitted_at
+resume_version
+cover_letter_version
+failure_reason</code></pre>
+  <h3>Stable duplicate key</h3>
+  <pre><code>// n8n Code node
+const crypto = require('crypto');
+
+for (const item of items) {
+  const j = item.json;
+  const raw = [
+    (j.source || '').toLowerCase(),
+    (j.jobId || j.source_job_id || '').toString(),
+    (j.companyName || j.company || '').toLowerCase(),
+    (j.title || '').toLowerCase(),
+    (j.location || '').toLowerCase()
+  ].join('|');
+
+  j.job_key = crypto.createHash('sha256').update(raw).digest('hex');
+}
+return items;</code></pre>
+</section>
+
+<section id="scoring">
+  <h2>5. Match jobs to your CV before applying</h2>
+  <p>Use hard filters first, then a weighted fit score. This prevents the automation from wasting applications on roles that are obviously unsuitable.</p>
+  <table><thead><tr><th>Signal</th><th>Example weight</th><th>Rule</th></tr></thead><tbody>
+    <tr><td>Target job title</td><td>25%</td><td>DevOps / Cloud / Platform / SRE variations.</td></tr>
+    <tr><td>Required technical skills</td><td>30%</td><td>AWS, Terraform, Kubernetes, Linux, CI/CD, etc.</td></tr>
+    <tr><td>Years / seniority</td><td>15%</td><td>Reject large gaps rather than inventing experience.</td></tr>
+    <tr><td>Location / remote mode</td><td>10%</td><td>Must match your real preferences.</td></tr>
+    <tr><td>Domain / responsibilities</td><td>10%</td><td>Infrastructure, operations, platform engineering, SRE.</td></tr>
+    <tr><td>Salary / notice period</td><td>10%</td><td>Use only if the posting provides enough information.</td></tr>
+  </tbody></table>
+  <div class="callout"><b>Example routing:</b><br>Score &lt; 65 -&gt; reject automatically<br>65-79 -&gt; save for review<br>80-89 -&gt; prepare application + request approval<br>90+ -&gt; eligible for auto-submit only if the domain is allowlisted and every required answer is known</div>
+  <h3>Application packet sent to the apply worker</h3>
+  <pre><code>{
+  "job": {
+    "job_key": "...",
+    "title": "Senior DevOps Engineer",
+    "company": "Example Co",
+    "url": "https://careers.example.com/jobs/123"
+  },
+  "candidate": {
+    "full_name": "YOUR NAME",
+    "email": "you@example.com",
+    "phone": "+971...",
+    "location": "Dubai, UAE",
+    "notice_period": "30 days",
+    "work_authorization": "YOUR TRUE ANSWER"
+  },
+  "files": {"resume": "/secure/profile/resume-devops.pdf"},
+  "answers": {"years_aws": 6,"years_kubernetes": 4,"needs_sponsorship": false},
+  "controls": {"auto_submit": false,"allowed_domain": false}
+}</code></pre>
+  <div class="callout warn">The candidate profile should contain only facts you have approved. Never let the model invent years of experience, certifications, salary, work authorization, security clearance, education, or questionnaire answers.</div>
+</section>
+
+<section id="apply">
+  <h2>6. Application worker: Playwright pattern</h2>
+  <p>For an employer site or ATS where browser automation is permitted, use a separate Playwright worker. Keep credentials and CV files outside n8n workflow JSON.</p>
+  <h3>Fail-closed submission design</h3>
+  <pre><code>// illustrative Node.js / Playwright skeleton
+import { chromium } from 'playwright';
+
+const AUTO_SUBMIT = process.env.AUTO_SUBMIT === 'true';
+const ALLOWLIST = new Set([
+  // Add only domains whose current terms/process allow your automation.
+  // 'careers.example-company.com'
+]);
+
+export async function apply(packet) {
+  const url = new URL(packet.job.url);
+  if (!ALLOWLIST.has(url.hostname)) {
+    return { status: 'review', reason: 'domain_not_allowlisted' };
+  }
+
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage();
+
+  try {
+    await page.goto(packet.job.url, { waitUntil: 'domcontentloaded' });
+    await page.getByLabel(/full name/i).fill(packet.candidate.full_name);
+    await page.getByLabel(/email/i).fill(packet.candidate.email);
+    await page.getByLabel(/phone/i).fill(packet.candidate.phone);
+
+    const resumeInput = page.locator('input[type="file"]').first();
+    await resumeInput.setInputFiles(packet.files.resume);
+
+    const body = (await page.locator('body').innerText()).toLowerCase();
+    if (body.includes('captcha') || body.includes('verify you are human')) {
+      return { status: 'review', reason: 'security_challenge' };
+    }
+
+    const unresolved = await findUnresolvedRequiredQuestions(page, packet);
+    if (unresolved.length) {
+      return { status: 'review', reason: 'unknown_required_answers', unresolved };
+    }
+
+    await page.screenshot({ path: `review-${packet.job.job_key}.png`, fullPage: true });
+    if (!AUTO_SUBMIT) return { status: 'review', reason: 'final_approval_required' };
+
+    await page.getByRole('button', { name: /submit application|apply/i }).click();
+    return { status: 'submitted' };
+  } catch (err) {
+    return { status: 'failed', reason: String(err) };
+  } finally {
+    await browser.close();
+  }
+}</code></pre>
+  <p class="small">Playwright recommends user-facing locators such as <code>getByRole()</code> and <code>getByLabel()</code>, which are generally more resilient than long CSS/XPath selectors.</p>
+  <h3>Do not automate around these conditions</h3>
+  <ul>
+    <li><span class="stop">STOP:</span> CAPTCHA or "verify you are human".</li>
+    <li><span class="stop">STOP:</span> MFA/login approval requiring a human.</li>
+    <li><span class="stop">STOP:</span> a required question for which your approved candidate profile has no answer.</li>
+    <li><span class="stop">STOP:</span> a domain not present in the auto-submit allowlist.</li>
+    <li><span class="stop">STOP:</span> a job already submitted previously.</li>
+    <li><span class="stop">STOP:</span> a mismatch between job location/work authorization requirements and your profile.</li>
+  </ul>
+</section>
+
+<section id="rules">
+  <h2>7. Source-by-source mode</h2>
+  <table><thead><tr><th>Source</th><th>Discovery</th><th>Application mode</th><th>Recommended handling</th></tr></thead><tbody>
+    <tr><td>LinkedIn</td><td>Do not build a scraper/robot around LinkedIn services.</td><td><b>Manual</b></td><td>Use LinkedIn normally and keep it outside the bot. LinkedIn's User Agreement prohibits scraping/copying via scripts, robots and similar technology.</td></tr>
+    <tr><td>Naukri public listings</td><td>Apify Store currently has community Actors that extract public Naukri job listings.</td><td><b>Assisted by default</b></td><td>Use scraped listings for discovery only after checking the current Naukri terms applicable to your account/jurisdiction. Actor availability is not permission from Naukri.</td></tr>
+    <tr><td>Company career site / ATS</td><td>Prefer official/public job feeds or permitted pages.</td><td><b>Auto only if allowed</b></td><td>Allowlist one domain at a time after verifying current terms, testing form behavior, and confirming no CAPTCHA/access-control bypass is needed.</td></tr>
+    <tr><td>Email-based applications</td><td>Use job listing data to prepare the application.</td><td><b>Can be highly automated</b></td><td>Generate a truthful draft, attach the correct CV, and optionally require approval before sending.</td></tr>
+  </tbody></table>
+  <div class="callout warn"><b>Important:</b> do not use proxy rotation, CAPTCHA solving, stealth plugins, account farming, rate-limit bypass, or other techniques intended to defeat a site's anti-automation/security controls.</div>
+</section>
+
+<section>
+  <h2>8. Recommended controls so the bot does not damage your job search</h2>
+  <div class="grid">
+    <div class="card"><b>Daily cap</b>Start with 5-10 high-quality applications/day rather than hundreds.</div>
+    <div class="card"><b>Company cooldown</b>Avoid submitting to multiple near-identical roles at the same employer on the same day.</div>
+    <div class="card"><b>Resume versions</b>Maintain 2-3 approved CV variants, e.g. DevOps, Cloud Infrastructure, Platform/SRE.</div>
+    <div class="card"><b>Truth lock</b>Questionnaire answers come from an approved profile database, never free-form invention.</div>
+    <div class="card"><b>Approval threshold</b>Require manual approval for borderline matches, relocation, unusual salary, or sponsorship questions.</div>
+    <div class="card"><b>Audit log</b>Keep the job URL, date, exact resume used, answers supplied, and submission result.</div>
+  </div>
+</section>
+
+<section>
+  <h2>9. Suggested first implementation</h2>
+  <h3>Stage A - Discovery automation</h3>
+  <ol><li>Apify task runs twice daily.</li><li>n8n pulls new rows.</li><li>Duplicate jobs are removed.</li><li>Hard filters + CV match score run.</li><li>Top matches are written to a Job Queue.</li></ol>
+  <h3>Stage B - Assisted applications</h3>
+  <ol><li>n8n selects a CV version.</li><li>It drafts role-specific cover text.</li><li>It prepares known questionnaire answers.</li><li>You receive a review card with score, missing skills, job URL and application packet.</li><li>You approve or reject.</li></ol>
+  <h3>Stage C - Selective auto-submit</h3>
+  <ol><li>Create an explicit domain allowlist.</li><li>Implement one permitted ATS/site at a time.</li><li>Run Playwright with <code>AUTO_SUBMIT=false</code> first and inspect screenshots.</li><li>Only switch <code>AUTO_SUBMIT=true</code> for verified domains with no unresolved questions/security challenges.</li><li>Keep LinkedIn and any other restricted source in manual mode.</li></ol>
+</section>
+
+<section id="launch">
+  <h2>10. Launch checklist</h2>
+  <table><tbody>
+    <tr><td class="check">OK</td><td>Apify Actor/task tested manually with 5-10 jobs.</td></tr>
+    <tr><td class="check">OK</td><td>Apify schedule enabled with the correct timezone.</td></tr>
+    <tr><td class="check">OK</td><td>Apify success webhook reaches n8n.</td></tr>
+    <tr><td class="check">OK</td><td>Dataset items are normalized into one common job schema.</td></tr>
+    <tr><td class="check">OK</td><td>Duplicate detection is persistent across runs.</td></tr>
+    <tr><td class="check">OK</td><td>Candidate facts/profile JSON reviewed by you.</td></tr>
+    <tr><td class="check">OK</td><td>Scoring threshold tested against at least 30 real jobs.</td></tr>
+    <tr><td class="check">OK</td><td>Application worker starts in review-only mode.</td></tr>
+    <tr><td class="check">OK</td><td>Security challenge/CAPTCHA causes immediate stop.</td></tr>
+    <tr><td class="check">OK</td><td>Only verified, permitted domains are added to the auto-submit allowlist.</td></tr>
+    <tr><td class="check">OK</td><td>All submissions and failures are logged.</td></tr>
+  </tbody></table>
+</section>
+
+<section>
+  <h2>11. Reference links</h2>
+  <ul>
+    <li>Apify Actors overview: <a href="https://docs.apify.com/actors">https://docs.apify.com/actors</a></li>
+    <li>Apify Actor schedules: <a href="https://docs.apify.com/actors/running/schedules">https://docs.apify.com/actors/running/schedules</a></li>
+    <li>Apify webhooks API: <a href="https://docs.apify.com/api/v2/webhooks-post">https://docs.apify.com/api/v2/webhooks-post</a></li>
+    <li>Apify Actor tasks: <a href="https://docs.apify.com/actors/running/tasks">https://docs.apify.com/actors/running/tasks</a></li>
+    <li>Example Naukri public-jobs Actor: <a href="https://apify.com/jobsapi/naukri-jobs-search-scraper">https://apify.com/jobsapi/naukri-jobs-search-scraper</a></li>
+    <li>Playwright locators: <a href="https://playwright.dev/docs/locators">https://playwright.dev/docs/locators</a></li>
+    <li>LinkedIn User Agreement: <a href="https://www.linkedin.com/legal/user-agreement">https://www.linkedin.com/legal/user-agreement</a></li>
+  </ul>
+  <p class="small">Reference status checked 29 Sep 2026. Terms and site behavior can change; re-check them before enabling any new auto-submit target.</p>
+</section>
+
+<section>
+  <h2>12. What to build next</h2>
+  <p>For a production setup, the next deliverable should be a self-contained project containing:</p>
+  <ul><li><code>n8n/workflow.json</code> - importable workflow</li><li><code>apply-worker/</code> - Node.js + Playwright service</li><li><code>config/candidate-profile.example.json</code> - approved personal facts</li><li><code>config/job-rules.json</code> - titles, locations, skills, score thresholds</li><li><code>config/domain-allowlist.json</code> - permitted auto-submit domains only</li><li><code>db/schema.sql</code> - jobs and applications tables</li><li><code>.env.example</code> - secrets configuration, with no real secrets committed</li></ul>
+</section>
+</main>
+<footer>Automated Job Discovery & Application Pipeline - implementation guide</footer>
+</body>
+</html>
