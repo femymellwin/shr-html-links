@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><meta content="light" name="color-scheme"/><meta content="A practical offline learning guide to NotebookLM, Mermaid, Excalidraw, draw.io, cloud architecture diagrams, and MinIO object storage." name="description"/><title>Cloud Learning Field Guide - NotebookLM, Mermaid, Excalidraw, draw.io &amp; MinIO</title><style>
+:root{--ink:#172e42;--muted:#5a6c7a;--accent:#087e79;--paper:#f5f5f0;--line:#dce3e4;--white:#fff;--warm:#bc6824;--sidebar:265px;scroll-behavior:smooth}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.73;font-size:16px}a{color:var(--accent);text-underline-offset:3px}a:hover{text-decoration-thickness:2px}button,input{font:inherit}button{cursor:pointer}button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #cf742d;outline-offset:4px}.skip{position:fixed;left:10px;top:-100px;z-index:9;padding:10px;background:#fff}.skip:focus{top:10px}.sidebar{position:fixed;inset:0 auto 0 0;width:var(--sidebar);padding:30px 20px 20px 24px;background:#fff;border-right:1px solid var(--line);overflow-y:auto;z-index:3}.brand{font-size:12px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent)}.sidebar h2{font-size:21px;line-height:1.3;margin:8px 0 20px;letter-spacing:-.4px}.sidebar label{font-size:12px;font-weight:700}.sidebar input[type=search]{width:100%;border:1px solid #c7d4d8;border-radius:7px;padding:9px 10px;margin:6px 0 2px;font-size:13px}.filter-status{font-size:11px;color:var(--muted);min-height:20px;margin-bottom:12px}.sidebar nav{display:flex;flex-direction:column;gap:2px}.sidebar nav a{display:flex;gap:10px;padding:7px 7px;border-radius:5px;text-decoration:none;font-size:12.5px;line-height:1.35;color:#445967}.sidebar nav a span{font-size:11px;min-width:19px;color:#8698a2}.sidebar nav a.active{background:#e9f5f2;color:#066b65;font-weight:700}.sidebar nav a:hover{background:#f0f4f4}.sidebar footer{border-top:1px solid var(--line);margin-top:20px;padding-top:12px;font-size:11px;color:var(--muted)}.progress-track{height:4px;border-radius:8px;background:#e3eae9;margin:8px 0}.progress-track i{display:block;height:100%;background:var(--accent);width:0;border-radius:8px}main{margin-left:var(--sidebar);max-width:1380px;padding:0 6vw 80px}.topline{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:23px 0;border-bottom:1px solid var(--line);font-size:11px;letter-spacing:1.5px;font-weight:700;color:var(--muted);text-transform:uppercase}.print-button{font-size:12px;padding:6px 12px;background:transparent;border:1px solid #b9c9cb;border-radius:6px;color:var(--ink);letter-spacing:0;text-transform:none}.hero{padding:58px 0 40px}.eyebrow{font-size:12px;font-weight:800;color:var(--accent);letter-spacing:2px;text-transform:uppercase}.hero h1{font-size:clamp(45px,5.5vw,76px);line-height:1.04;letter-spacing:-3.5px;font-weight:780;margin:18px 0 22px;max-width:900px}.hero h1 span{color:var(--accent)}.hero .lede{font-size:21px;line-height:1.6;color:#425a69;max-width:810px;margin:0 0 20px}.tool-strip{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0}.tool-strip span{font-size:12px;line-height:1.2;padding:8px 12px;border-radius:30px;background:#fff;border:1px solid var(--line);font-weight:650}.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--line);border-radius:12px;background:#fff;margin:32px 0 0;overflow:hidden}.hero-stats div{padding:22px 24px;border-right:1px solid var(--line)}.hero-stats div:last-child{border-right:0}.hero-stats b{font-size:29px;letter-spacing:-1px;display:block;line-height:1.2}.hero-stats small{font-size:12px;color:var(--muted)}.hero .meta{font-size:12px;color:var(--muted);margin-top:17px}.section-overview{padding:18px 22px;border-left:3px solid var(--accent);background:#eaf3ef;font-size:14px;margin:0 0 38px}section{border-top:1px solid var(--line);padding:42px 0 25px;scroll-margin-top:22px}.chapter-kicker{font-size:11px;letter-spacing:2px;font-weight:800;color:var(--accent);margin-bottom:9px}section h2{font-size:36px;line-height:1.2;letter-spacing:-1.1px;margin:0 0 27px}h3{font-size:22px;line-height:1.35;letter-spacing:-.35px;margin:32px 0 12px}p{margin:12px 0 17px}strong{font-weight:700}code{font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:.86em;overflow-wrap:anywhere;background:#e7edeb;padding:2px 5px;border-radius:4px}.code-wrap{position:relative;margin:20px 0;border-radius:10px;overflow:hidden;background:#172d40}.codebar{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;background:#223d50;color:#cad9de;font-size:10px;text-transform:uppercase;letter-spacing:1px}.copy{background:transparent;color:#dcebee;border:1px solid #637a88;border-radius:4px;padding:3px 9px;font-size:11px;text-transform:none;letter-spacing:0}.copy:hover{background:#304d60}pre{margin:0;padding:19px 20px 22px;overflow-x:auto;line-height:1.65;font-size:13px;tab-size:4;color:#e4f0f4}pre code{background:none;color:inherit;padding:0;font-size:inherit;white-space:pre;overflow-wrap:normal}.table-wrap{overflow:auto;margin:22px 0;border:1px solid var(--line);border-radius:9px;background:#fff}table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.65;min-width:550px}thead{background:#e9eeeb}th{text-align:left;font-size:11px;letter-spacing:.2px;font-weight:750;padding:13px 15px;color:#274457}td{padding:14px 15px;vertical-align:top;border-top:1px solid #e6ebeb}tbody tr:nth-child(even){background:#fafbf9}td:first-child{font-weight:620}td code{font-size:11.5px}td p{margin:0}.callout{padding:19px 22px;margin:25px 0;border:1px solid #cbded8;border-left:4px solid var(--accent);background:#edf6f1;border-radius:0 9px 9px 0;font-size:14px}.callout strong{display:block;margin-bottom:7px}.callout.warning{background:#fff5e7;border-color:#eddbc1;border-left-color:var(--warm)}.source-ref{font-size:11px;font-weight:650;white-space:nowrap;text-decoration:none;vertical-align:baseline}.figure{padding:12px;margin:23px 0;background:#fff;border:1px solid var(--line);border-radius:12px}.figure svg{width:100%;height:auto;display:block}.caption{font-size:12px!important;color:var(--muted);margin:8px 10px 5px;line-height:1.6}.download-row{display:flex;gap:9px;flex-wrap:wrap;margin:17px 0}.download{border:1px solid #b4d4cc;border-radius:7px;padding:9px 13px;background:#fff;color:#0a6965;font-size:12px;font-weight:700;margin:3px 0}.download:hover{background:#e6f2ee}.download:before{content:"\2193 ";font-weight:800}.milestones{display:grid;grid-template-columns:1fr 1fr;gap:12px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:22px;margin:28px 0}.milestones label{display:flex;align-items:flex-start;gap:9px;font-size:13px;line-height:1.6}.milestones input{margin-top:4px;accent-color:var(--accent);min-width:16px}details{border:1px solid var(--line);border-radius:8px;background:#fff;margin:11px 0;padding:14px 18px}summary{cursor:pointer;font-size:14px;font-weight:650}details p{font-size:14px;color:#4b6171;margin:15px 0 3px}.source-list{display:grid;grid-template-columns:1fr 1fr;gap:0 24px}.source-item{display:flex;gap:12px;padding:16px 0;border-bottom:1px solid var(--line);scroll-margin-top:20px}.source-number{font-size:11px;font-weight:800;color:#839691;min-width:29px}.source-item a{font-size:12px;line-height:1.5;text-decoration:none}.source-item small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.endnote{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:25px}.toast{position:fixed;right:24px;bottom:24px;background:#19364b;color:#fff;border-radius:8px;padding:10px 16px;font-size:13px;z-index:5;opacity:0;pointer-events:none;transition:opacity .15s}.toast.show{opacity:1}.mobile-nav{display:none}[hidden]{display:none!important}
+@media(min-width:1700px){main{margin-right:auto;padding-left:90px;padding-right:90px}.hero h1{font-size:76px}}
+@media(max-width:1100px){:root{--sidebar:225px}.sidebar{padding:25px 15px}main{padding:0 35px 60px}body{font-size:15px}.hero h1{font-size:57px}.hero .lede{font-size:18px}.hero-stats div{padding:20px 15px}.source-list{grid-template-columns:1fr}.milestones{grid-template-columns:1fr}}
+@media(max-width:760px){.sidebar{position:relative;width:auto;height:auto;padding:20px 20px 14px;border-right:0;border-bottom:1px solid var(--line)}.sidebar h2{font-size:19px;margin:6px 0 12px}.sidebar .sidebar-tools{display:none}.sidebar nav{display:grid;grid-template-columns:1fr 1fr;gap:3px}.sidebar nav a{font-size:11px;padding:5px 4px}.sidebar nav a span{font-size:10px;min-width:16px}.sidebar footer{display:none}main{margin:0;padding:0 21px 40px}.hero{padding:34px 0 30px}.hero h1{font-size:48px;letter-spacing:-2px}.hero .lede{font-size:17px}.hero-stats div{padding:15px 10px}.hero-stats b{font-size:23px}.hero-stats small{font-size:10px}.topline{font-size:9px;letter-spacing:.5px}.tool-strip span{font-size:10px;padding:7px 9px}section{padding-top:30px}section h2{font-size:30px}h3{font-size:20px}pre{font-size:11.5px;padding:15px}.callout{padding:16px;font-size:13px}.milestones{padding:17px}.caption{font-size:11px!important}.source-list{grid-template-columns:1fr}.figure{padding:5px}.table-wrap{margin:18px 0}}
+@media print{@page{size:A4;margin:16mm}body{background:white;font-size:10pt;line-height:1.5;color:#152b3e}.sidebar,.topline,.copy,.download,.toast,.skip,.hero-stats,.tool-strip,.sidebar-tools{display:none!important}main{margin:0;padding:0;max-width:none}.hero{padding:0 0 14pt}.hero h1{font-size:34pt;letter-spacing:-1.5px}.hero .lede{font-size:14pt}.hero .meta{font-size:9pt}.eyebrow{font-size:8pt}.section-overview{font-size:10pt;background:white;border:1px solid #bbb;margin:10pt 0;padding:10pt}section{padding:18pt 0 10pt;break-before:auto}section h2{font-size:23pt;break-after:avoid;margin-bottom:12pt}h3{font-size:14pt;break-after:avoid;margin:16pt 0 8pt}.chapter-kicker{font-size:8pt}p{margin:6pt 0 9pt;orphans:3;widows:3}.table-wrap{overflow:visible;border-radius:0;margin:10pt 0;break-inside:auto}table{font-size:8pt;min-width:0}thead{display:table-header-group}tr{break-inside:avoid}th,td{padding:6pt}.callout{font-size:9pt;break-inside:avoid;padding:10pt}.figure{break-inside:avoid;border:1px solid #ddd;padding:3pt}.caption{font-size:8pt!important}.code-wrap{background:#f3f5f6;border:1px solid #bbb;break-inside:auto;overflow:visible;margin:10pt 0}.codebar{background:#e7ecee;color:#283e4c;padding:5pt 8pt}pre{color:#172e42;font-size:7.7pt;white-space:pre-wrap;overflow:visible;line-height:1.45;padding:9pt}pre code{white-space:pre-wrap;overflow-wrap:anywhere}.milestones{grid-template-columns:1fr 1fr;padding:10pt}.milestones label{font-size:8pt}details{break-inside:avoid;padding:8pt;margin:6pt 0}summary,details p{font-size:9pt}.source-list{grid-template-columns:1fr 1fr}.source-item{break-inside:avoid;padding:8pt 0}.source-item a{font-size:8pt}.source-item small{font-size:7pt}a{color:#075e59;text-decoration:none}.source-ref{font-size:7pt}.endnote{font-size:8pt}}
+</style></head><body>
+<a class="skip" href="#content">Skip to the guide</a>
+<aside aria-label="Guide navigation" class="sidebar"><div class="brand">Cloud learning</div><h2>The practical<br/>field guide.</h2><div class="sidebar-tools"><label for="chapter-filter">Find a chapter or topic</label><input id="chapter-filter" placeholder="Try: versioning, cloud, prompts" type="search"/><div class="filter-status" id="filter-status" role="status">Filter navigation, or use browser Find</div></div><nav aria-label="Chapters"><a data-section="start-here" href="#start-here"><span>01</span>Start here</a><a data-section="foundations" href="#foundations"><span>02</span>Foundations</a><a data-section="notebooklm" href="#notebooklm"><span>03</span>NotebookLM</a><a data-section="mermaid" href="#mermaid"><span>04</span>Mermaid</a><a data-section="excalidraw" href="#excalidraw"><span>05</span>Excalidraw</a><a data-section="draw-io" href="#draw-io"><span>06</span>draw.io</a><a data-section="object-storage" href="#object-storage"><span>07</span>Object storage</a><a data-section="minio-lab" href="#minio-lab"><span>08</span>MinIO lab</a><a data-section="integrated-workflow" href="#integrated-workflow"><span>09</span>Integrated workflow</a><a data-section="related-tools" href="#related-tools"><span>10</span>Related tools</a><a data-section="30-session-roadmap" href="#30-session-roadmap"><span>11</span>30-session roadmap</a><a data-section="troubleshooting" href="#troubleshooting"><span>12</span>Troubleshooting</a><a data-section="glossary-and-self-test" href="#glossary-and-self-test"><span>13</span>Glossary and self-test</a><a data-section="resources-and-files" href="#resources-and-files"><span>14</span>Resources and files</a></nav><footer>READING PROGRESS<div class="progress-track"><i id="reading-progress"></i></div>Offline document · 1 October 2026<br/>Editable examples &amp; practical exercises</footer></aside>
+<main id="content"><div class="topline"><span>FIELD GUIDE / BEGINNER TO PRACTITIONER</span><button class="print-button" id="print" type="button">Print guide</button></div>
+<header class="hero"><div class="eyebrow">Research · architecture · storage</div><h1>Learn.<br/>Sketch. <span>Build.</span></h1><p class="lede">A hands-on path from source-grounded learning to clear cloud diagrams and a testable object-storage lab.</p><div class="tool-strip"><span>NotebookLM</span><span>Mermaid</span><span>Excalidraw</span><span>draw.io</span><span>MinIO / AIStor</span></div><div class="hero-stats"><div><b>5</b><small>core tools, one workflow</small></div><div><b>30</b><small>guided learning sessions</small></div><div><b>1</b><small>practical capstone</small></div></div><p class="meta">Prepared 1 October 2026 · Self-paced · Original exercises + official references</p></header>
+<div class="section-overview"><strong>The guiding principle:</strong> understand the source, explain every arrow, and test the behaviour before calling it a working design.</div><noscript><p class="callout">The guide is readable without JavaScript. Copy buttons, embedded downloads, and local milestone saving require JavaScript; all companion files are also in the ZIP.</p></noscript>
+<section aria-labelledby="heading-start-here" id="start-here"><div class="chapter-kicker">CHAPTER 01</div><h2 id="heading-start-here">Start here</h2><p>This is a practical learning path for using <strong>NotebookLM, Mermaid, Excalidraw, draw.io, and MinIO together</strong>. The aim is not to memorise five interfaces. It is to develop one repeatable skill: turn reliable source material into an understandable architecture, implement a small part of it, and explain what the implementation actually proves.</p>
+<p><strong>Assumption:</strong> “notebook llm” means Google's <strong>NotebookLM</strong>, not Jupyter notebooks or running a local language model. Google's help pages checked on <strong>1 October 2026</strong> redirect to <strong>Gemini Notebook</strong> and use that name. This guide retains “NotebookLM” so it matches the tool you asked about. Screens and account-specific capabilities may differ. <a class="source-ref" href="#s01">S01</a></p>
+<div class="callout warning"><strong>Read this before following older MinIO tutorials.</strong> The official <code>minio/minio</code> community repository is archived and says it is no longer maintained. Its legacy binary instructions are not a current maintenance promise. This guide uses the documented AIStor container path for the optional lab, which requires your own license file; a single-compute-resource Free tier is documented. Do not assume AIStor and the archived AGPL community edition have the same license or support model. <a class="source-ref" href="#s21">[S21]</a> <a class="source-ref" href="#s22">[S22]</a></div>
+<h3>What each tool contributes</h3>
+<div aria-label="Scrollable reference table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>The job you give it</th>
+<th>Your first useful output</th>
+<th>What it does not prove</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NotebookLM</td>
+<td>Question and organise selected sources</td>
+<td>A cited, reviewed architecture brief</td>
+<td>That every answer is correct or that a design will work</td>
+</tr>
+<tr>
+<td>Mermaid</td>
+<td>Express relationships as text</td>
+<td>A flowchart and a request sequence</td>
+<td>That cloud infrastructure exists or is secure</td>
+</tr>
+<tr>
+<td>Excalidraw</td>
+<td>Explore and explain visually</td>
+<td>A clear, editable architecture sketch</td>
+<td>That a rough-looking diagram has sound engineering behind it</td>
+</tr>
+<tr>
+<td>draw.io / diagrams.net</td>
+<td>Refine and maintain structured diagrams</td>
+<td>A polished cloud/network view</td>
+<td>That an imported diagram remains automatically synchronised</td>
+</tr>
+<tr>
+<td>MinIO / AIStor</td>
+<td>Practise S3-compatible object storage</td>
+<td>A private bucket, scoped credentials, verified upload/download</td>
+<td>That a one-container lab is resilient production storage</td>
+</tr>
+</tbody>
+</table></div>
+<p>The product roles above are grounded in their own documentation; the choice to combine them into this learning workflow is a recommendation for this guide. Mermaid is the text-based diagramming technology. A hosted editor such as the service known as Mermaid Chart, now presented through Mermaid.ai, is a separate layer around that technology; start by learning the syntax rather than paid-plan features. <a class="source-ref" href="#s01">S01</a> <a class="source-ref" href="#s06">S06</a> <a class="source-ref" href="#s10">S10</a> <a class="source-ref" href="#s14">S14</a> <a class="source-ref" href="#s22">S22</a></p>
+<h3>The recommended order</h3>
+<p><strong>Understand the problem → learn the drawing basics → research with sources → describe the design in text → operate a small storage lab.</strong> Begin with the foundations and a simple Excalidraw sketch, use NotebookLM to clarify gaps, then learn Mermaid and draw.io. Leave distributed storage and Kubernetes until you can explain a single-node lab without copying a tutorial.</p>
+<p>The default plan is <strong>30 study sessions of about 45–60 minutes each</strong>, not a guaranteed completion time. A useful session structure is 10 minutes reading, 25 minutes building, 10 minutes explaining what you did, and 5 minutes recording errors. An experienced cloud engineer can skip familiar basics; a beginner can repeat any session.</p>
+<h3>What you need</h3>
+<p>For the diagramming and research chapters, use a modern browser, a local project folder, and approved non-sensitive source documents. A Google account is needed for the research product, subject to its account and regional availability. For the optional storage lab, you need a Docker environment with Compose, Python 3.10 or newer for the supplied scripts, the official <code>mc</code> client, internet access to obtain software, and a valid AIStor license. Those external tools, accounts, images, and licenses are <strong>not bundled</strong>. The guide and its built-in examples require no internet to read. <a class="source-ref" href="#s01">S01</a> <a class="source-ref" href="#s22">S22</a> <a class="source-ref" href="#s30">S30</a></p>
+<h3>Your running project: a private document platform</h3>
+<p>Imagine an internal team that stores approved technical documents. A user reaches a document API through a gateway. The API keeps <strong>file bytes in object storage</strong> and <strong>document IDs, owners, and object keys in a metadata database</strong>. A person may separately export an approved, sanitised document for use in NotebookLM. This is a proposed teaching design, not a claim that these tools have a native integration.</p>
+<p>The supplied container lab implements <strong>only the object store and client operations</strong>. It does not deploy a gateway, API, database, identity provider, NotebookLM connector, backup service, or monitoring stack. Keep the full design and the implemented subset visibly distinct.</p>
+<div aria-label="Learning milestones" class="milestones">
+<label><input data-milestone="foundations" type="checkbox"/> I can explain the components and boundaries.</label>
+<label><input data-milestone="sources" type="checkbox"/> I can verify an AI answer against its source.</label>
+<label><input data-milestone="mermaid" type="checkbox"/> I can write and explain a Mermaid diagram.</label>
+<label><input data-milestone="drawing" type="checkbox"/> I can recreate the system in Excalidraw and draw.io.</label>
+<label><input data-milestone="storage" type="checkbox"/> I can verify a scoped S3 upload and download.</label>
+<label><input data-milestone="capstone" type="checkbox"/> I can defend the design and explain its limitations.</label>
+</div>
+</section><section aria-labelledby="heading-foundations" id="foundations"><div class="chapter-kicker">CHAPTER 02</div><h2 id="heading-foundations">Foundations</h2><h3>First decide which question the diagram answers</h3>
+<p>A diagram becomes confusing when it mixes business context, deployment topology, network packets, and individual source-code classes. Write one sentence before drawing: <strong>“This diagram explains ___ to ___ so that they can ___.”</strong> For example: “This diagram explains document access to the security reviewer so that they can identify trust boundaries.”</p>
+<p>The C4 model offers four common abstraction levels: system context, containers, components, and code. A C4 <strong>container</strong> means a separately runnable application or data store; it does not necessarily mean a Docker container. This distinction prevents a frequent beginner misunderstanding. You do not need all four levels for every project. <a class="source-ref" href="#s35">S35</a></p>
+<div aria-label="Scrollable reference table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>View</th>
+<th>The question it answers</th>
+<th>What belongs in your document-platform example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Context</td>
+<td>Who uses the system, and what external systems matter?</td>
+<td>Internal user, document platform, identity service, approved external research tool</td>
+</tr>
+<tr>
+<td>Logical / container</td>
+<td>What are the major responsibilities?</td>
+<td>Gateway, document API, metadata database, object store</td>
+</tr>
+<tr>
+<td>Deployment</td>
+<td>Where do those responsibilities run?</td>
+<td>Hosts or cluster, networks, zones, disks, replicas, endpoints</td>
+</tr>
+<tr>
+<td>Sequence</td>
+<td>What happens during one operation?</td>
+<td>Authenticate, authorise, read metadata, sign URL, fetch bytes</td>
+</tr>
+<tr>
+<td>Operational</td>
+<td>How is the system observed and recovered?</td>
+<td>Metrics, audit logs, backups, restore procedure, operators</td>
+</tr>
+</tbody>
+</table></div>
+<p>The last three rows are useful complementary views in this guide; they are not a replacement definition of the four C4 levels.</p>
+<h3>Learn a small vocabulary before collecting icons</h3>
+<p>An <strong>API</strong> is an interface through which software requests an operation. A <strong>gateway or reverse proxy</strong> receives requests and forwards them to another service. A <strong>database</strong> holds application records; an <strong>object store</strong> holds objects addressed by a bucket and key. A <strong>trust boundary</strong> is a place where your assumptions about identity, permissions, or control change. A <strong>failure domain</strong> is a unit that can fail together, such as one host. In the proposed design, the same service can cross several of these concerns, which is why a single coloured box is rarely enough.</p>
+<p>For cloud drawings, distinguish an account or subscription boundary from a Region, a virtual network, a subnet, a security rule, and an availability boundary. Do not draw them as interchangeable nested rectangles. A line crossing a box does not establish a firewall rule, a route, or permission. The picture must agree with a separately checked configuration.</p>
+<h3>Five rules for diagrams you can explain</h3>
+<p><strong>Name responsibilities, not only products.</strong> “Document API — validates ownership” is more useful than “EC2.” Put a product name below the responsibility when implementation detail matters.</p>
+<p><strong>Label relationships.</strong> “S3 API over HTTPS” is clearer than an unlabeled arrow. Choose a convention: arrow direction means request initiation, data movement, or dependency. State it in the legend and do not silently change conventions halfway across the page.</p>
+<p><strong>Keep scope consistent.</strong> A database schema diagram and an organisation-wide architecture diagram need different levels of detail. When something is omitted, say so. “Backup path not shown” is better than implying there is no backup requirement.</p>
+<p><strong>Show uncertainty.</strong> Use labels such as “proposed,” “to verify,” or “external dependency.” Do not make a guessed service look like discovered infrastructure. A hand-drawn style is not a substitute for these labels.</p>
+<p><strong>Keep source and export.</strong> An editable <code>.excalidraw</code>, <code>.drawio</code>, or <code>.mmd</code> file is the source; a PNG or SVG is a convenient view. Record the owner, date, and intended audience with both. Excalidraw and draw.io provide image export capabilities, but editability depends on what you save and embed. <a class="source-ref" href="#s10">S10</a> <a class="source-ref" href="#s13">S13</a> <a class="source-ref" href="#s14">S14</a></p>
+<h3>A first exercise without any software</h3>
+<p>Write six lines: user, gateway, API, object store, metadata database, and administrator. For each, write one responsibility, one input, one output, and one failure. Then remove the administrator from the main data-path drawing and give administrative access its own small view. This forces you to distinguish “users downloading a file” from “operators changing the server.”</p>
+<p><strong>Finish condition:</strong> explain the request path in 90 seconds without saying “and then some cloud stuff happens.” If you cannot explain a connection, replace it with an open question rather than a confident arrow.</p>
+</section><section aria-labelledby="heading-notebooklm" id="notebooklm"><div class="chapter-kicker">CHAPTER 03</div><h2 id="heading-notebooklm">NotebookLM</h2><h3>Learn source-grounded research, not just prompting</h3>
+<p>NotebookLM answers questions using material added to a notebook and provides source references. Its study-oriented outputs include formats such as reports, Audio Overviews, and Mind Maps; exact features and limits depend on the current product and account. A citation is a route to verification, not a certificate of truth. <a class="source-ref" href="#s01">S01</a> <a class="source-ref" href="#s03">S03</a> <a class="source-ref" href="#s04">S04</a></p>
+<p>Your most important habit is to separate <strong>what a source says</strong>, <strong>what the model inferred</strong>, and <strong>what you decided to build</strong>. For example, “the documentation supports bucket versioning” is a product fact. “We should retain versions for 30 days” is a proposed retention choice. “That policy satisfies our obligations” requires a different kind of review and should not be accepted just because an assistant wrote it.</p>
+<h3>Build your first useful notebook</h3>
+<p><strong>Step 1 — choose a narrow question.</strong> Use a notebook titled “Private document storage — foundations.” The question is: “How should a small internal application store and retrieve documents using an S3-compatible service?” Avoid combining unrelated certification notes, personal files, and production incident logs in the first notebook.</p>
+<p><strong>Step 2 — assemble a small source pack.</strong> Start with five to eight selected pages: an S3 introduction, object keys/prefixes, current AIStor installation, access management, versioning, and your own one-page requirements. Those quantities are a learning recommendation, not a product limit. Create a source register with publisher, URL, accessed date, version, and sensitivity. Use the bundled template.</p>
+<p><strong>Step 3 — add sources deliberately.</strong> Create a notebook and use its source controls to add the supported documents or individual URLs. Inspect the imported content before asking detailed questions. Web URL ingestion generally imports the page's text, not every linked page, image, or embedded video. A documentation home page is not the whole documentation site. Supported import types and update behaviour vary; check the current source help rather than assuming a live mirror. <a class="source-ref" href="#s02">S02</a> <a class="source-ref" href="#s03">S03</a></p>
+<p><strong>Step 4 — test coverage.</strong> Ask for the exact source that explains the distinction between an object key and a filesystem path. If the response cannot identify the relevant passage, improve the source set before asking for a large architecture proposal.</p>
+<p><strong>Step 5 — build your vocabulary.</strong> Ask for ten terms with one-sentence explanations and one example per term. Correct the list against the documentation. Save a short note in your own words rather than keeping a long, unreviewed generated answer.</p>
+<p><strong>Step 6 — compare and challenge.</strong> Ask which operational tasks remain your responsibility in the proposed self-managed design. Ask what the sources do <strong>not</strong> establish. Specifically challenge claims about availability, backups, license scope, and automatic integration.</p>
+<p><strong>Step 7 — generate a study artifact.</strong> Make a short report or Mind Map, then ask questions about unclear branches. A Mind Map groups ideas; it does not encode a complete network topology or prove data-flow direction. Use it to discover concepts, then draw the architecture separately. <a class="source-ref" href="#s03">S03</a> <a class="source-ref" href="#s04">S04</a></p>
+<p><strong>Step 8 — export a reviewed brief.</strong> Produce a one-page brief containing scope, components, relationships, evidence, assumptions, and open questions. This brief becomes the input to Excalidraw and Mermaid. Mark any sentence you have not personally checked.</p>
+<h3>Prompts worth practising</h3>
+<p>Use these as starting points. Replace the project details and require source support rather than merely asking for a confident tone.</p>
+<pre><code class="language-text">Using only the sources in this notebook, explain object storage to a
+beginner. Distinguish bucket, object key, prefix, endpoint, and version ID.
+For each definition, cite the supporting source. Clearly mark anything
+that the sources do not explain.
+</code></pre>
+<pre><code class="language-text">Create an evidence table for our private document platform:
+claim | source and relevant passage | limitation | design implication.
+Separate documented product capabilities from proposed design choices.
+Do not infer high availability from the presence of multiple boxes.
+</code></pre>
+<pre><code class="language-text">Compare the responsibilities of a managed object-storage service and
+self-managed MinIO/AIStor. Restrict factual claims to the sources.
+Include patching, disks, access policies, monitoring, backup, and restore.
+List questions that still require current vendor documentation.
+</code></pre>
+<pre><code class="language-text">Draft a component-and-relationship inventory, not a picture.
+For each component: name, responsibility, inputs, outputs, trust boundary.
+For each relationship: caller, receiver, operation, protocol, and identity.
+Mark missing information instead of inventing a network or service.
+</code></pre>
+<pre><code class="language-text">Quiz me with five questions, one at a time. Wait for my answer before
+showing the explanation. Ask at least one question about the difference
+between versioning, backup, and high availability. Cite the explanation.
+</code></pre>
+<pre><code class="language-text">Review this architecture brief against the notebook sources.
+Identify unsupported statements, inconsistent terminology, security
+assumptions, and facts that may depend on product version or license.
+Do not rewrite an uncertain claim as a verified fact.
+</code></pre>
+<h3>A simple evidence audit</h3>
+<p>Take three statements from the generated brief. Open each citation, read the surrounding context, and check whether it actually supports the whole sentence. Watch for scope creep: a sentence about a supported API is not proof that every SDK feature behaves identically; a single-host free tier is not evidence of a free distributed production cluster. Record <strong>verified</strong>, <strong>partially supported</strong>, or <strong>unsupported</strong> in the source register.</p>
+<p>When two sources disagree, record their dates, versions, and scope. Prefer the source that governs your actual edition and deployment. Do not average the two answers. For example, older draw.io Mermaid instructions and its newer container-based Mermaid editing workflow can describe different application versions. <a class="source-ref" href="#s15">S15</a> <a class="source-ref" href="#s16">S16</a></p>
+<h3>Privacy and sharing</h3>
+<p>Use only data you are permitted to send to the product. Remove credentials, customer data, internal hostnames when unnecessary, and confidential architecture details from practice material. Google's current privacy documentation describes feedback-related collection and review, as well as differences in applicable terms for account types. Do not simplify that into “nothing is ever reviewed or used.” Check your organisation's policy before uploading work documents or sharing a notebook. <a class="source-ref" href="#s05">S05</a></p>
+<p><strong>Practice deliverable:</strong> one notebook, one source register, one reviewed brief, and five questions you can answer without the notebook. The goal is understanding that survives after you close the tool.</p>
+</section><section aria-labelledby="heading-mermaid" id="mermaid"><div class="chapter-kicker">CHAPTER 04</div><h2 id="heading-mermaid">Mermaid</h2><h3>Start with syntax, then choose an editor</h3>
+<p>Mermaid turns text descriptions into diagrams. You can practise in the official Live Editor or a compatible editor, save the text as <code>.mmd</code>, and keep it with your documentation. Rendering support depends on the host's Mermaid version; the same text may lay out differently in different tools. This guide's HTML includes static artwork and copyable source, not a live Mermaid runtime. <a class="source-ref" href="#s06">S06</a></p>
+<h3>Your first flowchart</h3>
+<p>Paste this into a Mermaid editor. Change “Application” to “Document API,” render again, and observe that relationships are preserved even if the layout moves.</p>
+<pre><code class="language-mermaid">flowchart LR
+    U["User"] --&gt;|HTTPS| A["Application"]
+    A --&gt;|S3 API| S["Object storage"]
+</code></pre>
+<p><button class="download" data-file="diagrams/01-first-flow.mmd">Save first-flow.mmd</button></p>
+<p><code>flowchart</code> selects the diagram type. <code>LR</code> requests a left-to-right direction. <code>U</code>, <code>A</code>, and <code>S</code> are identifiers; the quoted text inside brackets is what a reader sees. <code>--&gt;</code> is a directed edge, and <code>|HTTPS|</code> is its label. Keep identifiers short and labels descriptive. <a class="source-ref" href="#s07">S07</a></p>
+<div aria-label="Scrollable reference table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Purpose</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>flowchart TD</code></td>
+<td>Top-to-bottom flow</td>
+<td>A process with several stages</td>
+</tr>
+<tr>
+<td><code>A["Label"]</code></td>
+<td>Rectangular node</td>
+<td>An application or responsibility</td>
+</tr>
+<tr>
+<td><code>A{"Question?"}</code></td>
+<td>Decision</td>
+<td>An approval or routing choice</td>
+</tr>
+<tr>
+<td><code>A --&gt; B</code></td>
+<td>Directed connection</td>
+<td>A calls or sends to B</td>
+</tr>
+<tr>
+<td><code>A --&gt;\|label\| B</code></td>
+<td>Explained connection</td>
+<td>HTTPS, S3 operation, or event</td>
+</tr>
+<tr>
+<td><code>A -.-&gt; B</code></td>
+<td>Dotted connection</td>
+<td>A convention you define in a legend</td>
+</tr>
+<tr>
+<td><code>subgraph ... end</code></td>
+<td>Group related nodes</td>
+<td>A logical or deployment boundary</td>
+</tr>
+<tr>
+<td><code>%% comment</code></td>
+<td>Source comment</td>
+<td>Notes for future editors</td>
+</tr>
+</tbody>
+</table></div>
+<p>Use quoted labels for punctuation-heavy names. Do not use the lowercase keyword <code>end</code> as an unquoted node label in a flowchart. When a diagram fails, remove styling and reduce it to two nodes before adding complexity back. The official flowchart syntax page is the best place to check escaping and supported shapes. <a class="source-ref" href="#s07">S07</a></p>
+<h3>Draw the document platform</h3>
+<pre><code class="language-mermaid">flowchart LR
+    U["Internal user"] --&gt;|HTTPS| G["Gateway / reverse proxy"]
+    subgraph P["Private application environment - conceptual"]
+        G --&gt;|Authenticated request| A["Document API"]
+        A --&gt;|S3 API over HTTPS| O["MinIO / AIStor"]
+        A --&gt;|Metadata query| D[("Metadata database")]
+    end
+    N["Admin access, backups and monitoring need separate views"]
+</code></pre>
+<p><button class="download" data-file="diagrams/02-document-platform.mmd">Save platform flowchart</button></p>
+<p>This is an <strong>original logical example</strong>, not a deployable specification. The boundary says what the example groups together; it does not configure a firewall. The metadata database keeps records such as owner and object key, while the object store holds bytes. The lab later in the guide implements only the object-storage portion.</p>
+<p><strong>Exercise:</strong> add a scanning worker as a proposed component. Label the triggering relationship, the identity used to read objects, and where scan status is recorded. Then decide whether the main diagram has become too dense and needs a separate processing view.</p>
+<h3>Use a sequence diagram for one operation</h3>
+<p>A component diagram tells you who is connected. A sequence diagram tells you the order of one interaction. This example shows an <strong>alternative download design</strong> using a short-lived URL. It is not the same as streaming every download through the API. Mermaid sequence syntax uses participants and message arrows, with constructs such as notes, alternatives, and loops available when needed. <a class="source-ref" href="#s08">S08</a></p>
+<pre><code class="language-mermaid">sequenceDiagram
+    autonumber
+    participant U as Authorized user
+    participant A as Document API
+    participant M as S3 endpoint
+    U-&gt;&gt;A: Request download for document ID
+    A-&gt;&gt;A: Authenticate and authorize object access
+    A-&gt;&gt;A: Sign short-lived GET URL locally
+    A--&gt;&gt;U: Return presigned URL
+    U-&gt;&gt;M: GET using signed URL
+    M-&gt;&gt;M: Validate signature, expiry and permissions
+    M--&gt;&gt;U: Object bytes
+    Note over U,M: The endpoint must be reachable by the user; a URL does not create a network route.
+</code></pre>
+<p><button class="download" data-file="diagrams/03-presigned-download.mmd">Save download sequence</button></p>
+<p>Signing can be performed by the SDK using credentials; the act of generating the URL does not itself prove that the object exists or that the recipient can reach the endpoint. A signed URL conveys temporary access under the signing identity's permissions. Treat it as a secret while usable. <a class="source-ref" href="#s28">S28</a></p>
+<p><strong>Exercise:</strong> add an <code>alt</code> branch for “user is not the document owner.” The API must refuse before issuing the URL. Explain why a valid storage credential does not automatically establish a user's application-level right to a document.</p>
+<h3>Architecture-specific syntax: learn later</h3>
+<p>Mermaid's <code>architecture-beta</code> syntax, documented from version 11.1.0, models services, groups, and edge connection sides. Its built-in icons include cloud, database, disk, internet, and server. Custom icon packs require registration; a service name alone does not automatically load a cloud-provider logo. <a class="source-ref" href="#s09">S09</a></p>
+<pre><code class="language-mermaid">architecture-beta
+    group platform(cloud)[Private platform]
+    service user(internet)[User]
+    service gateway(server)[Gateway] in platform
+    service api(server)[Document API] in platform
+    service objects(disk)[Object storage] in platform
+    service metadata(database)[Metadata] in platform
+    user:R --&gt; L:gateway
+    gateway:R --&gt; L:api
+    api:R --&gt; L:objects
+    api:B --&gt; T:metadata
+</code></pre>
+<p><button class="download" data-file="diagrams/04-architecture-beta.mmd">Save architecture example</button></p>
+<p>Begin with flowcharts for compatibility. Use architecture syntax only after checking the renderer in the system where your documentation will actually live. A successful render in one web editor does not prove support in an older wiki plugin.</p>
+<h3>Maintain a diagram as code</h3>
+<p>Use a predictable filename such as <code>document-platform.mmd</code>. Change one concern at a time: add a service, update an edge label, or remove an obsolete connection. Render after each change. In a review, ask both “does the syntax work?” and “is the relationship still true?” Git can track the history of these text changes; it does not validate their engineering meaning. <a class="source-ref" href="#s40">S40</a></p>
+<p>Keep a simple convention in your README: solid arrows are request paths, dotted arrows are optional or out-of-band only when explicitly labelled, and grouping boxes represent the boundary named in their title. Avoid relying on colour alone. Your diagram should remain readable in grayscale and when copied into an issue or printed.</p>
+<p><strong>Practice deliverable:</strong> a valid flowchart, one sequence diagram, and a short explanation of the chosen arrow conventions. The downloadable state diagram and Image Builder learning flow are optional extra exercises.</p>
+</section><section aria-labelledby="heading-excalidraw" id="excalidraw"><div class="chapter-kicker">CHAPTER 05</div><h2 id="heading-excalidraw">Excalidraw</h2><h3>What to learn first</h3>
+<p>Excalidraw provides a canvas, basic shapes, text, arrows, image support, shape libraries, and editable <code>.excalidraw</code> files. Its sketch-like presentation is useful for exploring a design with other people. Start with rectangles and labels before spending time on icon collections. The official project also documents bound and labelled arrows and export to PNG/SVG. <a class="source-ref" href="#s10">S10</a></p>
+<div class="figure"><svg aria-labelledby="diagram-title diagram-desc" role="img" viewbox="0 0 1135 595" xmlns="http://www.w3.org/2000/svg">
+<title id="diagram-title">Conceptual private document platform</title><desc id="diagram-desc">An internal user reaches a gateway over HTTPS. The gateway calls a document API. The API stores bytes in MinIO and metadata in a separate database. This is a conceptual application view, not the one-container lab deployment.</desc>
+<defs><marker id="ah" markerheight="9" markerwidth="9" orient="auto" refx="7" refy="4"><path d="M0,0 L8,4 L0,8" fill="none" stroke="#536179" stroke-width="1.5"></path></marker></defs>
+<rect fill="#fff" height="595" rx="16" width="1135"></rect>
+<text fill="#182940" font-family="Arial,sans-serif" font-size="23" font-weight="700" x="32" y="44">Document platform / logical view</text>
+<text fill="#5b677a" font-family="Arial,sans-serif" font-size="15" x="32" y="75">Conceptual design - only the object store is deployed by the supplied lab.</text>
+<rect fill="#f7f9fc" height="400" rx="14" stroke="#9ba8bb" stroke-dasharray="8 6" stroke-width="1.5" width="855" x="247" y="110"></rect>
+<text fill="#43546e" font-family="Arial,sans-serif" font-size="15" font-weight="700" x="270" y="143">PRIVATE APPLICATION ENVIRONMENT</text><polyline fill="none" marker-end="url(#ah)" points="190,302 285,302" stroke="#536179" stroke-width="2"></polyline><polyline fill="none" marker-end="url(#ah)" points="470,302 545,302" stroke="#536179" stroke-width="2"></polyline><polyline fill="none" marker-end="url(#ah)" points="730,285 778,285 778,217 835,217" stroke="#536179" stroke-width="2"></polyline><polyline fill="none" marker-end="url(#ah)" points="730,320 778,320 778,412 835,412" stroke="#536179" stroke-width="2"></polyline><rect fill="#fff7ed" height="85" rx="10" stroke="#697d98" stroke-width="1.6" width="155" x="35" y="260"></rect><text dominant-baseline="middle" fill="#182940" font-family="Arial,sans-serif" font-size="17" text-anchor="middle" x="112.5" y="302.5">Internal user</text><rect fill="#eef2ff" height="85" rx="10" stroke="#697d98" stroke-width="1.6" width="185" x="285" y="260"></rect><text dominant-baseline="middle" fill="#182940" font-family="Arial,sans-serif" font-size="17" text-anchor="middle" x="377.5" y="291.5">Gateway /</text><text dominant-baseline="middle" fill="#182940" font-family="Arial,sans-serif" font-size="17" text-anchor="middle" x="377.5" y="315.5">reverse proxy</text><rect fill="#eef2ff" height="85" rx="10" stroke="#697d98" stroke-width="1.6" width="185" x="545" y="260"></rect><text dominant-baseline="middle" fill="#182940" font-family="Arial,sans-serif" font-size="17" text-anchor="middle" x="637.5" y="302.5">Document API</text><rect fill="#e6f5f0" height="95" rx="10" stroke="#697d98" stroke-width="1.6" width="230" x="835" y="170"></rect><text dominant-baseline="middle" fill="#182940" font-family="Arial,sans-serif" font-size="17" text-anchor="middle" x="950.0" y="206.5">MinIO / AIStor</text><text dominant-baseline="middle" fill="#182940" font-family="Arial,sans-serif" font-size="17" text-anchor="middle" x="950.0" y="230.5">Object bytes</text><rect fill="#f3f1fc" height="95" rx="10" stroke="#697d98" stroke-width="1.6" width="230" x="835" y="365"></rect><text dominant-baseline="middle" fill="#182940" font-family="Arial,sans-serif" font-size="17" text-anchor="middle" x="950.0" y="401.5">Metadata database</text><text dominant-baseline="middle" fill="#182940" font-family="Arial,sans-serif" font-size="17" text-anchor="middle" x="950.0" y="425.5">IDs, owners, keys</text><text fill="#536179" font-family="Arial,sans-serif" font-size="13" x="207" y="288">HTTPS</text><text fill="#536179" font-family="Arial,sans-serif" font-size="13" x="473" y="371">Authenticated request</text><text fill="#536179" font-family="Arial,sans-serif" font-size="13" x="745" y="181">S3 / HTTPS</text><text fill="#536179" font-family="Arial,sans-serif" font-size="13" x="747" y="444">Metadata</text><text fill="#5b677a" font-family="Arial,sans-serif" font-size="14" x="32" y="552">Separate views still needed: admin access, identity, TLS termination, backups, monitoring and failure domains.</text></svg><p class="caption">Original teaching schematic. The downloadable Excalidraw and draw.io files contain editable versions of this logical design. This illustration is not a discovered cloud environment.</p></div>
+<div class="download-row"><button class="download" data-file="diagrams/document-platform.excalidraw">Save editable Excalidraw example</button><button class="download" data-file="diagrams/document-platform.svg">Save reference SVG</button></div>
+<h3>Draw a cloud diagram from a blank canvas</h3>
+<p><strong>1. Write the title and question.</strong> Add “Private document platform — logical view — proposed.” Include an owner and date in your own working copy. Keep detailed network addresses out of the first sketch.</p>
+<p><strong>2. Make a five-component inventory.</strong> Internal user, gateway, document API, object store, metadata database. Put these in a row/list outside the canvas first. Each component needs one responsibility; remove any icon whose purpose you cannot explain.</p>
+<p><strong>3. Draw boundaries before components.</strong> Create a large rectangle for the private application environment. Give it a subtle fill or dashed outline and send it behind the other objects. Put the user outside the boundary. Do not label the rectangle “VPC” unless it actually represents a virtual network in your intended deployment.</p>
+<p><strong>4. Place boxes with room for labels.</strong> Put the gateway on the left, the document API in the middle, and storage plus metadata on the right. Leave enough space for a connector label without squeezing text between shapes. Start with equal-sized application boxes.</p>
+<p><strong>5. Add responsibility labels.</strong> Use two lines when helpful: “MinIO / AIStor” and “object bytes.” For the database, use “metadata” and examples such as “owner, object key, status.” A database icon and a disk icon are not explanations on their own.</p>
+<p><strong>6. Connect the request path.</strong> Draw user → gateway → API. Bind arrow ends to the relevant shapes, then move a box to check that the relationship follows. An arrow that merely touches a box can become misleading after a layout change. Add arrow labels describing the interaction, not just “data.” <a class="source-ref" href="#s10">S10</a></p>
+<p><strong>7. Add the storage relationships.</strong> Connect the API to object storage with “S3 API over HTTPS.” Connect the API to metadata with “metadata query.” This is a desired secure design; the later local lab deliberately uses HTTP only on loopback. Do not silently present the lab's transport as production TLS.</p>
+<p><strong>8. Separate administrative access.</strong> In a second frame or separate drawing, place an operator, an approved access path, and the management console. The storage console is not the S3 API endpoint. Add identity, approval, and audit questions to this view rather than cluttering the application path.</p>
+<p><strong>9. Mark omitted concerns.</strong> Add a short note: “Identity provider, backups, monitoring, and failure domains not shown.” You can draw them later. Omitting a concern from one view is acceptable; forgetting it entirely is not.</p>
+<p><strong>10. Align and review.</strong> Use consistent spacing, line weights, and text size. Prefer one diagram that can be explained on one screen. When labels overlap, move components instead of making the font too small.</p>
+<p><strong>11. Save an editable source.</strong> Save the <code>.excalidraw</code> file locally and reopen it. Confirm you can move a node, edit its label, and follow the associated arrows. Keep your working source separate from a sanitised sharing copy. <a class="source-ref" href="#s10">S10</a></p>
+<p><strong>12. Export a readable view.</strong> Export SVG for crisp scaling or PNG for broad compatibility, then inspect the actual export. Check margins, small text, transparent backgrounds, and whether editable scene data is embedded. Excalidraw export options can embed scene data, which is useful for editing but may expose more than the visible image. <a class="source-ref" href="#s13">S13</a></p>
+<h3>Add AWS, Azure, GCP, or Kubernetes icons</h3>
+<p>Open the library controls and browse the Excalidraw libraries directory. Search for the cloud platform or component collection you need, add a relevant library, then place only the symbols that improve understanding. The directory includes community-contributed cloud and system-design collections. Verify the collection's age, accuracy, and licensing rather than assuming all icons are current vendor assets. <a class="source-ref" href="#s11">S11</a></p>
+<p>For formal AWS documentation, consult AWS's architecture icon resource. An imported library can be convenient, while an official icon pack gives you a vendor-maintained reference. Keep provider icon sets consistent within one diagram. If an icon is difficult to import, use a labelled box instead of blocking the whole exercise. <a class="source-ref" href="#s17">S17</a></p>
+<p><strong>Do not let an icon dictate the design.</strong> A storage symbol does not tell you whether the service is managed, self-hosted, public, private, encrypted, replicated, or backed up. Put those facts in the relevant deployment or operations view.</p>
+<h3>Place cloud resources correctly</h3>
+<p>For a follow-up AWS deployment view, choose either <strong>managed Amazon S3</strong> or <strong>self-hosted AIStor</strong> explicitly. They are not the same deployment with a different logo.</p>
+<div aria-label="Scrollable reference table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>Design choice</th>
+<th>What to draw</th>
+<th>What to avoid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Managed Amazon S3</td>
+<td>A regional service outside the VPC/subnet boxes, plus the chosen access path</td>
+<td>Placing the bucket inside an EC2 subnet as though it were a VM</td>
+</tr>
+<tr>
+<td>S3 gateway endpoint</td>
+<td>An access mechanism associated with the VPC's routing design</td>
+<td>Treating it as an S3 server you operate</td>
+</tr>
+<tr>
+<td>Self-hosted AIStor</td>
+<td>The actual hosts/cluster, attached storage, service endpoint, and management path</td>
+<td>Implying that its S3-compatible API makes it an AWS-managed service</td>
+</tr>
+<tr>
+<td>Local learning lab</td>
+<td>One container, one named data volume, loopback host ports</td>
+<td>Calling it multi-zone or production highly available</td>
+</tr>
+</tbody>
+</table></div>
+<p>AWS documents both gateway and interface endpoint options for S3; their networking details differ. Pick one and verify the relevant routing, DNS, and permissions rather than drawing a generic “private endpoint” and assuming the rest. <a class="source-ref" href="#s18">S18</a> <a class="source-ref" href="#s20">S20</a> <a class="source-ref" href="#s22">S22</a></p>
+<h3>Mermaid to Excalidraw: useful, but not lossless</h3>
+<p>A conversion can give you a starting layout. The official Mermaid-to-Excalidraw package documents native conversion support for flowcharts, with other diagram types rendered as images and some shapes falling back to simpler shapes. That means an imported result may not consist of individually editable native objects. Availability in the web interface can vary; the supplied native <code>.excalidraw</code> example avoids depending on a particular menu. <a class="source-ref" href="#s12">S12</a></p>
+<p>Keep the original Mermaid text. Once you manually rearrange a converted sketch, do not assume the Mermaid source will update automatically. Declare which file is authoritative and treat the other as a derived view.</p>
+<h3>Three practice challenges</h3>
+<p><strong>Challenge A:</strong> recreate the five-component example without importing the supplied file. Explain every arrow, then compare your drawing to the reference.</p>
+<p><strong>Challenge B:</strong> add a second application instance. Identify whether the gateway, database, storage, and host are still single points of failure. Merely duplicating the API box does not make the whole system highly available.</p>
+<p><strong>Challenge C:</strong> make a stakeholder version with no IP addresses or implementation jargon, and an engineer version with protocols, trust boundaries, and open operational questions. Both must describe the same underlying design.</p>
+<p><strong>Finish condition:</strong> another person can identify the user path, storage responsibility, and three missing operational concerns without your narration.</p>
+</section><section aria-labelledby="heading-draw-io" id="draw-io"><div class="chapter-kicker">CHAPTER 06</div><h2 id="heading-draw-io">draw.io</h2><h3>Use structure when the diagram needs to be maintained</h3>
+<p>The browser editor commonly called draw.io is available through diagrams.net. It supports shape libraries, connectors, templates, and image exports useful for cloud and network diagrams. Treat the editable <code>.drawio</code> file as the working document and the exported image as a view for readers. <a class="source-ref" href="#s14">S14</a></p>
+<h3>Recreate the same architecture, not a different one</h3>
+<p><strong>Start a local diagram.</strong> Choose a blank diagram and local/device storage when available, or use an organisation-approved storage integration. Name the file <code>document-platform.drawio</code>. Avoid connecting an external account merely to complete a beginner exercise.</p>
+<p><strong>Enable only the relevant shapes.</strong> Use <strong>More Shapes</strong> to enable the cloud or networking library you need. Draw.io documents this workflow for AWS libraries. Templates can accelerate a layout, but remove services that do not belong to your design. A template is not an approved architecture. <a class="source-ref" href="#s14">S14</a></p>
+<p><strong>Build containers and relationships.</strong> Add a boundary, place the gateway and API, then add storage and metadata. Use connectors attached to shapes rather than independent line segments. Label the communication. Reposition one component and check that the relationship is still intelligible.</p>
+<p><strong>Organise for review.</strong> Keep the logical application view separate from a deployment page or layer. Use the same names across views. “Document service,” “upload API,” and “app server” should not accidentally become three names for the same component.</p>
+<p><strong>Save and reopen.</strong> Confirm that boxes, text, and connectors remain editable. Export a clean SVG or PNG. If you choose to include a copy of the diagram in an image export, review the embedded source for confidential labels or hidden information. Draw.io's export options can preserve editable diagram data. <a class="source-ref" href="#s14">S14</a></p>
+<p><button class="download" data-file="diagrams/document-platform.drawio">Save editable draw.io example</button></p>
+<h3>Bring in Mermaid carefully</h3>
+<p>In the current documented workflow, use <strong>Arrange → Insert → Mermaid</strong>, or the toolbar's insert control. Paste a supported diagram and choose the appropriate insertion mode. Recent draw.io versions can place native shapes inside a Mermaid container while retaining the Mermaid source. Editing that source regenerates the layout: style/label overrides can be retained, but manual geometry changes can be discarded. An image insertion is a single SVG rather than independently editable shapes. <a class="source-ref" href="#s15">S15</a></p>
+<p>A July 2026 draw.io update documents this newer editing behaviour. Older builds and older help pages can behave differently, so check the application you actually use. Do not assume that every installed desktop copy or enterprise integration has the same feature set. <a class="source-ref" href="#s16">S16</a></p>
+<p><strong>Your exercise:</strong> insert <code>02-document-platform.mmd</code>, move a shape, then edit the Mermaid source and regenerate. Observe what remains and what changes. Save the original <code>.mmd</code> separately even when source is retained inside the diagram.</p>
+<h3>Excalidraw or draw.io?</h3>
+<p>For this learning path, use Excalidraw when you are still discussing responsibilities and alternatives. Use draw.io when precise layout, multiple views, and consistent cloud symbols become useful. Use Mermaid when reviewing relationships as text is more important than manual placement. These are workflow recommendations, not claims that one tool cannot perform another tool's job.</p>
+<p>You do not need to maintain three equally authoritative diagrams forever. Choose one source of truth for each view. For example: <code>context.excalidraw</code> for exploration, <code>deployment.drawio</code> for the reviewed deployment, and <code>download-sequence.mmd</code> for request behaviour. Write down the rule in the project README.</p>
+<p><strong>Practice deliverable:</strong> a readable draw.io diagram, its image export, and a short note naming the authoritative file for each view.</p>
+</section><section aria-labelledby="heading-object-storage" id="object-storage"><div class="chapter-kicker">CHAPTER 07</div><h2 id="heading-object-storage">Object storage</h2><h3>Understand what MinIO stores</h3>
+<p>For this guide, concentrate on the S3 object interface: a client stores bytes under a <strong>bucket</strong> and an <strong>object key</strong>, with associated metadata. Amazon S3 is a managed AWS service; MinIO/AIStor provides an S3-compatible service that you can operate on your own infrastructure. API compatibility is not a promise that every AWS feature, administrative API, or operational characteristic is identical. <a class="source-ref" href="#s18">S18</a> <a class="source-ref" href="#s22">S22</a> <a class="source-ref" href="#s48">S48</a></p>
+<div aria-label="Scrollable reference table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Meaning in the lab</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bucket</td>
+<td>Top-level object container and a policy/versioning boundary</td>
+<td><code>learning-docs</code></td>
+</tr>
+<tr>
+<td>Object key</td>
+<td>The identifier used to address an object's bytes</td>
+<td><code>lab/sample.txt</code></td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td>The beginning of a key, used for organisation and filtering</td>
+<td><code>lab/</code></td>
+</tr>
+<tr>
+<td>Endpoint</td>
+<td>The server URL used by the client</td>
+<td><code>http://127.0.0.1:9000</code></td>
+</tr>
+<tr>
+<td>Access key / secret key</td>
+<td>Credentials used to authenticate signed requests</td>
+<td>Generated <code>docapp</code> identity and its secret</td>
+</tr>
+<tr>
+<td>Version ID</td>
+<td>Identifier for a stored version, when versioning is enabled</td>
+<td>Returned after a successful versioned write</td>
+</tr>
+<tr>
+<td>Metadata</td>
+<td>Extra descriptive fields associated with an object</td>
+<td>The lab's SHA-256 field</td>
+</tr>
+</tbody>
+</table></div>
+<p>An object key that contains <code>/</code> can look like a directory path, but S3's key/prefix model is not a traditional filesystem directory hierarchy. Keep that distinction in mind when designing policies or moving data. A bucket/prefix arrangement is not a substitute for an application's document ownership model. <a class="source-ref" href="#s19">S19</a></p>
+<h3>Object, file, and block storage are different interfaces</h3>
+<p>Use object storage when your application wants to put and retrieve whole objects by key. Use a shared filesystem when the workload genuinely depends on filesystem operations and semantics. Use block storage as a disk-like device beneath a filesystem or database when appropriate. In the teaching architecture, a database stores searchable document records, while object storage stores the associated bytes; this separation is a design choice for the exercise, not a requirement imposed on all applications.</p>
+<p>Do not install MinIO merely because you need “some storage.” Write down the access pattern first: object size, operation rate, concurrency, retention, recovery needs, and which systems must read the data. Then choose the storage interface and operational model.</p>
+<h3>Versioning, retention, replication, and backup</h3>
+<p><strong>Versioning</strong> keeps multiple versions of an object rather than simply replacing the previous one. In a typical version-enabled S3 workflow, an ordinary delete adds a delete marker; deleting a specific version can remove that version permanently. Version history consumes storage and needs its own retention consideration. The supplied lab enables versioning and demonstrates writing two versions without deleting either. <a class="source-ref" href="#s27">S27</a> <a class="source-ref" href="#s34">S34</a></p>
+<p><strong>Retention/lifecycle</strong> is a policy decision about how long objects and old versions should remain. Do not enable automatic deletion as your first exercise. Define which objects it covers, who approved the rule, and how you would recover from an incorrect policy. The lab intentionally does not install a lifecycle deletion rule.</p>
+<p><strong>Replication</strong> creates or maintains another copy according to a configured process. <strong>Backup</strong> should be judged by whether you can recover the required data and metadata from the failures you care about. A second copy that shares the same credentials, deletion path, or physical failure domain may not provide the independence your recovery plan needs.</p>
+<p><strong>Erasure coding</strong> divides data into data/parity shards to tolerate certain storage failures. AIStor documents erasure sets, quorum, and parity-dependent behaviour. It does not make one laptop resilient to loss of that laptop, and a one-volume container exercise must not be presented as a distributed erasure-coded deployment. <a class="source-ref" href="#s33">S33</a></p>
+<h3>The minimum operating questions</h3>
+<p>Before describing a real storage system as production-ready, ask who patches it, who rotates credentials, what the capacity alerts are, how a lost disk or host is handled, how TLS is configured, and how you restore both objects and application metadata. Define an acceptable <strong>recovery point objective</strong> (how much recent data loss is tolerable) and <strong>recovery time objective</strong> (how quickly service must return). Those are business/engineering requirements to choose and test, not values supplied by a diagram.</p>
+</section><section aria-labelledby="heading-minio-lab" id="minio-lab"><div class="chapter-kicker">CHAPTER 08</div><h2 id="heading-minio-lab">MinIO lab</h2><h3>Scope, prerequisites, and current product choice</h3>
+<p>This is a <strong>single-node, local-only learning lab</strong>. Its purpose is to teach startup, access control, bucket versioning, and S3 client behaviour. Use non-sensitive sample data. Do not expose the management console or S3 port to the internet and do not transplant this Compose file into production.</p>
+<p>The current official container instructions use <code>quay.io/minio/aistor/minio</code> and a license file. Obtain your own eligible AIStor license through the official process. The documented Free tier is for a single compute resource; evaluate the current terms yourself before operational use. The archived community server remains a historical/source-learning topic, not the default fresh deployment in this guide. <a class="source-ref" href="#s21">S21</a> <a class="source-ref" href="#s22">S22</a></p>
+<p><strong>Required tools:</strong> Docker with the Compose plugin, Python 3.10+, and the official <code>mc</code> executable on your PATH. The included <code>requirements.txt</code> pins the direct Boto3 dependency used for local code checks. External software, transitive Python packages, container images, and the license require separate acquisition. Windows users can use Docker Desktop with a working Linux-container environment and either PowerShell Python commands or WSL; use consistent paths within the environment you choose.</p>
+<div class="callout"><strong>Validation boundary:</strong> the supplied code has local syntax/structure checks and mocked S3-operation tests. A licensed AIStor server was not available in the authoring environment, so live startup, <code>mc</code> bootstrapping, and end-to-end storage results must be verified on your machine. Expected results below are acceptance criteria, not fabricated execution logs.</div>
+<h3>What is in the lab folder</h3>
+<div aria-label="Scrollable reference table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>compose.yaml</code></td>
+<td>One AIStor service, loopback port bindings, a persistent named volume, and a read-only license mount</td>
+</tr>
+<tr>
+<td><code>lab.py</code></td>
+<td>Generates local secrets, starts/checks the service, configures the bucket/user/policy, and stops containers</td>
+</tr>
+<tr>
+<td><code>s3_demo.py</code></td>
+<td>Uses application credentials to put/get/list a sample and verify downloaded bytes</td>
+</tr>
+<tr>
+<td><code>policy.json</code></td>
+<td>Allows listing one bucket and reading/writing only its <code>lab/</code> prefix</td>
+</tr>
+<tr>
+<td><code>.env.example</code></td>
+<td>Documents the configuration names; it does not contain working credentials</td>
+</tr>
+<tr>
+<td><code>requirements.txt</code></td>
+<td>Direct Python SDK dependency for the example</td>
+</tr>
+<tr>
+<td><code>sample.txt</code></td>
+<td>Deliberately non-sensitive test content</td>
+</tr>
+</tbody>
+</table></div>
+<p>The application identity may list the names in <code>learning-docs</code>, but object read/write access is restricted to <code>lab/*</code>. This is <strong>not</strong> a multi-tenant isolation policy. It intentionally excludes object deletion, all-bucket listing, bucket creation, and server administration. For a tenant-aware product, separately design prefix filtering, application authorisation, and identity scope.</p>
+<h3>Step 1 — initialise the folder and generate credentials</h3>
+<p>Extract the ZIP, open a terminal, and move into its lab folder:</p>
+<pre><code class="language-bash">cd cloud-learning-kit/labs/minio
+python lab.py init
+</code></pre>
+<p>On a system where Python 3 is named <code>python3</code>, substitute <code>python3</code> consistently. <code>init</code> creates <code>.env</code> with independent random administrator and application secrets. It refuses to overwrite an existing <code>.env</code>. No credentials are printed. Review the file locally only when you need the administrator login.</p>
+<p>The helper does not evaluate <code>.env</code> as shell code; it reads simple <code>KEY=VALUE</code> lines. Keep the lab's bucket and endpoint unchanged unless you also update and review the policy and helper restrictions. Do not paste <code>.env</code>, <code>.mc</code>, or your license file into NotebookLM, chat messages, tickets, screenshots, or source control.</p>
+<h3>Step 2 — obtain and place the license</h3>
+<p>Follow the official AIStor container installation page and obtain a license appropriate to your use. Save it at:</p>
+<pre><code class="language-text">cloud-learning-kit/labs/minio/minio.license
+</code></pre>
+<p>It must be a real, non-empty file, not a directory or a placeholder. The Compose configuration mounts it read-only and refuses to create a missing host path as a directory. The helper also checks that the file exists before starting the service. <a class="source-ref" href="#s22">S22</a> <a class="source-ref" href="#s30">S30</a></p>
+<h3>Step 3 — understand the Compose configuration before running it</h3>
+<pre><code class="language-yaml">name: cloud-learning-minio
+services:
+  minio:
+    image: ${MINIO_IMAGE:?Run python lab.py init first}
+    command: ["minio", "server", "/mnt/data", "--license", "/minio.license", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:?Missing root username}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:?Missing root password}
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+    volumes:
+      - minio-data:/mnt/data
+      - type: bind
+        source: ./minio.license
+        target: /minio.license
+        read_only: true
+        bind:
+          create_host_path: false
+    restart: "no"
+volumes:
+  minio-data:
+</code></pre>
+<p>The server command follows the documented AIStor container pattern, with an explicit console port. Root credentials are provided through the documented environment variables. Port <code>9000</code> serves the S3 interface; <code>9001</code> is the console in this configuration. Host bindings beginning with <code>127.0.0.1</code> are intended for local access rather than all host interfaces. Review Docker's actual networking behaviour and host firewall for your environment. <a class="source-ref" href="#s22">S22</a> <a class="source-ref" href="#s23">S23</a> <a class="source-ref" href="#s30">S30</a> <a class="source-ref" href="#s50">S50</a></p>
+<p>The data lives in a Docker-managed named volume, not merely in the container's disposable writable layer. <code>docker compose down</code> does not remove that named volume unless you request volume removal. Restarting a container is not a backup test. <a class="source-ref" href="#s32">S32</a></p>
+<p>The generated configuration initially uses a moving <code>:latest</code> image reference for discoverability. After a successful test, record the image version/digest and replace it with a reviewed immutable digest for repeatable work. Do not invent a digest or assume that an old cached image is current.</p>
+<h3>Step 4 — start and inspect the service</h3>
+<pre><code class="language-bash">python lab.py start
+python lab.py status
+docker compose logs minio
+</code></pre>
+<p>The helper waits for the local liveness endpoint after starting Compose. A liveness response establishes only that a process is responding; it does not establish correct authorisation, durable writes, backup recoverability, or high availability. Use the remaining exercises to gather stronger evidence. <a class="source-ref" href="#s54">S54</a></p>
+<p>Open the console locally at <code>http://127.0.0.1:9001</code> and sign in with the generated administrator credentials from <code>.env</code>. Keep the console private. If startup fails, inspect the license path, image/CPU support, logs, and port conflicts before changing the security configuration. Do not “fix” a problem by publishing the service to all networks.</p>
+<h3>Step 5 — install the client and configure access</h3>
+<p>Use the current official AIStor installation instructions to obtain <code>mc</code> for your operating system and CPU architecture. Run <code>mc --version</code> and confirm it is the intended MinIO/AIStor client, not another program with the same name. If your approved installation names it <code>mcli</code>, adapt the helper's <code>mc()</code> wrapper to that executable name. Do not blindly copy a Linux AMD64 download command to an ARM or Windows machine. <a class="source-ref" href="#s22">S22</a></p>
+<pre><code class="language-bash">mc --version
+python lab.py bootstrap
+</code></pre>
+<p>The bootstrap helper configures an administrator alias named <code>lab</code>, creates <code>learning-docs</code>, enables versioning, installs the <code>learning-app</code> policy, creates the <code>docapp</code> identity, and attaches that policy. It then configures an application alias named <code>app</code>. It uses the documented <code>mc admin user add</code>, policy creation/attachment, and versioning commands. <a class="source-ref" href="#s25">S25</a> <a class="source-ref" href="#s26">S26</a> <a class="source-ref" href="#s27">S27</a> <a class="source-ref" href="#s49">S49</a></p>
+<p>Aliases are stored in the lab's <code>.mc</code> folder. <code>mc</code> configuration contains credentials: it is not safe to commit or share. The helper does not echo credential-bearing commands, but credentials passed to a command-line process may still be visible to sufficiently privileged local users. This is another reason to keep the exercise on a trusted workstation rather than use it as a production secret-management pattern. <a class="source-ref" href="#s55">S55</a></p>
+<h3>Step 6 — inspect the policy</h3>
+<pre><code class="language-json">{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ListOnlyLearningBucket",
+      "Effect": "Allow",
+      "Action": ["s3:ListBucket", "s3:GetBucketLocation"],
+      "Resource": ["arn:aws:s3:::learning-docs"]
+    },
+    {
+      "Sid": "ReadWriteOnlyLabPrefix",
+      "Effect": "Allow",
+      "Action": ["s3:GetObject", "s3:PutObject"],
+      "Resource": ["arn:aws:s3:::learning-docs/lab/*"]
+    }
+  ]
+}
+</code></pre>
+<p>Bucket-level actions refer to the bucket resource; object actions refer to object resources. AIStor's policy system uses IAM-compatible structures, and access not granted by the relevant policies is denied. A user can authenticate successfully while still lacking permission for a particular action. <a class="source-ref" href="#s24">S24</a></p>
+<p>For this simple single-user lab, bucket listing is allowed broadly within <code>learning-docs</code>, while object access is prefix-scoped. Do not describe the policy as hiding other prefixes' object names. That would require additional policy conditions and testing.</p>
+<h3>Step 7 — run the Python storage exercise</h3>
+<p>Create and activate a virtual environment before installing the dependency:</p>
+<pre><code class="language-bash"># macOS / Linux / WSL
+python -m venv .venv
+. .venv/bin/activate
+python -m pip install -r requirements.txt
+python s3_demo.py
+</code></pre>
+<p>For PowerShell, activation is optional; you can call the environment's Python directly:</p>
+<pre><code class="language-powershell">py -3 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe s3_demo.py
+</code></pre>
+<p>The script reads the generated application credentials, uses Signature Version 4 and path-style addressing for the local endpoint, uploads <code>sample.txt</code> to <code>learning-docs/lab/sample.txt</code>, downloads it, and compares SHA-256 digests. It lists objects under <code>lab/</code>, then checks that listing <strong>all buckets</strong> is denied. The example is limited to 10 MiB per input file and deliberately uses a small-object approach; it is not a performance or multipart-upload benchmark. Boto3 documents S3 upload and signed-URL APIs, while MinIO documents S3 SDK compatibility. <a class="source-ref" href="#s28">S28</a> <a class="source-ref" href="#s29">S29</a> <a class="source-ref" href="#s48">S48</a></p>
+<p><strong>Expected evidence:</strong> a successful write, a returned version ID when enabled, a matching SHA-256 result, the object key in the listing, and a denied all-buckets operation. An unexpected allow is a failed permission test, not a reason to remove that test.</p>
+<p>The application script does not use root credentials, create buckets, administer the server, or delete objects. The SHA-256 comparison verifies that these downloaded bytes match the sample; it does not independently prove long-term durability. Do not use an ETag as a universal substitute for a content hash.</p>
+<h3>Step 8 — practise versioning and recovery without deleting data</h3>
+<p>Edit the local <code>sample.txt</code> so that it says “Version two,” run the demo again, then inspect the stored versions using the administrator alias:</p>
+<pre><code class="language-bash">python s3_demo.py
+mc --config-dir .mc version info lab/learning-docs
+mc --config-dir .mc ls --versions lab/learning-docs/lab/sample.txt
+</code></pre>
+<p>To retrieve an earlier version, copy its exact version ID from the listing and substitute it below:</p>
+<pre><code class="language-bash">mc --config-dir .mc cp --version-id "PASTE_VERSION_ID_HERE" \
+  lab/learning-docs/lab/sample.txt ./restored-sample.txt
+</code></pre>
+<p>Open <code>restored-sample.txt</code> and confirm it contains the earlier bytes. The application's policy deliberately does not include historical-version access or version deletion; the administrator performs this learning step. The evidence you want is an actual restored file, not merely a screenshot of a versioning toggle. <a class="source-ref" href="#s27">S27</a> <a class="source-ref" href="#s34">S34</a> <a class="source-ref" href="#s52">S52</a> <a class="source-ref" href="#s53">S53</a></p>
+<h3>Step 9 — understand a presigned download</h3>
+<pre><code class="language-bash">python s3_demo.py --show-url
+</code></pre>
+<p>This deliberately prints a short-lived bearer URL for the current sample object. Open it locally while valid and compare the content. Do not paste the URL into shared logs or tickets. It uses the application's permissions and the local endpoint, so it will not magically work from a colleague's computer: <strong>their <code>127.0.0.1</code> is their computer, not yours</strong>. A production or team design needs an approved user-reachable endpoint, appropriate TLS, and application-level authorisation before signing. <a class="source-ref" href="#s28">S28</a></p>
+<p>Generating a URL is not the same as making a bucket public. It grants the permitted operation to someone who possesses the usable URL. Expiration, credential validity, permissions, HTTP method, and the signed endpoint all matter. Do not change the hostname inside a signed URL as a casual workaround.</p>
+<h3>Step 10 — stop safely and record evidence</h3>
+<pre><code class="language-bash">python lab.py stop
+</code></pre>
+<p>This stops/removes the lab containers while retaining the named data volume. Start again and retrieve the sample to check persistence across this lifecycle. That still does not test loss of the host or data volume. <a class="source-ref" href="#s32">S32</a></p>
+<div class="callout warning"><strong>Destructive cleanup is a separate decision.</strong> <code>docker compose down --volumes</code> removes the lab's named volume and its stored objects, including versions. Do not run it until you intentionally want to discard the lab data. It does not mean your <code>.env</code>, <code>.mc</code>, or license file have also been removed.</div>
+<p>Keep a sanitised record of the server image/digest, <code>mc</code> version, Python/Boto3 version, test outcomes, and any deviations from the guide. Record configuration, not secrets. Freeze the complete Python environment after a successful test when you need a transitive dependency record; the included requirements file pins only the direct SDK dependency.</p>
+<h3>Before extending this beyond a laptop</h3>
+<p>Require TLS, scoped application identities, approved credential handling, private management access, capacity monitoring, audit requirements, recovery testing, lifecycle approval, patch ownership, and a reviewed license/deployment model. Decide whether managing storage is actually the right responsibility for your team; a managed service may be a better fit. The local lab is a teaching starting point, not a production recommendation. <a class="source-ref" href="#s22">S22</a> <a class="source-ref" href="#s23">S23</a> <a class="source-ref" href="#s24">S24</a> <a class="source-ref" href="#s33">S33</a></p>
+</section><section aria-labelledby="heading-integrated-workflow" id="integrated-workflow"><div class="chapter-kicker">CHAPTER 09</div><h2 id="heading-integrated-workflow">Integrated workflow</h2><h3>Connect the tools through artifacts, not assumed integrations</h3>
+<p>The simplest reliable integration is a chain of reviewed files. NotebookLM helps you understand selected sources. A reviewed brief informs a sketch. Mermaid captures relationships and sequences. Draw.io maintains a formal view. A storage lab tests specific API operations. Evidence from those tests feeds back into the brief.</p>
+<div aria-label="Scrollable reference table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Action</th>
+<th>Artifact to keep</th>
+<th>Review gate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Define</td>
+<td>State the users, data, scope, and constraints</td>
+<td><code>requirements.md</code></td>
+<td>Are requirements distinguishable from guesses?</td>
+</tr>
+<tr>
+<td>Research</td>
+<td>Add selected official sources and question them</td>
+<td>Source register and cited notes</td>
+<td>Do citations support the claims?</td>
+</tr>
+<tr>
+<td>Sketch</td>
+<td>Draw responsibilities and boundaries in Excalidraw</td>
+<td><code>.excalidraw</code> source</td>
+<td>Can someone explain every arrow?</td>
+</tr>
+<tr>
+<td>Specify</td>
+<td>Write a flowchart and operation sequence</td>
+<td><code>.mmd</code> files</td>
+<td>Is the behaviour consistent with the sketch?</td>
+</tr>
+<tr>
+<td>Refine</td>
+<td>Create a deployment-oriented draw.io view</td>
+<td><code>.drawio</code> source</td>
+<td>Are resources placed in the correct boundaries?</td>
+</tr>
+<tr>
+<td>Implement</td>
+<td>Run only the selected storage lab</td>
+<td>Compose and configuration record</td>
+<td>Is the implemented subset explicitly labelled?</td>
+</tr>
+<tr>
+<td>Verify</td>
+<td>Test write/read, denied access, and version retrieval</td>
+<td>Sanitised test evidence</td>
+<td>Did you observe the result, not infer it?</td>
+</tr>
+<tr>
+<td>Decide</td>
+<td>Record trade-offs and remaining work</td>
+<td>Architecture decision record</td>
+<td>Who owns the risks and revisit triggers?</td>
+</tr>
+</tbody>
+</table></div>
+<h3>Do not invent a NotebookLM–MinIO connector</h3>
+<p>This guide does not assume a native connector that continuously synchronises private MinIO buckets with NotebookLM. The supported learning workflow is <strong>manual and permission-aware</strong>: download or export a permitted document, remove sensitive information, add it through a currently supported source mechanism, and note its version/date. A changed object in storage does not, by itself, prove that the notebook's source has changed. Review current source/import behaviour for the actual source type. <a class="source-ref" href="#s02">S02</a></p>
+<p>Similarly, a <code>.drawio</code> import is not an ongoing synchronisation service, and a Mermaid export is not infrastructure deployment. Each handoff needs a declared source of truth and a check for stale information.</p>
+<h3>Capstone: document, build, and defend the storage slice</h3>
+<p><strong>Scenario:</strong> an internal team needs to store small, approved technical documents and retrieve them through a controlled application. You will design the whole conceptual system but implement only the object-storage slice locally.</p>
+<p>Choose your own target object volume, retention needs, availability goal, and recovery objectives. Write them down as <strong>proposed requirements</strong>, not measurements or vendor guarantees. Consider whether uploads go through an API or directly to storage using presigned requests. Do not mix those data paths in one unexplained sequence.</p>
+<p>Your hand-in consists of a requirements page, source register, reviewed architecture brief, editable Excalidraw logical view, editable draw.io deployment view, Mermaid operation sequence, local lab evidence, and one decision record comparing self-managed storage with a managed alternative. Remove credentials and usable signed URLs before sharing.</p>
+<div aria-label="Scrollable reference table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th style="text-align:right">Points</th>
+<th>Full-credit evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Clear scope and requirements</td>
+<td style="text-align:right">15</td>
+<td>Design goals and the implemented subset are explicit</td>
+</tr>
+<tr>
+<td>Source quality and verification</td>
+<td style="text-align:right">15</td>
+<td>Important claims are traceable and checked</td>
+</tr>
+<tr>
+<td>Diagram meaning and boundaries</td>
+<td style="text-align:right">20</td>
+<td>Views are consistent, labelled, and do not overclaim availability</td>
+</tr>
+<tr>
+<td>Access-control reasoning</td>
+<td style="text-align:right">20</td>
+<td>Root/app separation, scoped policy, and a negative test</td>
+</tr>
+<tr>
+<td>Storage verification</td>
+<td style="text-align:right">20</td>
+<td>Verified bytes, observed versions, and a restored earlier copy</td>
+</tr>
+<tr>
+<td>Decision quality and handover</td>
+<td style="text-align:right">10</td>
+<td>Trade-offs, owners, limitations, editable sources, and reproducible notes</td>
+</tr>
+</tbody>
+</table></div>
+<p>This rubric is an original learning assessment. Passing it demonstrates the skills practised here, not a professional certification or production-readiness approval.</p>
+<h3>Optional extension: your AWS Image Builder work</h3>
+<p>Apply the same workflow to an EC2 Image Builder pipeline: collect the relevant official pages, write an inventory of recipe/components/build/test/distribution responsibilities, and draw the process before adding deployment details. Image Builder is intended to automate the creation, testing, and distribution of machine/container images; use the official documentation for exact behaviour. <a class="source-ref" href="#s47">S47</a></p>
+<p>The included <code>06-image-builder-learning.mmd</code> is a <strong>learning/process map</strong>, not a fully accurate resource inventory of your AWS account. Extend it by adding the actual owners, build environment, evidence destinations, and lifecycle review decisions in your own system. Keep object-storage retention, image lifecycle, and EBS snapshot handling as distinct concerns rather than combining them into one “cleanup” arrow.</p>
+<p><button class="download" data-file="diagrams/06-image-builder-learning.mmd">Save Image Builder learning flow</button></p>
+</section><section aria-labelledby="heading-related-tools" id="related-tools"><div class="chapter-kicker">CHAPTER 10</div><h2 id="heading-related-tools">Related tools</h2><h3>Add a tool only when you have a reason</h3>
+<p>Learn the five core tools first. The following are useful next steps, organised by the problem they solve. These are learning recommendations; no paid subscription is required just to follow the core guide.</p>
+<div aria-label="Scrollable reference table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>Tool or method</th>
+<th>Why it relates</th>
+<th>A small next exercise</th>
+<th>Learn when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>C4 model</td>
+<td>Gives a vocabulary for architecture abstraction</td>
+<td>Separate context from container views</td>
+<td>Now, alongside drawing <a class="source-ref" href="#s35">S35</a></td>
+</tr>
+<tr>
+<td>Git</td>
+<td>Keeps version history for source files</td>
+<td>Commit a diagram change and explain its diff</td>
+<td>Once you have two versions <a class="source-ref" href="#s40">S40</a></td>
+</tr>
+<tr>
+<td>Structurizr</td>
+<td>Models architecture and creates C4-oriented views</td>
+<td>Describe one system and two containers</td>
+<td>When several views need a shared model <a class="source-ref" href="#s36">S36</a></td>
+</tr>
+<tr>
+<td>PlantUML</td>
+<td>Text-based UML and related diagrams</td>
+<td>Draw a class or sequence view</td>
+<td>When UML notation is important <a class="source-ref" href="#s37">S37</a></td>
+</tr>
+<tr>
+<td>D2</td>
+<td>Another text-to-diagram language</td>
+<td>Recreate the same five-component design</td>
+<td>When comparing diagram-as-code ergonomics <a class="source-ref" href="#s38">S38</a></td>
+</tr>
+<tr>
+<td>Python Diagrams</td>
+<td>Expresses infrastructure diagrams in Python</td>
+<td>Generate a small provider-specific view</td>
+<td>When your team prefers Python tooling <a class="source-ref" href="#s39">S39</a></td>
+</tr>
+<tr>
+<td>Docker Compose</td>
+<td>Defines and runs a local multi-service environment</td>
+<td>Explain each line of the supplied service definition</td>
+<td>During the storage lab <a class="source-ref" href="#s30">S30</a></td>
+</tr>
+<tr>
+<td>Boto3 / MinIO SDK</td>
+<td>Connects application code to S3-compatible APIs</td>
+<td>Write a small read-back verification</td>
+<td>After learning buckets and keys <a class="source-ref" href="#s29">S29</a> <a class="source-ref" href="#s48">S48</a></td>
+</tr>
+<tr>
+<td>rclone</td>
+<td>Copies and manages data across storage systems</td>
+<td>Compare copy versus sync on disposable data</td>
+<td>When moving data becomes a real task <a class="source-ref" href="#s41">S41</a></td>
+</tr>
+<tr>
+<td>Prometheus</td>
+<td>Collects and queries time-series metrics</td>
+<td>Identify storage availability/capacity signals</td>
+<td>After you can operate one service <a class="source-ref" href="#s42">S42</a></td>
+</tr>
+<tr>
+<td>Grafana</td>
+<td>Visualises and explores observability data</td>
+<td>Sketch a dashboard for those signals</td>
+<td>After you have meaningful metrics <a class="source-ref" href="#s43">S43</a></td>
+</tr>
+<tr>
+<td>OpenTofu</td>
+<td>Describes infrastructure as code</td>
+<td>Read a plan and map its resources to your diagram</td>
+<td>After the architecture is stable <a class="source-ref" href="#s46">S46</a></td>
+</tr>
+</tbody>
+</table></div>
+<p>A diagram-as-code tool creates documentation; an infrastructure-as-code tool can change real infrastructure. Do not confuse rendering a graph with safely deploying the system. For any tool that can delete, sync, apply, or provision, begin with disposable data and understand the scope of the operation first.</p>
+<h3>Storage alternatives to investigate</h3>
+<p><strong>Amazon S3</strong> is relevant when you want AWS-managed object storage rather than running the server yourself. Compare operational responsibility, access patterns, integration, and total cost for your situation. This guide does not estimate current prices. <a class="source-ref" href="#s18">S18</a></p>
+<p><strong>Ceph Object Gateway</strong> exposes object-storage interfaces, including S3-compatible access, in a Ceph environment. Investigate it when Ceph is already part of the platform or when a broader storage architecture is being considered; do not assume it is a smaller beginner lab. <a class="source-ref" href="#s44">S44</a></p>
+<p><strong>Garage</strong> is a distributed object-storage project with an S3-compatible interface. Evaluate its supported API subset, operational model, recovery behaviour, and current project documentation against your actual requirements rather than treating all S3-compatible products as interchangeable. <a class="source-ref" href="#s45">S45</a></p>
+<p>To compare any two options, build a matrix with: required API operations, license/support, patch ownership, failure domains, encryption, identity integration, lifecycle/versioning, observability, backup/restore, and exit/migration plan. Fill unknown entries with “not yet verified,” not optimistic assumptions.</p>
+</section><section aria-labelledby="heading-30-session-roadmap" id="30-session-roadmap"><div class="chapter-kicker">CHAPTER 11</div><h2 id="heading-30-session-roadmap">30-session roadmap</h2><p>This schedule is a suggested sequence. Keep each session's evidence small enough to finish, and repeat a session when the finish condition is not yet met. There is no benefit in reaching the last row while still unable to explain the first diagram.</p>
+<div aria-label="Scrollable reference table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th style="text-align:right">Session</th>
+<th>Focus and action</th>
+<th>Evidence to keep</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">1</td>
+<td>Explain what each core tool does</td>
+<td>A five-row tool map in your own words</td>
+</tr>
+<tr>
+<td style="text-align:right">2</td>
+<td>Define the document-platform problem</td>
+<td>One-page requirements draft</td>
+</tr>
+<tr>
+<td style="text-align:right">3</td>
+<td>Learn context, logical, and deployment views</td>
+<td>Three tiny sketches with different questions</td>
+</tr>
+<tr>
+<td style="text-align:right">4</td>
+<td>Learn bucket, key, prefix, and endpoint</td>
+<td>A labelled storage example</td>
+</tr>
+<tr>
+<td style="text-align:right">5</td>
+<td>Draw the system with boxes and arrows</td>
+<td>First Excalidraw sketch, no icons needed</td>
+</tr>
+<tr>
+<td style="text-align:right">6</td>
+<td>Select and register official sources</td>
+<td>Source register with dates and versions</td>
+</tr>
+<tr>
+<td style="text-align:right">7</td>
+<td>Create a narrow NotebookLM notebook</td>
+<td>Imported sources checked for coverage</td>
+</tr>
+<tr>
+<td style="text-align:right">8</td>
+<td>Ask vocabulary and comparison questions</td>
+<td>Ten reviewed definitions</td>
+</tr>
+<tr>
+<td style="text-align:right">9</td>
+<td>Audit three generated claims</td>
+<td>Verified/partial/unsupported evidence table</td>
+</tr>
+<tr>
+<td style="text-align:right">10</td>
+<td>Produce a study report and self-quiz</td>
+<td>One reviewed architecture brief</td>
+</tr>
+<tr>
+<td style="text-align:right">11</td>
+<td>Write the first Mermaid flowchart</td>
+<td><code>01-first-flow.mmd</code> edited by you</td>
+</tr>
+<tr>
+<td style="text-align:right">12</td>
+<td>Add labels and a grouping boundary</td>
+<td>Your document-platform flowchart</td>
+</tr>
+<tr>
+<td style="text-align:right">13</td>
+<td>Write a download sequence</td>
+<td>An authorisation-aware sequence diagram</td>
+</tr>
+<tr>
+<td style="text-align:right">14</td>
+<td>Deliberately break and repair syntax</td>
+<td>A short error/fix note</td>
+</tr>
+<tr>
+<td style="text-align:right">15</td>
+<td>Compare renderers or conversion paths</td>
+<td>A compatibility note and chosen source of truth</td>
+</tr>
+<tr>
+<td style="text-align:right">16</td>
+<td>Rebuild the Excalidraw architecture</td>
+<td>A clean editable logical view</td>
+</tr>
+<tr>
+<td style="text-align:right">17</td>
+<td>Add provider icons only where useful</td>
+<td>A consistent, labelled icon version</td>
+</tr>
+<tr>
+<td style="text-align:right">18</td>
+<td>Create a separate security/admin view</td>
+<td>Trust boundaries and unresolved questions</td>
+</tr>
+<tr>
+<td style="text-align:right">19</td>
+<td>Recreate the design in draw.io</td>
+<td>Editable <code>.drawio</code> source and export</td>
+</tr>
+<tr>
+<td style="text-align:right">20</td>
+<td>Review both diagrams for consistency</td>
+<td>Completed diagram-review checklist</td>
+</tr>
+<tr>
+<td style="text-align:right">21</td>
+<td>Review current AIStor requirements</td>
+<td>Chosen edition, license path, tool versions</td>
+</tr>
+<tr>
+<td style="text-align:right">22</td>
+<td>Initialise and start the local lab</td>
+<td>Sanitised startup evidence</td>
+</tr>
+<tr>
+<td style="text-align:right">23</td>
+<td>Bootstrap bucket and scoped identity</td>
+<td>Policy explanation and versioning status</td>
+</tr>
+<tr>
+<td style="text-align:right">24</td>
+<td>Run put/get/list and denial checks</td>
+<td>Read-back hash and denied all-buckets result</td>
+</tr>
+<tr>
+<td style="text-align:right">25</td>
+<td>Retrieve an earlier object version</td>
+<td>Restored file and observed version IDs</td>
+</tr>
+<tr>
+<td style="text-align:right">26</td>
+<td>Test a presigned download locally</td>
+<td>A written explanation; do not retain the live URL</td>
+</tr>
+<tr>
+<td style="text-align:right">27</td>
+<td>Stop/restart and discuss failure limits</td>
+<td>Persistence result plus untested failure scenarios</td>
+</tr>
+<tr>
+<td style="text-align:right">28</td>
+<td>Compare storage options and decide</td>
+<td>An architecture decision record</td>
+</tr>
+<tr>
+<td style="text-align:right">29</td>
+<td>Assemble the capstone handover</td>
+<td>Sources, editable files, exports, and test evidence</td>
+</tr>
+<tr>
+<td style="text-align:right">30</td>
+<td>Present the design and answer challenges</td>
+<td>A five-minute walkthrough and next-learning plan</td>
+</tr>
+</tbody>
+</table></div>
+<h3>Three milestone checks</h3>
+<p>At the end of session 10, you should be able to recognise an unsupported AI-generated statement. At the end of session 20, you should be able to distinguish logical and deployment views and maintain an editable diagram. At the end of session 30, you should be able to show observed storage behaviour, explain the access policy, and state why the local lab is not production architecture.</p>
+<p>When stuck, reduce scope rather than add another tool. A well-understood three-node diagram and one verified API call are more useful than an elaborate picture and an untested deployment.</p>
+</section><section aria-labelledby="heading-troubleshooting" id="troubleshooting"><div class="chapter-kicker">CHAPTER 12</div><h2 id="heading-troubleshooting">Troubleshooting</h2><p>Treat this table as a diagnostic starting point, not a substitute for the exact error and version-specific documentation. The proposed checks are designed to narrow the cause without weakening security.</p>
+<div aria-label="Scrollable reference table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Likely cause to investigate</th>
+<th>A safe next check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NotebookLM answers vaguely</td>
+<td>Sources are broad, incomplete, or unrelated</td>
+<td>Ask which exact source passage supports the answer; inspect the import <a class="source-ref" href="#s02">S02</a></td>
+</tr>
+<tr>
+<td>A website's nested pages are missing</td>
+<td>Only the submitted page was imported</td>
+<td>Add the relevant individual pages rather than the site's root URL <a class="source-ref" href="#s02">S02</a></td>
+</tr>
+<tr>
+<td>A generated answer contradicts a tutorial</td>
+<td>Different editions, dates, or scope</td>
+<td>Compare source dates and your product edition before changing the design</td>
+</tr>
+<tr>
+<td>Mermaid reports a parse error</td>
+<td>Syntax/escaping issue</td>
+<td>Reduce to two nodes; check quote/bracket pairs and the diagram type <a class="source-ref" href="#s07">S07</a></td>
+</tr>
+<tr>
+<td>Architecture syntax works in one editor only</td>
+<td>Renderer-version mismatch</td>
+<td>Use a compatible renderer or the supplied flowchart alternative <a class="source-ref" href="#s09">S09</a></td>
+</tr>
+<tr>
+<td>Mermaid-imported content is not individually editable</td>
+<td>Conversion produced an image or fallback</td>
+<td>Inspect the conversion mode and keep the original <code>.mmd</code> <a class="source-ref" href="#s12">S12</a> <a class="source-ref" href="#s15">S15</a></td>
+</tr>
+<tr>
+<td>Draw.io positions reset after source edit</td>
+<td>Regeneration recalculates geometry</td>
+<td>Keep manual layout in a native authoritative view or accept regeneration <a class="source-ref" href="#s15">S15</a></td>
+</tr>
+<tr>
+<td>An arrow detaches after moving a box</td>
+<td>It was not bound to the shape</td>
+<td>Reconnect it and move the box again as a test <a class="source-ref" href="#s10">S10</a></td>
+</tr>
+<tr>
+<td>Docker cannot start</td>
+<td>Engine/Compose not available or permissions problem</td>
+<td>Check <code>docker version</code> and <code>docker compose version</code> before debugging AIStor</td>
+</tr>
+<tr>
+<td>License mount fails</td>
+<td>Wrong path, missing file, or a directory at that path</td>
+<td>Check <code>minio.license</code> is a non-empty file in the lab folder <a class="source-ref" href="#s22">S22</a></td>
+</tr>
+<tr>
+<td>Port 9000/9001 is already in use</td>
+<td>Another local service owns the port</td>
+<td>Identify the process; stop the conflicting lab or review all endpoint changes together</td>
+</tr>
+<tr>
+<td>Console works but the SDK fails</td>
+<td>Wrong endpoint, credentials, policy, or signing settings</td>
+<td>Use the API port, inspect the error, and verify the application identity <a class="source-ref" href="#s24">S24</a></td>
+</tr>
+<tr>
+<td><code>AccessDenied</code> occurs</td>
+<td>The operation was denied; the identity, policy, or credentials may not match your intent</td>
+<td>Check identity, operation, bucket/key, policy, and whether the failure is an intentional negative test</td>
+</tr>
+<tr>
+<td>An app in another container cannot use localhost</td>
+<td>Localhost refers to that container</td>
+<td>Within Compose, use the service DNS name and container port; this kit's script is intentionally host-run <a class="source-ref" href="#s31">S31</a></td>
+</tr>
+<tr>
+<td>A presigned URL fails on another machine</td>
+<td>Loopback/private endpoint is unreachable, signature altered, or URL expired</td>
+<td>Check reachability and exact signed host/method without publishing the bucket <a class="source-ref" href="#s28">S28</a></td>
+</tr>
+<tr>
+<td>A new version is not visible</td>
+<td>Same key not used, versioning not enabled, or wrong bucket inspected</td>
+<td>Check <code>version info</code>, the exact object key, and the versions listing <a class="source-ref" href="#s27">S27</a></td>
+</tr>
+<tr>
+<td>Data disappears after teardown</td>
+<td>The volume was removed or a different project/volume is in use</td>
+<td>Inspect the Compose project and volume; do not claim a recovery that was not tested <a class="source-ref" href="#s32">S32</a></td>
+</tr>
+<tr>
+<td>An import/export loses detail</td>
+<td>Format conversion is not lossless</td>
+<td>Reopen the native source and choose an explicit authoritative format</td>
+</tr>
+</tbody>
+</table></div>
+<h3>A useful troubleshooting note</h3>
+<p>For each problem, record the intended action, exact tool version, sanitised command, error text, smallest reproduction, suspected cause, actual fix, and how you verified the fix. Exclude secrets and signed URLs. Do not simply write “it worked after reinstalling”; that gives your future self no explanation.</p>
+</section><section aria-labelledby="heading-glossary-and-self-test" id="glossary-and-self-test"><div class="chapter-kicker">CHAPTER 13</div><h2 id="heading-glossary-and-self-test">Glossary and self-test</h2><h3>Terms to be able to explain aloud</h3>
+<div aria-label="Scrollable reference table" class="table-wrap" role="region" tabindex="0"><table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Working definition for this guide</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Source grounding</td>
+<td>Linking an answer to the material supplied or retrieved as evidence</td>
+</tr>
+<tr>
+<td>Citation audit</td>
+<td>Checking whether the referenced passage supports the actual claim</td>
+</tr>
+<tr>
+<td>Diagram as code</td>
+<td>Storing diagram structure as text/code that a renderer turns into a view</td>
+</tr>
+<tr>
+<td>C4 container</td>
+<td>An application or data store, not necessarily a Docker container <a class="source-ref" href="#s35">S35</a></td>
+</tr>
+<tr>
+<td>Trust boundary</td>
+<td>A boundary across which identity, permission, or control assumptions change</td>
+</tr>
+<tr>
+<td>Failure domain</td>
+<td>A unit whose components may fail together</td>
+</tr>
+<tr>
+<td>Object key</td>
+<td>The name used to address an object within a bucket <a class="source-ref" href="#s19">S19</a></td>
+</tr>
+<tr>
+<td>Prefix</td>
+<td>An initial portion of an object key used for grouping/filtering <a class="source-ref" href="#s19">S19</a></td>
+</tr>
+<tr>
+<td>Endpoint</td>
+<td>The address used to reach an API or service</td>
+</tr>
+<tr>
+<td>Authentication</td>
+<td>Establishing which identity is making a request <a class="source-ref" href="#s24">S24</a></td>
+</tr>
+<tr>
+<td>Authorisation</td>
+<td>Determining whether that identity may perform the requested action <a class="source-ref" href="#s24">S24</a></td>
+</tr>
+<tr>
+<td>Least privilege</td>
+<td>Granting only the actions and resources needed for the intended task</td>
+</tr>
+<tr>
+<td>Presigned URL</td>
+<td>A signed, time-limited request URL under the signer's applicable permissions <a class="source-ref" href="#s28">S28</a></td>
+</tr>
+<tr>
+<td>Versioning</td>
+<td>Retaining multiple object versions according to the service's versioning behaviour <a class="source-ref" href="#s34">S34</a></td>
+</tr>
+<tr>
+<td>Recovery point objective</td>
+<td>The maximum recent-data loss the design is intended to tolerate</td>
+</tr>
+<tr>
+<td>Recovery time objective</td>
+<td>The target time for restoring a defined level of service</td>
+</tr>
+<tr>
+<td>Source of truth</td>
+<td>The file or system declared authoritative for a particular view or fact</td>
+</tr>
+<tr>
+<td>Architecture decision record</td>
+<td>A concise record of a decision, evidence, alternatives, and consequences</td>
+</tr>
+</tbody>
+</table></div>
+<h3>Check your understanding before revealing the answers</h3>
+<details><summary>1. Why is a NotebookLM citation not enough on its own?</summary><p>The cited passage can be incomplete, misinterpreted, stale, or narrower than the claim. Open it, inspect its context, and separate the documented fact from an inference or design decision.</p></details>
+<details><summary>2. Does uploading a documentation homepage import the whole site?</summary><p>Do not assume so. Import the specific relevant pages and inspect what was actually included. Website-source behaviour is documented in the source-import help. <a class="source-ref" href="#s02">[S02]</a></p></details>
+<details><summary>3. When should you use a sequence diagram instead of adding more arrows to a component view?</summary><p>When the question is about the order and conditions of one interaction, such as authorising a download before returning a URL. A static relationship view should not be forced to show every step.</p></details>
+<details><summary>4. Can a Mermaid or Excalidraw diagram deploy the cloud resources it shows?</summary><p>Not by itself. The diagram represents a design. Deployment requires separately reviewed tooling and configuration, and the runtime still needs verification.</p></details>
+<details><summary>5. Why is placing an Amazon S3 bucket inside a private subnet misleading?</summary><p>A managed regional S3 service is not an instance hosted inside your subnet. Draw the service and the relevant VPC access mechanism separately. <a class="source-ref" href="#s18">[S18]</a> <a class="source-ref" href="#s20">[S20]</a></p></details>
+<details><summary>6. Is a key such as lab/sample.txt necessarily a real directory and file?</summary><p>In S3's key model, it is an object key with a slash-containing prefix. A console can present it like a folder hierarchy without making it a traditional filesystem directory. <a class="source-ref" href="#s19">[S19]</a></p></details>
+<details><summary>7. Why does the demo use an application identity rather than root?</summary><p>The application's task is object access under one prefix, not server administration. Separate credentials make the intended permission boundary explicit and testable. <a class="source-ref" href="#s23">[S23]</a> <a class="source-ref" href="#s24">[S24]</a></p></details>
+<details><summary>8. What does the lab's denied list-buckets check prove?</summary><p>Only that this identity was denied that operation under the tested configuration. It does not prove every unwanted action is denied. Add a permission test matrix for the real application's actions and resources.</p></details>
+<details><summary>9. Is a presigned URL a replacement for application authorisation?</summary><p>No. The application should establish the requesting user's right to the object before issuing the URL. Possession of a usable URL can confer the signed operation; it also needs a reachable endpoint. <a class="source-ref" href="#s28">[S28]</a></p></details>
+<details><summary>10. Does versioning protect against loss of the only data volume?</summary><p>No. All versions can still share that same failure domain. The recovery design needs appropriate independent copies and a tested restore procedure; the local lab does not establish either.</p></details>
+<details><summary>11. What is the difference between stopping the lab and deleting its volume?</summary><p>Stopping/removing the containers with the documented stop action retains the named volume. Explicit volume removal discards the stored lab objects and versions. <a class="source-ref" href="#s32">[S32]</a></p></details>
+<details><summary>12. What should you do when the sketch, Mermaid file, and draw.io file disagree?</summary><p>Identify the declared source of truth, review which fact changed, and update the derived views deliberately. Do not assume round-trip conversion or automatic synchronisation.</p></details>
+<h3>Your next learning decision</h3>
+<p>Choose one direction based on the gap you observed: better source evaluation, clearer architecture communication, application integration, or storage operations. Do not add Kubernetes, automated discovery, or complex monitoring merely to make the project look larger. Add them when they answer a concrete requirement you can explain.</p>
+</section><section aria-labelledby="heading-resources-and-files" id="resources-and-files"><div class="chapter-kicker">CHAPTER 14</div><h2 id="heading-resources-and-files">Resources and files</h2><h3>How to use this offline guide</h3>
+<p>Open <code>guide.html</code> in a modern browser. The text, styling, reference illustration, source snippets, navigation, and downloadable examples are embedded in the file. No CDN, external font, account, or web server is needed to read it. External reference links and the actual hosted tools require internet access. The Mermaid examples are source text, not live in-page rendering.</p>
+<p>Use the chapter filter to narrow navigation and your browser's Find command to search the full text. Copy buttons work when browser permissions allow; otherwise select the code manually. The six milestone checkboxes use local browser storage where available. They do not send progress anywhere and are not a cloud backup; a browser reset or different file location can affect saved progress.</p>
+<p>Use the Print button for a print-friendly layout. Expand the self-test answers first when you want them included. The complete ZIP is the easiest way to obtain the lab with all its companion files in the correct relative locations. Individual embedded downloads are convenient for diagrams and templates.</p>
+<h3>Reusable templates</h3>
+<div class="download-row"><button class="download" data-file="templates/requirements.md">Requirements template</button><button class="download" data-file="templates/source-register.md">Source register</button><button class="download" data-file="templates/adr.md">Decision record</button><button class="download" data-file="templates/diagram-review.md">Diagram review</button><button class="download" data-file="templates/notebook-prompts.md">NotebookLM prompts</button></div>
+<h3>Package map</h3>
+<pre><code class="language-text">cloud-learning-kit/
+  guide.html                   Standalone learning document
+  README.md                    Start here and setup notes
+  VALIDATION.md                What was and was not tested
+  .gitignore                   Local secrets and generated-file exclusions
+  diagrams/
+    01-first-flow.mmd
+    02-document-platform.mmd
+    03-presigned-download.mmd
+    04-architecture-beta.mmd
+    05-document-state.mmd
+    06-image-builder-learning.mmd
+    document-platform.excalidraw
+    document-platform.drawio
+    document-platform.svg
+  labs/minio/
+    compose.yaml
+    .env.example
+    lab.py
+    s3_demo.py
+    policy.json
+    requirements.txt
+    sample.txt
+  templates/
+    requirements.md
+    source-register.md
+    adr.md
+    diagram-review.md
+    notebook-prompts.md
+  resources/
+    sources.md
+  tests/
+    test_lab.py               16 offline configuration and S3-stub tests
+  authoring/
+    content.md                Editable guide text
+    build_guide.py            Rebuild the standalone HTML
+    requirements.txt          Optional authoring dependencies
+</code></pre>
+<h3>Repeat the offline code checks</h3>
+<p>After installing the lab requirements, run <code>python -m unittest discover -s tests -v</code> from the project root. The 16 tests use temporary files, fake credentials, and stubbed SDK responses; they do not start Docker or contact a storage server. Passing them checks selected code paths, not deployment success. See <code>VALIDATION.md</code> for the full test boundary.</p>
+<h3>Official reading desk</h3>
+<p>The following primary sources were checked while preparing the guide on <strong>1 October 2026</strong>. Software behaviour, UI labels, availability, distribution, and license terms can change. Recheck the source governing your actual version before relying on a command or deployment decision. The exercises, sample architecture, roadmap, and rubric are original teaching material; cited sources support the underlying product facts.</p>
+<div class="source-list"><div class="source-item" id="s01"><span class="source-number">S01</span><div><a href="https://support.google.com/notebooklm/answer/16164461?hl=en" rel="noopener noreferrer" target="_blank">Google: product overview (current Gemini Notebook help)</a><small>Research · Primary source</small></div></div><div class="source-item" id="s02"><span class="source-number">S02</span><div><a href="https://support.google.com/notebooklm/answer/16215270?hl=en" rel="noopener noreferrer" target="_blank">Google: add or discover notebook sources</a><small>Research · Primary source</small></div></div><div class="source-item" id="s03"><span class="source-number">S03</span><div><a href="https://support.google.com/notebooklm/answer/16206563?hl=en" rel="noopener noreferrer" target="_blank">Google: create a notebook</a><small>Research · Primary source</small></div></div><div class="source-item" id="s04"><span class="source-number">S04</span><div><a href="https://support.google.com/gemininotebook/answer/16212283?hl=en-AU" rel="noopener noreferrer" target="_blank">Google: use Mind Maps</a><small>Research · Primary source</small></div></div><div class="source-item" id="s05"><span class="source-number">S05</span><div><a href="https://support.google.com/gemininotebook/answer/17004255?hl=en-GB" rel="noopener noreferrer" target="_blank">Google: privacy and terms of use</a><small>Research · Primary source</small></div></div><div class="source-item" id="s06"><span class="source-number">S06</span><div><a href="https://mermaid.ai/open-source/intro/getting-started.html" rel="noopener noreferrer" target="_blank">Mermaid: user guide</a><small>Diagramming · Primary source</small></div></div><div class="source-item" id="s07"><span class="source-number">S07</span><div><a href="https://mermaid.ai/open-source/syntax/flowchart.html" rel="noopener noreferrer" target="_blank">Mermaid: flowchart syntax</a><small>Diagramming · Primary source</small></div></div><div class="source-item" id="s08"><span class="source-number">S08</span><div><a href="https://mermaid.ai/open-source/syntax/sequenceDiagram.html" rel="noopener noreferrer" target="_blank">Mermaid: sequence diagrams</a><small>Diagramming · Primary source</small></div></div><div class="source-item" id="s09"><span class="source-number">S09</span><div><a href="https://mermaid.ai/open-source/syntax/architecture.html" rel="noopener noreferrer" target="_blank">Mermaid: architecture diagrams</a><small>Diagramming · Primary source</small></div></div><div class="source-item" id="s10"><span class="source-number">S10</span><div><a href="https://github.com/excalidraw/excalidraw" rel="noopener noreferrer" target="_blank">Excalidraw: official project and features</a><small>Diagramming · Primary source</small></div></div><div class="source-item" id="s11"><span class="source-number">S11</span><div><a href="https://libraries.excalidraw.com/" rel="noopener noreferrer" target="_blank">Excalidraw: shape libraries</a><small>Diagramming · Primary source</small></div></div><div class="source-item" id="s12"><span class="source-number">S12</span><div><a href="https://docs.excalidraw.com/docs/%40excalidraw/mermaid-to-excalidraw/api" rel="noopener noreferrer" target="_blank">Excalidraw: Mermaid conversion capabilities</a><small>Diagramming · Primary source</small></div></div><div class="source-item" id="s13"><span class="source-number">S13</span><div><a href="https://docs.excalidraw.com/docs/%40excalidraw/excalidraw/api/utils/export" rel="noopener noreferrer" target="_blank">Excalidraw: export utilities and embedded scene data</a><small>Diagramming · Primary source</small></div></div><div class="source-item" id="s14"><span class="source-number">S14</span><div><a href="https://www.drawio.com/docs/diagram-types/aws-diagrams/" rel="noopener noreferrer" target="_blank">draw.io: AWS diagrams, libraries, and exports</a><small>Diagramming · Primary source</small></div></div><div class="source-item" id="s15"><span class="source-number">S15</span><div><a href="https://www.drawio.com/docs/manual/mermaid/" rel="noopener noreferrer" target="_blank">draw.io: insert and edit Mermaid diagrams</a><small>Diagramming · Primary source</small></div></div><div class="source-item" id="s16"><span class="source-number">S16</span><div><a href="https://www.drawio.com/blog/mermaid-updates/" rel="noopener noreferrer" target="_blank">draw.io: editable Mermaid update, 3 July 2026</a><small>Diagramming · Primary source</small></div></div><div class="source-item" id="s17"><span class="source-number">S17</span><div><a href="https://aws.amazon.com/architecture/icons/" rel="noopener noreferrer" target="_blank">AWS: architecture icons</a><small>Cloud and storage · Primary source</small></div></div><div class="source-item" id="s18"><span class="source-number">S18</span><div><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html" rel="noopener noreferrer" target="_blank">AWS: what is Amazon S3?</a><small>Cloud and storage · Primary source</small></div></div><div class="source-item" id="s19"><span class="source-number">S19</span><div><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/using-prefixes.html" rel="noopener noreferrer" target="_blank">AWS: organising objects using prefixes</a><small>Cloud and storage · Primary source</small></div></div><div class="source-item" id="s20"><span class="source-number">S20</span><div><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/privatelink-interface-endpoints.html" rel="noopener noreferrer" target="_blank">AWS: private access and endpoints for S3</a><small>Cloud and storage · Primary source</small></div></div><div class="source-item" id="s21"><span class="source-number">S21</span><div><a href="https://github.com/minio/minio" rel="noopener noreferrer" target="_blank">MinIO: archived community server repository and maintenance notice</a><small>MinIO and SDKs · Primary source</small></div></div><div class="source-item" id="s22"><span class="source-number">S22</span><div><a href="https://docs.min.io/aistor/installation/container/install/" rel="noopener noreferrer" target="_blank">MinIO: deploy AIStor as a container and obtain a license</a><small>MinIO and SDKs · Primary source</small></div></div><div class="source-item" id="s23"><span class="source-number">S23</span><div><a href="https://docs.min.io/aistor/reference/aistor-server/settings/root-credentials/" rel="noopener noreferrer" target="_blank">MinIO: root credentials and root access</a><small>MinIO and SDKs · Primary source</small></div></div><div class="source-item" id="s24"><span class="source-number">S24</span><div><a href="https://docs.min.io/aistor/administration/iam/" rel="noopener noreferrer" target="_blank">MinIO: identity and access management</a><small>MinIO and SDKs · Primary source</small></div></div><div class="source-item" id="s25"><span class="source-number">S25</span><div><a href="https://docs.min.io/aistor/administration/iam/identity/built-in-identity/" rel="noopener noreferrer" target="_blank">MinIO: built-in identity management</a><small>MinIO and SDKs · Primary source</small></div></div><div class="source-item" id="s26"><span class="source-number">S26</span><div><a href="https://docs.min.io/aistor/reference/cli/admin/mc-admin-policy/mc-admin-policy-attach/" rel="noopener noreferrer" target="_blank">MinIO: attach a policy to a user/group</a><small>MinIO and SDKs · Primary source</small></div></div><div class="source-item" id="s27"><span class="source-number">S27</span><div><a href="https://docs.min.io/aistor/reference/cli/mc-version/mc-version-enable/" rel="noopener noreferrer" target="_blank">MinIO: enable bucket versioning</a><small>MinIO and SDKs · Primary source</small></div></div><div class="source-item" id="s28"><span class="source-number">S28</span><div><a href="https://docs.aws.amazon.com/boto3/latest/guide/s3-presigned-urls.html" rel="noopener noreferrer" target="_blank">AWS Boto3: presigned URLs</a><small>MinIO and SDKs · Primary source</small></div></div><div class="source-item" id="s29"><span class="source-number">S29</span><div><a href="https://docs.aws.amazon.com/boto3/latest/guide/s3-uploading-files.html" rel="noopener noreferrer" target="_blank">AWS Boto3: uploading files</a><small>MinIO and SDKs · Primary source</small></div></div><div class="source-item" id="s30"><span class="source-number">S30</span><div><a href="https://docs.docker.com/reference/compose-file/services/" rel="noopener noreferrer" target="_blank">Docker: Compose service specification</a><small>Containers and operations · Primary source</small></div></div><div class="source-item" id="s31"><span class="source-number">S31</span><div><a href="https://docs.docker.com/compose/how-tos/networking/" rel="noopener noreferrer" target="_blank">Docker: networking in Compose</a><small>Containers and operations · Primary source</small></div></div><div class="source-item" id="s32"><span class="source-number">S32</span><div><a href="https://docs.docker.com/compose/gettingstarted/" rel="noopener noreferrer" target="_blank">Docker: Compose getting started and volume lifecycle</a><small>Containers and operations · Primary source</small></div></div><div class="source-item" id="s33"><span class="source-number">S33</span><div><a href="https://docs.min.io/aistor/operations/core-concepts/erasure-coding/" rel="noopener noreferrer" target="_blank">MinIO: erasure coding, sets, and quorum</a><small>Cloud and storage · Primary source</small></div></div><div class="source-item" id="s34"><span class="source-number">S34</span><div><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/Versioning.html" rel="noopener noreferrer" target="_blank">AWS: object versioning behaviour</a><small>Cloud and storage · Primary source</small></div></div><div class="source-item" id="s35"><span class="source-number">S35</span><div><a href="https://c4model.com/" rel="noopener noreferrer" target="_blank">C4: model overview and abstraction levels</a><small>Related tools · Primary source</small></div></div><div class="source-item" id="s36"><span class="source-number">S36</span><div><a href="https://docs.structurizr.com/" rel="noopener noreferrer" target="_blank">Structurizr: architecture models and views</a><small>Related tools · Primary source</small></div></div><div class="source-item" id="s37"><span class="source-number">S37</span><div><a href="https://plantuml.com/" rel="noopener noreferrer" target="_blank">PlantUML: text-based diagramming</a><small>Related tools · Primary source</small></div></div><div class="source-item" id="s38"><span class="source-number">S38</span><div><a href="https://d2lang.com/" rel="noopener noreferrer" target="_blank">D2: diagram language documentation</a><small>Related tools · Primary source</small></div></div><div class="source-item" id="s39"><span class="source-number">S39</span><div><a href="https://diagrams.mingrammer.com/" rel="noopener noreferrer" target="_blank">Diagrams: infrastructure diagrams in Python</a><small>Related tools · Primary source</small></div></div><div class="source-item" id="s40"><span class="source-number">S40</span><div><a href="https://git-scm.com/book/en/v2/Getting-Started-About-Version-Control" rel="noopener noreferrer" target="_blank">Git: about version control</a><small>Related tools · Primary source</small></div></div><div class="source-item" id="s41"><span class="source-number">S41</span><div><a href="https://rclone.org/" rel="noopener noreferrer" target="_blank">rclone: storage management and transfer</a><small>Related tools · Primary source</small></div></div><div class="source-item" id="s42"><span class="source-number">S42</span><div><a href="https://prometheus.io/docs/introduction/overview/" rel="noopener noreferrer" target="_blank">Prometheus: overview</a><small>Related tools · Primary source</small></div></div><div class="source-item" id="s43"><span class="source-number">S43</span><div><a href="https://grafana.com/docs/grafana/latest/introduction/" rel="noopener noreferrer" target="_blank">Grafana: introduction</a><small>Related tools · Primary source</small></div></div><div class="source-item" id="s44"><span class="source-number">S44</span><div><a href="https://docs.ceph.com/en/latest/radosgw/" rel="noopener noreferrer" target="_blank">Ceph: object gateway</a><small>Related tools · Primary source</small></div></div><div class="source-item" id="s45"><span class="source-number">S45</span><div><a href="https://garagehq.deuxfleurs.fr/" rel="noopener noreferrer" target="_blank">Garage: S3-compatible distributed object storage</a><small>Related tools · Primary source</small></div></div><div class="source-item" id="s46"><span class="source-number">S46</span><div><a href="https://opentofu.org/docs/intro/" rel="noopener noreferrer" target="_blank">OpenTofu: getting started</a><small>Related tools · Primary source</small></div></div><div class="source-item" id="s47"><span class="source-number">S47</span><div><a href="https://docs.aws.amazon.com/imagebuilder/latest/userguide/what-is-image-builder.html" rel="noopener noreferrer" target="_blank">AWS: EC2 Image Builder overview</a><small>Cloud and storage · Primary source</small></div></div><div class="source-item" id="s48"><span class="source-number">S48</span><div><a href="https://docs.min.io/aistor/developers/sdk/python/" rel="noopener noreferrer" target="_blank">MinIO: Python SDK and S3-compatible access</a><small>MinIO and SDKs · Primary source</small></div></div><div class="source-item" id="s49"><span class="source-number">S49</span><div><a href="https://docs.min.io/aistor/reference/cli/admin/mc-admin-policy/" rel="noopener noreferrer" target="_blank">MinIO: policy management commands</a><small>MinIO and SDKs · Primary source</small></div></div><div class="source-item" id="s50"><span class="source-number">S50</span><div><a href="https://docs.min.io/aistor/reference/aistor-server/" rel="noopener noreferrer" target="_blank">MinIO: AIStor server command reference</a><small>MinIO and SDKs · Primary source</small></div></div><div class="source-item" id="s51"><span class="source-number">S51</span><div><a href="https://docs.min.io/aistor/reference/cli/mc-share/mc-share-download/" rel="noopener noreferrer" target="_blank">MinIO: sharing a download</a><small>MinIO and SDKs · Primary source</small></div></div><div class="source-item" id="s52"><span class="source-number">S52</span><div><a href="https://docs.min.io/aistor/reference/cli/mc-cp/" rel="noopener noreferrer" target="_blank">MinIO: copy and restore a specific object version</a><small>MinIO and SDKs · Primary source</small></div></div><div class="source-item" id="s53"><span class="source-number">S53</span><div><a href="https://docs.min.io/aistor/reference/cli/mc-ls/" rel="noopener noreferrer" target="_blank">MinIO: list objects and versions</a><small>MinIO and SDKs · Primary source</small></div></div><div class="source-item" id="s54"><span class="source-number">S54</span><div><a href="https://docs.min.io/aistor/operations/monitoring/healthcheck-probe/" rel="noopener noreferrer" target="_blank">MinIO: liveness and readiness probes</a><small>MinIO and SDKs · Primary source</small></div></div><div class="source-item" id="s55"><span class="source-number">S55</span><div><a href="https://docs.min.io/aistor/reference/cli/" rel="noopener noreferrer" target="_blank">MinIO: mc installation, naming, versions, and configuration</a><small>MinIO and SDKs · Primary source</small></div></div></div>
+</section><p class="endnote">End of field guide. Preserve the editable source, the evidence behind the design, and the limits of what was actually tested.</p></main><div aria-live="polite" class="toast" id="toast" role="status"></div><script id="embedded-files" type="application/json">{"diagrams/01-first-flow.mmd": "Zmxvd2NoYXJ0IExSCiAgICBVWyJVc2VyIl0gLS0+fEhUVFBTfCBBWyJBcHBsaWNhdGlvbiJdCiAgICBBIC0tPnxTMyBBUEl8IFNbIk9iamVjdCBzdG9yYWdlIl0K", "diagrams/02-document-platform.mmd": "Zmxvd2NoYXJ0IExSCiAgICBVWyJJbnRlcm5hbCB1c2VyIl0gLS0+fEhUVFBTfCBHWyJHYXRld2F5IC8gcmV2ZXJzZSBwcm94eSJdCiAgICBzdWJncmFwaCBQWyJQcml2YXRlIGFwcGxpY2F0aW9uIGVudmlyb25tZW50IC0gY29uY2VwdHVhbCJdCiAgICAgICAgRyAtLT58QXV0aGVudGljYXRlZCByZXF1ZXN0fCBBWyJEb2N1bWVudCBBUEkiXQogICAgICAgIEEgLS0+fFMzIEFQSSBvdmVyIEhUVFBTfCBPWyJNaW5JTyAvIEFJU3RvciJdCiAgICAgICAgQSAtLT58TWV0YWRhdGEgcXVlcnl8IERbKCJNZXRhZGF0YSBkYXRhYmFzZSIpXQogICAgZW5kCiAgICBOWyJBZG1pbiBhY2Nlc3MsIGJhY2t1cHMgYW5kIG1vbml0b3JpbmcgbmVlZCBzZXBhcmF0ZSB2aWV3cyJdCg==", "diagrams/03-presigned-download.mmd": "c2VxdWVuY2VEaWFncmFtCiAgICBhdXRvbnVtYmVyCiAgICBwYXJ0aWNpcGFudCBVIGFzIEF1dGhvcml6ZWQgdXNlcgogICAgcGFydGljaXBhbnQgQSBhcyBEb2N1bWVudCBBUEkKICAgIHBhcnRpY2lwYW50IE0gYXMgUzMgZW5kcG9pbnQKICAgIFUtPj5BOiBSZXF1ZXN0IGRvd25sb2FkIGZvciBkb2N1bWVudCBJRAogICAgQS0+PkE6IEF1dGhlbnRpY2F0ZSBhbmQgYXV0aG9yaXplIG9iamVjdCBhY2Nlc3MKICAgIEEtPj5BOiBTaWduIHNob3J0LWxpdmVkIEdFVCBVUkwgbG9jYWxseQogICAgQS0tPj5VOiBSZXR1cm4gcHJlc2lnbmVkIFVSTAogICAgVS0+Pk06IEdFVCB1c2luZyBzaWduZWQgVVJMCiAgICBNLT4+TTogVmFsaWRhdGUgc2lnbmF0dXJlLCBleHBpcnkgYW5kIHBlcm1pc3Npb25zCiAgICBNLS0+PlU6IE9iamVjdCBieXRlcwogICAgTm90ZSBvdmVyIFUsTTogVGhlIGVuZHBvaW50IG11c3QgYmUgcmVhY2hhYmxlIGJ5IHRoZSB1c2VyOyBhIFVSTCBkb2VzIG5vdCBjcmVhdGUgYSBuZXR3b3JrIHJvdXRlLgo=", "diagrams/04-architecture-beta.mmd": "YXJjaGl0ZWN0dXJlLWJldGEKICAgIGdyb3VwIHBsYXRmb3JtKGNsb3VkKVtQcml2YXRlIHBsYXRmb3JtXQogICAgc2VydmljZSB1c2VyKGludGVybmV0KVtVc2VyXQogICAgc2VydmljZSBnYXRld2F5KHNlcnZlcilbR2F0ZXdheV0gaW4gcGxhdGZvcm0KICAgIHNlcnZpY2UgYXBpKHNlcnZlcilbRG9jdW1lbnQgQVBJXSBpbiBwbGF0Zm9ybQogICAgc2VydmljZSBvYmplY3RzKGRpc2spW09iamVjdCBzdG9yYWdlXSBpbiBwbGF0Zm9ybQogICAgc2VydmljZSBtZXRhZGF0YShkYXRhYmFzZSlbTWV0YWRhdGFdIGluIHBsYXRmb3JtCiAgICB1c2VyOlIgLS0+IEw6Z2F0ZXdheQogICAgZ2F0ZXdheTpSIC0tPiBMOmFwaQogICAgYXBpOlIgLS0+IEw6b2JqZWN0cwogICAgYXBpOkIgLS0+IFQ6bWV0YWRhdGEK", "diagrams/05-document-state.mmd": "c3RhdGVEaWFncmFtLXYyCiAgICBbKl0gLS0+IERyYWZ0CiAgICBEcmFmdCAtLT4gUmV2aWV3ZWQ6IEh1bWFuIGNoZWNrcyBzb3VyY2UgYW5kIHNlbnNpdGl2aXR5CiAgICBSZXZpZXdlZCAtLT4gVXBsb2FkZWQ6IEFwcHJvdmVkIGZvciBzdG9yYWdlCiAgICBVcGxvYWRlZCAtLT4gUHVibGlzaGVkOiBBY2Nlc3MgcG9saWN5IHZlcmlmaWVkCiAgICBQdWJsaXNoZWQgLS0+IEFyY2hpdmVkOiBSZXRlbnRpb24gZGVjaXNpb24KICAgIEFyY2hpdmVkIC0tPiBbKl0K", "diagrams/06-image-builder-learning.mmd": "Zmxvd2NoYXJ0IExSCiAgICBSWyJSZWNpcGUgYW5kIGNvbXBvbmVudHMiXSAtLT4gQlsiQnVpbGQgaW1hZ2UiXQogICAgQiAtLT4gVFsiVGVzdCBpbWFnZSJdCiAgICBUIC0tPiBEWyJEaXN0cmlidXRlIGFwcHJvdmVkIGltYWdlIl0KICAgIEQgLS0+IFZbIlZlcnNpb24gaW52ZW50b3J5Il0KICAgIFYgLS0+IExbIkxpZmVjeWNsZSBwb2xpY3kgcmV2aWV3Il0KICAgIEwgLS0+IEVbIkV2aWRlbmNlIGFuZCByZXRhaW5lZCBhdWRpdCByZWNvcmRzIl0K", "diagrams/document-platform.drawio": "PD94bWwgdmVyc2lvbj0nMS4wJyBlbmNvZGluZz0ndXRmLTgnPz4KPG14ZmlsZSBob3N0PSJhcHAuZGlhZ3JhbXMubmV0IiBhZ2VudD0iQ2xvdWQgTGVhcm5pbmcgS2l0IiB2ZXJzaW9uPSIyNi4wLjAiPgogIDxkaWFncmFtIG5hbWU9IkxvZ2ljYWwgYXJjaGl0ZWN0dXJlIiBpZD0ibG9naWNhbC1hcmNoaXRlY3R1cmUiPgogICAgPG14R3JhcGhNb2RlbCBkeD0iMTIwMCIgZHk9IjgwMCIgZ3JpZD0iMSIgZ3JpZFNpemU9IjEwIiBndWlkZXM9IjEiIHRvb2x0aXBzPSIxIiBjb25uZWN0PSIxIiBhcnJvd3M9IjEiIGZvbGQ9IjEiIHBhZ2U9IjEiIHBhZ2VTY2FsZT0iMSIgcGFnZVdpZHRoPSIxMTY5IiBwYWdlSGVpZ2h0PSI4MjciIG1hdGg9IjAiIHNoYWRvdz0iMCI+CiAgICAgIDxyb290PgogICAgICAgIDxteENlbGwgaWQ9IjAiIC8+CiAgICAgICAgPG14Q2VsbCBpZD0iMSIgcGFyZW50PSIwIiAvPgogICAgICAgIDxteENlbGwgaWQ9InRpdGxlIiB2YWx1ZT0iRG9jdW1lbnQgcGxhdGZvcm0gLyBsb2dpY2FsIHZpZXciIHN0eWxlPSJ0ZXh0O2h0bWw9MDthbGlnbj1sZWZ0O3ZlcnRpY2FsQWxpZ249bWlkZGxlO2ZvbnRTaXplPTI0O2ZvbnRTdHlsZT0xOyIgdmVydGV4PSIxIiBwYXJlbnQ9IjEiPgogICAgICAgICAgPG14R2VvbWV0cnkgeD0iMzIiIHk9IjE4IiB3aWR0aD0iODIwIiBoZWlnaHQ9IjQwIiBhcz0iZ2VvbWV0cnkiIC8+CiAgICAgICAgPC9teENlbGw+CiAgICAgICAgPG14Q2VsbCBpZD0ic3VidGl0bGUiIHZhbHVlPSJDb25jZXB0dWFsIGRlc2lnbjogb25seSB0aGUgb2JqZWN0IHN0b3JlIGlzIGRlcGxveWVkIGJ5IHRoZSBzdXBwbGllZCBsYWIuIiBzdHlsZT0idGV4dDtodG1sPTA7YWxpZ249bGVmdDtmb250U2l6ZT0xNTsiIHZlcnRleD0iMSIgcGFyZW50PSIxIj4KICAgICAgICAgIDxteEdlb21ldHJ5IHg9IjMyIiB5PSI2MCIgd2lkdGg9IjEwNTAiIGhlaWdodD0iMzAiIGFzPSJnZW9tZXRyeSIgLz4KICAgICAgICA8L214Q2VsbD4KICAgICAgICA8bXhDZWxsIGlkPSJib3VuZGFyeSIgdmFsdWU9IlBSSVZBVEUgQVBQTElDQVRJT04gRU5WSVJPTk1FTlQiIHN0eWxlPSJyb3VuZGVkPTE7d2hpdGVTcGFjZT13cmFwO2h0bWw9MDtmaWxsQ29sb3I9I2Y3ZjlmYztzdHJva2VDb2xvcj0jOWJhOGJiO2Rhc2hlZD0xO3ZlcnRpY2FsQWxpZ249dG9wO2FsaWduPWxlZnQ7c3BhY2luZ0xlZnQ9MjA7c3BhY2luZ1RvcD0xMjtmb250U2l6ZT0xNTsiIHZlcnRleD0iMSIgcGFyZW50PSIxIj4KICAgICAgICAgIDxteEdlb21ldHJ5IHg9IjI0NyIgeT0iMTEwIiB3aWR0aD0iODU1IiBoZWlnaHQ9IjQwMCIgYXM9Imdlb21ldHJ5IiAvPgogICAgICAgIDwvbXhDZWxsPgogICAgICAgIDxteENlbGwgaWQ9InVzZXIiIHZhbHVlPSJJbnRlcm5hbCB1c2VyIiBzdHlsZT0icm91bmRlZD0xO3doaXRlU3BhY2U9d3JhcDtodG1sPTA7ZmlsbENvbG9yPSNmZmY3ZWQ7c3Ryb2tlQ29sb3I9IzY5N2Q5ODtmb250U2l6ZT0xODsiIHZlcnRleD0iMSIgcGFyZW50PSIxIj4KICAgICAgICAgIDxteEdlb21ldHJ5IHg9IjM1IiB5PSIyNjAiIHdpZHRoPSIxNTUiIGhlaWdodD0iODUiIGFzPSJnZW9tZXRyeSIgLz4KICAgICAgICA8L214Q2VsbD4KICAgICAgICA8bXhDZWxsIGlkPSJnYXRld2F5IiB2YWx1ZT0iR2F0ZXdheSAvJiMxMDtyZXZlcnNlIHByb3h5IiBzdHlsZT0icm91bmRlZD0xO3doaXRlU3BhY2U9d3JhcDtodG1sPTA7ZmlsbENvbG9yPSNlZWYyZmY7c3Ryb2tlQ29sb3I9IzY5N2Q5ODtmb250U2l6ZT0xODsiIHZlcnRleD0iMSIgcGFyZW50PSIxIj4KICAgICAgICAgIDxteEdlb21ldHJ5IHg9IjI4NSIgeT0iMjYwIiB3aWR0aD0iMTg1IiBoZWlnaHQ9Ijg1IiBhcz0iZ2VvbWV0cnkiIC8+CiAgICAgICAgPC9teENlbGw+CiAgICAgICAgPG14Q2VsbCBpZD0iYXBpIiB2YWx1ZT0iRG9jdW1lbnQgQVBJIiBzdHlsZT0icm91bmRlZD0xO3doaXRlU3BhY2U9d3JhcDtodG1sPTA7ZmlsbENvbG9yPSNlZWYyZmY7c3Ryb2tlQ29sb3I9IzY5N2Q5ODtmb250U2l6ZT0xODsiIHZlcnRleD0iMSIgcGFyZW50PSIxIj4KICAgICAgICAgIDxteEdlb21ldHJ5IHg9IjU0NSIgeT0iMjYwIiB3aWR0aD0iMTg1IiBoZWlnaHQ9Ijg1IiBhcz0iZ2VvbWV0cnkiIC8+CiAgICAgICAgPC9teENlbGw+CiAgICAgICAgPG14Q2VsbCBpZD0ic3RvcmFnZSIgdmFsdWU9Ik1pbklPIC8gQUlTdG9yJiMxMDtPYmplY3QgYnl0ZXMiIHN0eWxlPSJyb3VuZGVkPTE7d2hpdGVTcGFjZT13cmFwO2h0bWw9MDtmaWxsQ29sb3I9I2U2ZjVmMDtzdHJva2VDb2xvcj0jNjk3ZDk4O2ZvbnRTaXplPTE4OyIgdmVydGV4PSIxIiBwYXJlbnQ9IjEiPgogICAgICAgICAgPG14R2VvbWV0cnkgeD0iODM1IiB5PSIxNzAiIHdpZHRoPSIyMzAiIGhlaWdodD0iOTUiIGFzPSJnZW9tZXRyeSIgLz4KICAgICAgICA8L214Q2VsbD4KICAgICAgICA8bXhDZWxsIGlkPSJkYiIgdmFsdWU9Ik1ldGFkYXRhIGRhdGFiYXNlJiMxMDtJRHMsIG93bmVycywga2V5cyIgc3R5bGU9InJvdW5kZWQ9MTt3aGl0ZVNwYWNlPXdyYXA7aHRtbD0wO2ZpbGxDb2xvcj0jZjNmMWZjO3N0cm9rZUNvbG9yPSM2OTdkOTg7Zm9udFNpemU9MTg7IiB2ZXJ0ZXg9IjEiIHBhcmVudD0iMSI+CiAgICAgICAgICA8bXhHZW9tZXRyeSB4PSI4MzUiIHk9IjM2NSIgd2lkdGg9IjIzMCIgaGVpZ2h0PSI5NSIgYXM9Imdlb21ldHJ5IiAvPgogICAgICAgIDwvbXhDZWxsPgogICAgICAgIDxteENlbGwgaWQ9ImVkZ2UwIiB2YWx1ZT0iSFRUUFMiIHN0eWxlPSJlZGdlU3R5bGU9b3J0aG9nb25hbEVkZ2VTdHlsZTtyb3VuZGVkPTA7aHRtbD0wO2VuZEFycm93PWJsb2NrO2VuZEZpbGw9MTtzdHJva2VDb2xvcj0jNTM2MTc5O2ZvbnRTaXplPTEzOyIgZWRnZT0iMSIgcGFyZW50PSIxIiBzb3VyY2U9InVzZXIiIHRhcmdldD0iZ2F0ZXdheSI+CiAgICAgICAgICA8bXhHZW9tZXRyeSByZWxhdGl2ZT0iMSIgYXM9Imdlb21ldHJ5IiAvPgogICAgICAgIDwvbXhDZWxsPgogICAgICAgIDxteENlbGwgaWQ9ImVkZ2UxIiB2YWx1ZT0iQXV0aGVudGljYXRlZCIgc3R5bGU9ImVkZ2VTdHlsZT1vcnRob2dvbmFsRWRnZVN0eWxlO3JvdW5kZWQ9MDtodG1sPTA7ZW5kQXJyb3c9YmxvY2s7ZW5kRmlsbD0xO3N0cm9rZUNvbG9yPSM1MzYxNzk7Zm9udFNpemU9MTM7IiBlZGdlPSIxIiBwYXJlbnQ9IjEiIHNvdXJjZT0iZ2F0ZXdheSIgdGFyZ2V0PSJhcGkiPgogICAgICAgICAgPG14R2VvbWV0cnkgcmVsYXRpdmU9IjEiIGFzPSJnZW9tZXRyeSIgLz4KICAgICAgICA8L214Q2VsbD4KICAgICAgICA8bXhDZWxsIGlkPSJlZGdlMiIgdmFsdWU9IlMzIEFQSSAvIEhUVFBTIiBzdHlsZT0iZWRnZVN0eWxlPW9ydGhvZ29uYWxFZGdlU3R5bGU7cm91bmRlZD0wO2h0bWw9MDtlbmRBcnJvdz1ibG9jaztlbmRGaWxsPTE7c3Ryb2tlQ29sb3I9IzUzNjE3OTtmb250U2l6ZT0xMzsiIGVkZ2U9IjEiIHBhcmVudD0iMSIgc291cmNlPSJhcGkiIHRhcmdldD0ic3RvcmFnZSI+CiAgICAgICAgICA8bXhHZW9tZXRyeSByZWxhdGl2ZT0iMSIgYXM9Imdlb21ldHJ5IiAvPgogICAgICAgIDwvbXhDZWxsPgogICAgICAgIDxteENlbGwgaWQ9ImVkZ2UzIiB2YWx1ZT0iTWV0YWRhdGEiIHN0eWxlPSJlZGdlU3R5bGU9b3J0aG9nb25hbEVkZ2VTdHlsZTtyb3VuZGVkPTA7aHRtbD0wO2VuZEFycm93PWJsb2NrO2VuZEZpbGw9MTtzdHJva2VDb2xvcj0jNTM2MTc5O2ZvbnRTaXplPTEzOyIgZWRnZT0iMSIgcGFyZW50PSIxIiBzb3VyY2U9ImFwaSIgdGFyZ2V0PSJkYiI+CiAgICAgICAgICA8bXhHZW9tZXRyeSByZWxhdGl2ZT0iMSIgYXM9Imdlb21ldHJ5IiAvPgogICAgICAgIDwvbXhDZWxsPgogICAgICAgIDxteENlbGwgaWQ9Im5vdGUiIHZhbHVlPSJBZGQgc2VwYXJhdGUgYWRtaW4gYWNjZXNzLCBpZGVudGl0eSwgYmFja3VwLCBtb25pdG9yaW5nIGFuZCBmYWlsdXJlLWRvbWFpbiB2aWV3cy4gVGhpcyBpcyBub3QgSEEuIiBzdHlsZT0idGV4dDtodG1sPTA7YWxpZ249bGVmdDtmb250U2l6ZT0xNDsiIHZlcnRleD0iMSIgcGFyZW50PSIxIj4KICAgICAgICAgIDxteEdlb21ldHJ5IHg9IjMyIiB5PSI1NDgiIHdpZHRoPSIxMDcwIiBoZWlnaHQ9IjM1IiBhcz0iZ2VvbWV0cnkiIC8+CiAgICAgICAgPC9teENlbGw+CiAgICAgIDwvcm9vdD4KICAgIDwvbXhHcmFwaE1vZGVsPgogIDwvZGlhZ3JhbT4KPC9teGZpbGU+", "diagrams/document-platform.excalidraw": "ewogICJ0eXBlIjogImV4Y2FsaWRyYXciLAogICJ2ZXJzaW9uIjogMiwKICAic291cmNlIjogImh0dHBzOi8vZXhjYWxpZHJhdy5jb20iLAogICJlbGVtZW50cyI6IFsKICAgIHsKICAgICAgImlkIjogImUxIiwKICAgICAgInR5cGUiOiAidGV4dCIsCiAgICAgICJ4IjogMzIsCiAgICAgICJ5IjogMTUsCiAgICAgICJ3aWR0aCI6IDU1MCwKICAgICAgImhlaWdodCI6IDMwLAogICAgICAiYW5nbGUiOiAwLAogICAgICAic3Ryb2tlQ29sb3IiOiAiIzQzNTQ2ZSIsCiAgICAgICJiYWNrZ3JvdW5kQ29sb3IiOiAidHJhbnNwYXJlbnQiLAogICAgICAiZmlsbFN0eWxlIjogInNvbGlkIiwKICAgICAgInN0cm9rZVdpZHRoIjogMS41LAogICAgICAic3Ryb2tlU3R5bGUiOiAic29saWQiLAogICAgICAicm91Z2huZXNzIjogMSwKICAgICAgIm9wYWNpdHkiOiAxMDAsCiAgICAgICJncm91cElkcyI6IFtdLAogICAgICAiZnJhbWVJZCI6IG51bGwsCiAgICAgICJyb3VuZG5lc3MiOiBudWxsLAogICAgICAic2VlZCI6IDEwMDEsCiAgICAgICJ2ZXJzaW9uIjogMSwKICAgICAgInZlcnNpb25Ob25jZSI6IDIwMDEsCiAgICAgICJpc0RlbGV0ZWQiOiBmYWxzZSwKICAgICAgImJvdW5kRWxlbWVudHMiOiBudWxsLAogICAgICAidXBkYXRlZCI6IDEsCiAgICAgICJsaW5rIjogbnVsbCwKICAgICAgImxvY2tlZCI6IGZhbHNlLAogICAgICAidGV4dCI6ICJEb2N1bWVudCBwbGF0Zm9ybSAvIGxvZ2ljYWwgdmlldyIsCiAgICAgICJmb250U2l6ZSI6IDIwLAogICAgICAiZm9udEZhbWlseSI6IDIsCiAgICAgICJ0ZXh0QWxpZ24iOiAibGVmdCIsCiAgICAgICJ2ZXJ0aWNhbEFsaWduIjogIm1pZGRsZSIsCiAgICAgICJjb250YWluZXJJZCI6IG51bGwsCiAgICAgICJvcmlnaW5hbFRleHQiOiAiRG9jdW1lbnQgcGxhdGZvcm0gLyBsb2dpY2FsIHZpZXciLAogICAgICAiYXV0b1Jlc2l6ZSI6IHRydWUsCiAgICAgICJsaW5lSGVpZ2h0IjogMS4yNQogICAgfSwKICAgIHsKICAgICAgImlkIjogImUyIiwKICAgICAgInR5cGUiOiAidGV4dCIsCiAgICAgICJ4IjogMzIsCiAgICAgICJ5IjogNTYsCiAgICAgICJ3aWR0aCI6IDEwNTAsCiAgICAgICJoZWlnaHQiOiAyNSwKICAgICAgImFuZ2xlIjogMCwKICAgICAgInN0cm9rZUNvbG9yIjogIiM0MzU0NmUiLAogICAgICAiYmFja2dyb3VuZENvbG9yIjogInRyYW5zcGFyZW50IiwKICAgICAgImZpbGxTdHlsZSI6ICJzb2xpZCIsCiAgICAgICJzdHJva2VXaWR0aCI6IDEuNSwKICAgICAgInN0cm9rZVN0eWxlIjogInNvbGlkIiwKICAgICAgInJvdWdobmVzcyI6IDEsCiAgICAgICJvcGFjaXR5IjogMTAwLAogICAgICAiZ3JvdXBJZHMiOiBbXSwKICAgICAgImZyYW1lSWQiOiBudWxsLAogICAgICAicm91bmRuZXNzIjogbnVsbCwKICAgICAgInNlZWQiOiAxMDAyLAogICAgICAidmVyc2lvbiI6IDEsCiAgICAgICJ2ZXJzaW9uTm9uY2UiOiAyMDAyLAogICAgICAiaXNEZWxldGVkIjogZmFsc2UsCiAgICAgICJib3VuZEVsZW1lbnRzIjogbnVsbCwKICAgICAgInVwZGF0ZWQiOiAxLAogICAgICAibGluayI6IG51bGwsCiAgICAgICJsb2NrZWQiOiBmYWxzZSwKICAgICAgInRleHQiOiAiQ29uY2VwdHVhbCBvbmx5OiB0aGUgc3VwcGxpZWQgbGFiIGRlcGxveXMgdGhlIG9iamVjdCBzdG9yZSwgbm90IHRoZSBlbnRpcmUgYXBwbGljYXRpb24uIiwKICAgICAgImZvbnRTaXplIjogMTYsCiAgICAgICJmb250RmFtaWx5IjogMiwKICAgICAgInRleHRBbGlnbiI6ICJsZWZ0IiwKICAgICAgInZlcnRpY2FsQWxpZ24iOiAibWlkZGxlIiwKICAgICAgImNvbnRhaW5lcklkIjogbnVsbCwKICAgICAgIm9yaWdpbmFsVGV4dCI6ICJDb25jZXB0dWFsIG9ubHk6IHRoZSBzdXBwbGllZCBsYWIgZGVwbG95cyB0aGUgb2JqZWN0IHN0b3JlLCBub3QgdGhlIGVudGlyZSBhcHBsaWNhdGlvbi4iLAogICAgICAiYXV0b1Jlc2l6ZSI6IHRydWUsCiAgICAgICJsaW5lSGVpZ2h0IjogMS4yNQogICAgfSwKICAgIHsKICAgICAgImlkIjogImUzIiwKICAgICAgInR5cGUiOiAicmVjdGFuZ2xlIiwKICAgICAgIngiOiAyNDcsCiAgICAgICJ5IjogMTEwLAogICAgICAid2lkdGgiOiA4NTUsCiAgICAgICJoZWlnaHQiOiA0MDAsCiAgICAgICJhbmdsZSI6IDAsCiAgICAgICJzdHJva2VDb2xvciI6ICIjNDM1NDZlIiwKICAgICAgImJhY2tncm91bmRDb2xvciI6ICIjZjdmOWZjIiwKICAgICAgImZpbGxTdHlsZSI6ICJzb2xpZCIsCiAgICAgICJzdHJva2VXaWR0aCI6IDEuNSwKICAgICAgInN0cm9rZVN0eWxlIjogImRhc2hlZCIsCiAgICAgICJyb3VnaG5lc3MiOiAwLAogICAgICAib3BhY2l0eSI6IDEwMCwKICAgICAgImdyb3VwSWRzIjogW10sCiAgICAgICJmcmFtZUlkIjogbnVsbCwKICAgICAgInJvdW5kbmVzcyI6IG51bGwsCiAgICAgICJzZWVkIjogMTAwMywKICAgICAgInZlcnNpb24iOiAxLAogICAgICAidmVyc2lvbk5vbmNlIjogMjAwMywKICAgICAgImlzRGVsZXRlZCI6IGZhbHNlLAogICAgICAiYm91bmRFbGVtZW50cyI6IG51bGwsCiAgICAgICJ1cGRhdGVkIjogMSwKICAgICAgImxpbmsiOiBudWxsLAogICAgICAibG9ja2VkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJpZCI6ICJlNCIsCiAgICAgICJ0eXBlIjogInRleHQiLAogICAgICAieCI6IDI3MCwKICAgICAgInkiOiAxMjQsCiAgICAgICJ3aWR0aCI6IDYyMCwKICAgICAgImhlaWdodCI6IDMwLAogICAgICAiYW5nbGUiOiAwLAogICAgICAic3Ryb2tlQ29sb3IiOiAiIzQzNTQ2ZSIsCiAgICAgICJiYWNrZ3JvdW5kQ29sb3IiOiAidHJhbnNwYXJlbnQiLAogICAgICAiZmlsbFN0eWxlIjogInNvbGlkIiwKICAgICAgInN0cm9rZVdpZHRoIjogMS41LAogICAgICAic3Ryb2tlU3R5bGUiOiAic29saWQiLAogICAgICAicm91Z2huZXNzIjogMSwKICAgICAgIm9wYWNpdHkiOiAxMDAsCiAgICAgICJncm91cElkcyI6IFtdLAogICAgICAiZnJhbWVJZCI6IG51bGwsCiAgICAgICJyb3VuZG5lc3MiOiBudWxsLAogICAgICAic2VlZCI6IDEwMDQsCiAgICAgICJ2ZXJzaW9uIjogMSwKICAgICAgInZlcnNpb25Ob25jZSI6IDIwMDQsCiAgICAgICJpc0RlbGV0ZWQiOiBmYWxzZSwKICAgICAgImJvdW5kRWxlbWVudHMiOiBudWxsLAogICAgICAidXBkYXRlZCI6IDEsCiAgICAgICJsaW5rIjogbnVsbCwKICAgICAgImxvY2tlZCI6IGZhbHNlLAogICAgICAidGV4dCI6ICJQUklWQVRFIEFQUExJQ0FUSU9OIEVOVklST05NRU5UIiwKICAgICAgImZvbnRTaXplIjogMTgsCiAgICAgICJmb250RmFtaWx5IjogMiwKICAgICAgInRleHRBbGlnbiI6ICJsZWZ0IiwKICAgICAgInZlcnRpY2FsQWxpZ24iOiAibWlkZGxlIiwKICAgICAgImNvbnRhaW5lcklkIjogbnVsbCwKICAgICAgIm9yaWdpbmFsVGV4dCI6ICJQUklWQVRFIEFQUExJQ0FUSU9OIEVOVklST05NRU5UIiwKICAgICAgImF1dG9SZXNpemUiOiB0cnVlLAogICAgICAibGluZUhlaWdodCI6IDEuMjUKICAgIH0sCiAgICB7CiAgICAgICJpZCI6ICJlNSIsCiAgICAgICJ0eXBlIjogInJlY3RhbmdsZSIsCiAgICAgICJ4IjogMzUsCiAgICAgICJ5IjogMjYwLAogICAgICAid2lkdGgiOiAxNTUsCiAgICAgICJoZWlnaHQiOiA4NSwKICAgICAgImFuZ2xlIjogMCwKICAgICAgInN0cm9rZUNvbG9yIjogIiM0MzU0NmUiLAogICAgICAiYmFja2dyb3VuZENvbG9yIjogIiNmZmY3ZWQiLAogICAgICAiZmlsbFN0eWxlIjogInNvbGlkIiwKICAgICAgInN0cm9rZVdpZHRoIjogMS41LAogICAgICAic3Ryb2tlU3R5bGUiOiAic29saWQiLAogICAgICAicm91Z2huZXNzIjogMSwKICAgICAgIm9wYWNpdHkiOiAxMDAsCiAgICAgICJncm91cElkcyI6IFtdLAogICAgICAiZnJhbWVJZCI6IG51bGwsCiAgICAgICJyb3VuZG5lc3MiOiB7CiAgICAgICAgInR5cGUiOiAzCiAgICAgIH0sCiAgICAgICJzZWVkIjogMTAwNSwKICAgICAgInZlcnNpb24iOiAxLAogICAgICAidmVyc2lvbk5vbmNlIjogMjAwNSwKICAgICAgImlzRGVsZXRlZCI6IGZhbHNlLAogICAgICAiYm91bmRFbGVtZW50cyI6IFsKICAgICAgICB7CiAgICAgICAgICAiaWQiOiAiZTYiLAogICAgICAgICAgInR5cGUiOiAidGV4dCIKICAgICAgICB9LAogICAgICAgIHsKICAgICAgICAgICJpZCI6ICJlMTUiLAogICAgICAgICAgInR5cGUiOiAiYXJyb3ciCiAgICAgICAgfQogICAgICBdLAogICAgICAidXBkYXRlZCI6IDEsCiAgICAgICJsaW5rIjogbnVsbCwKICAgICAgImxvY2tlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAiaWQiOiAiZTYiLAogICAgICAidHlwZSI6ICJ0ZXh0IiwKICAgICAgIngiOiA0MywKICAgICAgInkiOiAyNjgsCiAgICAgICJ3aWR0aCI6IDEzOSwKICAgICAgImhlaWdodCI6IDY5LAogICAgICAiYW5nbGUiOiAwLAogICAgICAic3Ryb2tlQ29sb3IiOiAiIzQzNTQ2ZSIsCiAgICAgICJiYWNrZ3JvdW5kQ29sb3IiOiAidHJhbnNwYXJlbnQiLAogICAgICAiZmlsbFN0eWxlIjogInNvbGlkIiwKICAgICAgInN0cm9rZVdpZHRoIjogMS41LAogICAgICAic3Ryb2tlU3R5bGUiOiAic29saWQiLAogICAgICAicm91Z2huZXNzIjogMSwKICAgICAgIm9wYWNpdHkiOiAxMDAsCiAgICAgICJncm91cElkcyI6IFtdLAogICAgICAiZnJhbWVJZCI6IG51bGwsCiAgICAgICJyb3VuZG5lc3MiOiBudWxsLAogICAgICAic2VlZCI6IDEwMDYsCiAgICAgICJ2ZXJzaW9uIjogMSwKICAgICAgInZlcnNpb25Ob25jZSI6IDIwMDYsCiAgICAgICJpc0RlbGV0ZWQiOiBmYWxzZSwKICAgICAgImJvdW5kRWxlbWVudHMiOiBudWxsLAogICAgICAidXBkYXRlZCI6IDEsCiAgICAgICJsaW5rIjogbnVsbCwKICAgICAgImxvY2tlZCI6IGZhbHNlLAogICAgICAidGV4dCI6ICJJbnRlcm5hbCB1c2VyIiwKICAgICAgImZvbnRTaXplIjogMTksCiAgICAgICJmb250RmFtaWx5IjogMiwKICAgICAgInRleHRBbGlnbiI6ICJjZW50ZXIiLAogICAgICAidmVydGljYWxBbGlnbiI6ICJtaWRkbGUiLAogICAgICAiY29udGFpbmVySWQiOiAiZTUiLAogICAgICAib3JpZ2luYWxUZXh0IjogIkludGVybmFsIHVzZXIiLAogICAgICAiYXV0b1Jlc2l6ZSI6IHRydWUsCiAgICAgICJsaW5lSGVpZ2h0IjogMS4yNQogICAgfSwKICAgIHsKICAgICAgImlkIjogImU3IiwKICAgICAgInR5cGUiOiAicmVjdGFuZ2xlIiwKICAgICAgIngiOiAyODUsCiAgICAgICJ5IjogMjYwLAogICAgICAid2lkdGgiOiAxODUsCiAgICAgICJoZWlnaHQiOiA4NSwKICAgICAgImFuZ2xlIjogMCwKICAgICAgInN0cm9rZUNvbG9yIjogIiM0MzU0NmUiLAogICAgICAiYmFja2dyb3VuZENvbG9yIjogIiNlZWYyZmYiLAogICAgICAiZmlsbFN0eWxlIjogInNvbGlkIiwKICAgICAgInN0cm9rZVdpZHRoIjogMS41LAogICAgICAic3Ryb2tlU3R5bGUiOiAic29saWQiLAogICAgICAicm91Z2huZXNzIjogMSwKICAgICAgIm9wYWNpdHkiOiAxMDAsCiAgICAgICJncm91cElkcyI6IFtdLAogICAgICAiZnJhbWVJZCI6IG51bGwsCiAgICAgICJyb3VuZG5lc3MiOiB7CiAgICAgICAgInR5cGUiOiAzCiAgICAgIH0sCiAgICAgICJzZWVkIjogMTAwNywKICAgICAgInZlcnNpb24iOiAxLAogICAgICAidmVyc2lvbk5vbmNlIjogMjAwNywKICAgICAgImlzRGVsZXRlZCI6IGZhbHNlLAogICAgICAiYm91bmRFbGVtZW50cyI6IFsKICAgICAgICB7CiAgICAgICAgICAiaWQiOiAiZTgiLAogICAgICAgICAgInR5cGUiOiAidGV4dCIKICAgICAgICB9LAogICAgICAgIHsKICAgICAgICAgICJpZCI6ICJlMTUiLAogICAgICAgICAgInR5cGUiOiAiYXJyb3ciCiAgICAgICAgfSwKICAgICAgICB7CiAgICAgICAgICAiaWQiOiAiZTE2IiwKICAgICAgICAgICJ0eXBlIjogImFycm93IgogICAgICAgIH0KICAgICAgXSwKICAgICAgInVwZGF0ZWQiOiAxLAogICAgICAibGluayI6IG51bGwsCiAgICAgICJsb2NrZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImlkIjogImU4IiwKICAgICAgInR5cGUiOiAidGV4dCIsCiAgICAgICJ4IjogMjkzLAogICAgICAieSI6IDI2OCwKICAgICAgIndpZHRoIjogMTY5LAogICAgICAiaGVpZ2h0IjogNjksCiAgICAgICJhbmdsZSI6IDAsCiAgICAgICJzdHJva2VDb2xvciI6ICIjNDM1NDZlIiwKICAgICAgImJhY2tncm91bmRDb2xvciI6ICJ0cmFuc3BhcmVudCIsCiAgICAgICJmaWxsU3R5bGUiOiAic29saWQiLAogICAgICAic3Ryb2tlV2lkdGgiOiAxLjUsCiAgICAgICJzdHJva2VTdHlsZSI6ICJzb2xpZCIsCiAgICAgICJyb3VnaG5lc3MiOiAxLAogICAgICAib3BhY2l0eSI6IDEwMCwKICAgICAgImdyb3VwSWRzIjogW10sCiAgICAgICJmcmFtZUlkIjogbnVsbCwKICAgICAgInJvdW5kbmVzcyI6IG51bGwsCiAgICAgICJzZWVkIjogMTAwOCwKICAgICAgInZlcnNpb24iOiAxLAogICAgICAidmVyc2lvbk5vbmNlIjogMjAwOCwKICAgICAgImlzRGVsZXRlZCI6IGZhbHNlLAogICAgICAiYm91bmRFbGVtZW50cyI6IG51bGwsCiAgICAgICJ1cGRhdGVkIjogMSwKICAgICAgImxpbmsiOiBudWxsLAogICAgICAibG9ja2VkIjogZmFsc2UsCiAgICAgICJ0ZXh0IjogIkdhdGV3YXkgL1xucmV2ZXJzZSBwcm94eSIsCiAgICAgICJmb250U2l6ZSI6IDE5LAogICAgICAiZm9udEZhbWlseSI6IDIsCiAgICAgICJ0ZXh0QWxpZ24iOiAiY2VudGVyIiwKICAgICAgInZlcnRpY2FsQWxpZ24iOiAibWlkZGxlIiwKICAgICAgImNvbnRhaW5lcklkIjogImU3IiwKICAgICAgIm9yaWdpbmFsVGV4dCI6ICJHYXRld2F5IC9cbnJldmVyc2UgcHJveHkiLAogICAgICAiYXV0b1Jlc2l6ZSI6IHRydWUsCiAgICAgICJsaW5lSGVpZ2h0IjogMS4yNQogICAgfSwKICAgIHsKICAgICAgImlkIjogImU5IiwKICAgICAgInR5cGUiOiAicmVjdGFuZ2xlIiwKICAgICAgIngiOiA1NDUsCiAgICAgICJ5IjogMjYwLAogICAgICAid2lkdGgiOiAxODUsCiAgICAgICJoZWlnaHQiOiA4NSwKICAgICAgImFuZ2xlIjogMCwKICAgICAgInN0cm9rZUNvbG9yIjogIiM0MzU0NmUiLAogICAgICAiYmFja2dyb3VuZENvbG9yIjogIiNlZWYyZmYiLAogICAgICAiZmlsbFN0eWxlIjogInNvbGlkIiwKICAgICAgInN0cm9rZVdpZHRoIjogMS41LAogICAgICAic3Ryb2tlU3R5bGUiOiAic29saWQiLAogICAgICAicm91Z2huZXNzIjogMSwKICAgICAgIm9wYWNpdHkiOiAxMDAsCiAgICAgICJncm91cElkcyI6IFtdLAogICAgICAiZnJhbWVJZCI6IG51bGwsCiAgICAgICJyb3VuZG5lc3MiOiB7CiAgICAgICAgInR5cGUiOiAzCiAgICAgIH0sCiAgICAgICJzZWVkIjogMTAwOSwKICAgICAgInZlcnNpb24iOiAxLAogICAgICAidmVyc2lvbk5vbmNlIjogMjAwOSwKICAgICAgImlzRGVsZXRlZCI6IGZhbHNlLAogICAgICAiYm91bmRFbGVtZW50cyI6IFsKICAgICAgICB7CiAgICAgICAgICAiaWQiOiAiZTEwIiwKICAgICAgICAgICJ0eXBlIjogInRleHQiCiAgICAgICAgfSwKICAgICAgICB7CiAgICAgICAgICAiaWQiOiAiZTE2IiwKICAgICAgICAgICJ0eXBlIjogImFycm93IgogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgImlkIjogImUxNyIsCiAgICAgICAgICAidHlwZSI6ICJhcnJvdyIKICAgICAgICB9LAogICAgICAgIHsKICAgICAgICAgICJpZCI6ICJlMTgiLAogICAgICAgICAgInR5cGUiOiAiYXJyb3ciCiAgICAgICAgfQogICAgICBdLAogICAgICAidXBkYXRlZCI6IDEsCiAgICAgICJsaW5rIjogbnVsbCwKICAgICAgImxvY2tlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAiaWQiOiAiZTEwIiwKICAgICAgInR5cGUiOiAidGV4dCIsCiAgICAgICJ4IjogNTUzLAogICAgICAieSI6IDI2OCwKICAgICAgIndpZHRoIjogMTY5LAogICAgICAiaGVpZ2h0IjogNjksCiAgICAgICJhbmdsZSI6IDAsCiAgICAgICJzdHJva2VDb2xvciI6ICIjNDM1NDZlIiwKICAgICAgImJhY2tncm91bmRDb2xvciI6ICJ0cmFuc3BhcmVudCIsCiAgICAgICJmaWxsU3R5bGUiOiAic29saWQiLAogICAgICAic3Ryb2tlV2lkdGgiOiAxLjUsCiAgICAgICJzdHJva2VTdHlsZSI6ICJzb2xpZCIsCiAgICAgICJyb3VnaG5lc3MiOiAxLAogICAgICAib3BhY2l0eSI6IDEwMCwKICAgICAgImdyb3VwSWRzIjogW10sCiAgICAgICJmcmFtZUlkIjogbnVsbCwKICAgICAgInJvdW5kbmVzcyI6IG51bGwsCiAgICAgICJzZWVkIjogMTAxMCwKICAgICAgInZlcnNpb24iOiAxLAogICAgICAidmVyc2lvbk5vbmNlIjogMjAxMCwKICAgICAgImlzRGVsZXRlZCI6IGZhbHNlLAogICAgICAiYm91bmRFbGVtZW50cyI6IG51bGwsCiAgICAgICJ1cGRhdGVkIjogMSwKICAgICAgImxpbmsiOiBudWxsLAogICAgICAibG9ja2VkIjogZmFsc2UsCiAgICAgICJ0ZXh0IjogIkRvY3VtZW50IEFQSSIsCiAgICAgICJmb250U2l6ZSI6IDE5LAogICAgICAiZm9udEZhbWlseSI6IDIsCiAgICAgICJ0ZXh0QWxpZ24iOiAiY2VudGVyIiwKICAgICAgInZlcnRpY2FsQWxpZ24iOiAibWlkZGxlIiwKICAgICAgImNvbnRhaW5lcklkIjogImU5IiwKICAgICAgIm9yaWdpbmFsVGV4dCI6ICJEb2N1bWVudCBBUEkiLAogICAgICAiYXV0b1Jlc2l6ZSI6IHRydWUsCiAgICAgICJsaW5lSGVpZ2h0IjogMS4yNQogICAgfSwKICAgIHsKICAgICAgImlkIjogImUxMSIsCiAgICAgICJ0eXBlIjogInJlY3RhbmdsZSIsCiAgICAgICJ4IjogODM1LAogICAgICAieSI6IDE3MCwKICAgICAgIndpZHRoIjogMjMwLAogICAgICAiaGVpZ2h0IjogOTUsCiAgICAgICJhbmdsZSI6IDAsCiAgICAgICJzdHJva2VDb2xvciI6ICIjNDM1NDZlIiwKICAgICAgImJhY2tncm91bmRDb2xvciI6ICIjZTZmNWYwIiwKICAgICAgImZpbGxTdHlsZSI6ICJzb2xpZCIsCiAgICAgICJzdHJva2VXaWR0aCI6IDEuNSwKICAgICAgInN0cm9rZVN0eWxlIjogInNvbGlkIiwKICAgICAgInJvdWdobmVzcyI6IDEsCiAgICAgICJvcGFjaXR5IjogMTAwLAogICAgICAiZ3JvdXBJZHMiOiBbXSwKICAgICAgImZyYW1lSWQiOiBudWxsLAogICAgICAicm91bmRuZXNzIjogewogICAgICAgICJ0eXBlIjogMwogICAgICB9LAogICAgICAic2VlZCI6IDEwMTEsCiAgICAgICJ2ZXJzaW9uIjogMSwKICAgICAgInZlcnNpb25Ob25jZSI6IDIwMTEsCiAgICAgICJpc0RlbGV0ZWQiOiBmYWxzZSwKICAgICAgImJvdW5kRWxlbWVudHMiOiBbCiAgICAgICAgewogICAgICAgICAgImlkIjogImUxMiIsCiAgICAgICAgICAidHlwZSI6ICJ0ZXh0IgogICAgICAgIH0sCiAgICAgICAgewogICAgICAgICAgImlkIjogImUxNyIsCiAgICAgICAgICAidHlwZSI6ICJhcnJvdyIKICAgICAgICB9CiAgICAgIF0sCiAgICAgICJ1cGRhdGVkIjogMSwKICAgICAgImxpbmsiOiBudWxsLAogICAgICAibG9ja2VkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJpZCI6ICJlMTIiLAogICAgICAidHlwZSI6ICJ0ZXh0IiwKICAgICAgIngiOiA4NDMsCiAgICAgICJ5IjogMTc4LAogICAgICAid2lkdGgiOiAyMTQsCiAgICAgICJoZWlnaHQiOiA3OSwKICAgICAgImFuZ2xlIjogMCwKICAgICAgInN0cm9rZUNvbG9yIjogIiM0MzU0NmUiLAogICAgICAiYmFja2dyb3VuZENvbG9yIjogInRyYW5zcGFyZW50IiwKICAgICAgImZpbGxTdHlsZSI6ICJzb2xpZCIsCiAgICAgICJzdHJva2VXaWR0aCI6IDEuNSwKICAgICAgInN0cm9rZVN0eWxlIjogInNvbGlkIiwKICAgICAgInJvdWdobmVzcyI6IDEsCiAgICAgICJvcGFjaXR5IjogMTAwLAogICAgICAiZ3JvdXBJZHMiOiBbXSwKICAgICAgImZyYW1lSWQiOiBudWxsLAogICAgICAicm91bmRuZXNzIjogbnVsbCwKICAgICAgInNlZWQiOiAxMDEyLAogICAgICAidmVyc2lvbiI6IDEsCiAgICAgICJ2ZXJzaW9uTm9uY2UiOiAyMDEyLAogICAgICAiaXNEZWxldGVkIjogZmFsc2UsCiAgICAgICJib3VuZEVsZW1lbnRzIjogbnVsbCwKICAgICAgInVwZGF0ZWQiOiAxLAogICAgICAibGluayI6IG51bGwsCiAgICAgICJsb2NrZWQiOiBmYWxzZSwKICAgICAgInRleHQiOiAiTWluSU8gLyBBSVN0b3Jcbk9iamVjdCBieXRlcyIsCiAgICAgICJmb250U2l6ZSI6IDE5LAogICAgICAiZm9udEZhbWlseSI6IDIsCiAgICAgICJ0ZXh0QWxpZ24iOiAiY2VudGVyIiwKICAgICAgInZlcnRpY2FsQWxpZ24iOiAibWlkZGxlIiwKICAgICAgImNvbnRhaW5lcklkIjogImUxMSIsCiAgICAgICJvcmlnaW5hbFRleHQiOiAiTWluSU8gLyBBSVN0b3Jcbk9iamVjdCBieXRlcyIsCiAgICAgICJhdXRvUmVzaXplIjogdHJ1ZSwKICAgICAgImxpbmVIZWlnaHQiOiAxLjI1CiAgICB9LAogICAgewogICAgICAiaWQiOiAiZTEzIiwKICAgICAgInR5cGUiOiAicmVjdGFuZ2xlIiwKICAgICAgIngiOiA4MzUsCiAgICAgICJ5IjogMzY1LAogICAgICAid2lkdGgiOiAyMzAsCiAgICAgICJoZWlnaHQiOiA5NSwKICAgICAgImFuZ2xlIjogMCwKICAgICAgInN0cm9rZUNvbG9yIjogIiM0MzU0NmUiLAogICAgICAiYmFja2dyb3VuZENvbG9yIjogIiNmM2YxZmMiLAogICAgICAiZmlsbFN0eWxlIjogInNvbGlkIiwKICAgICAgInN0cm9rZVdpZHRoIjogMS41LAogICAgICAic3Ryb2tlU3R5bGUiOiAic29saWQiLAogICAgICAicm91Z2huZXNzIjogMSwKICAgICAgIm9wYWNpdHkiOiAxMDAsCiAgICAgICJncm91cElkcyI6IFtdLAogICAgICAiZnJhbWVJZCI6IG51bGwsCiAgICAgICJyb3VuZG5lc3MiOiB7CiAgICAgICAgInR5cGUiOiAzCiAgICAgIH0sCiAgICAgICJzZWVkIjogMTAxMywKICAgICAgInZlcnNpb24iOiAxLAogICAgICAidmVyc2lvbk5vbmNlIjogMjAxMywKICAgICAgImlzRGVsZXRlZCI6IGZhbHNlLAogICAgICAiYm91bmRFbGVtZW50cyI6IFsKICAgICAgICB7CiAgICAgICAgICAiaWQiOiAiZTE0IiwKICAgICAgICAgICJ0eXBlIjogInRleHQiCiAgICAgICAgfSwKICAgICAgICB7CiAgICAgICAgICAiaWQiOiAiZTE4IiwKICAgICAgICAgICJ0eXBlIjogImFycm93IgogICAgICAgIH0KICAgICAgXSwKICAgICAgInVwZGF0ZWQiOiAxLAogICAgICAibGluayI6IG51bGwsCiAgICAgICJsb2NrZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImlkIjogImUxNCIsCiAgICAgICJ0eXBlIjogInRleHQiLAogICAgICAieCI6IDg0MywKICAgICAgInkiOiAzNzMsCiAgICAgICJ3aWR0aCI6IDIxNCwKICAgICAgImhlaWdodCI6IDc5LAogICAgICAiYW5nbGUiOiAwLAogICAgICAic3Ryb2tlQ29sb3IiOiAiIzQzNTQ2ZSIsCiAgICAgICJiYWNrZ3JvdW5kQ29sb3IiOiAidHJhbnNwYXJlbnQiLAogICAgICAiZmlsbFN0eWxlIjogInNvbGlkIiwKICAgICAgInN0cm9rZVdpZHRoIjogMS41LAogICAgICAic3Ryb2tlU3R5bGUiOiAic29saWQiLAogICAgICAicm91Z2huZXNzIjogMSwKICAgICAgIm9wYWNpdHkiOiAxMDAsCiAgICAgICJncm91cElkcyI6IFtdLAogICAgICAiZnJhbWVJZCI6IG51bGwsCiAgICAgICJyb3VuZG5lc3MiOiBudWxsLAogICAgICAic2VlZCI6IDEwMTQsCiAgICAgICJ2ZXJzaW9uIjogMSwKICAgICAgInZlcnNpb25Ob25jZSI6IDIwMTQsCiAgICAgICJpc0RlbGV0ZWQiOiBmYWxzZSwKICAgICAgImJvdW5kRWxlbWVudHMiOiBudWxsLAogICAgICAidXBkYXRlZCI6IDEsCiAgICAgICJsaW5rIjogbnVsbCwKICAgICAgImxvY2tlZCI6IGZhbHNlLAogICAgICAidGV4dCI6ICJNZXRhZGF0YSBkYXRhYmFzZVxuSURzLCBvd25lcnMsIGtleXMiLAogICAgICAiZm9udFNpemUiOiAxOSwKICAgICAgImZvbnRGYW1pbHkiOiAyLAogICAgICAidGV4dEFsaWduIjogImNlbnRlciIsCiAgICAgICJ2ZXJ0aWNhbEFsaWduIjogIm1pZGRsZSIsCiAgICAgICJjb250YWluZXJJZCI6ICJlMTMiLAogICAgICAib3JpZ2luYWxUZXh0IjogIk1ldGFkYXRhIGRhdGFiYXNlXG5JRHMsIG93bmVycywga2V5cyIsCiAgICAgICJhdXRvUmVzaXplIjogdHJ1ZSwKICAgICAgImxpbmVIZWlnaHQiOiAxLjI1CiAgICB9LAogICAgewogICAgICAiaWQiOiAiZTE1IiwKICAgICAgInR5cGUiOiAiYXJyb3ciLAogICAgICAieCI6IDE5MCwKICAgICAgInkiOiAzMDIsCiAgICAgICJ3aWR0aCI6IDk1LAogICAgICAiaGVpZ2h0IjogMCwKICAgICAgImFuZ2xlIjogMCwKICAgICAgInN0cm9rZUNvbG9yIjogIiM0MzU0NmUiLAogICAgICAiYmFja2dyb3VuZENvbG9yIjogInRyYW5zcGFyZW50IiwKICAgICAgImZpbGxTdHlsZSI6ICJzb2xpZCIsCiAgICAgICJzdHJva2VXaWR0aCI6IDEuNSwKICAgICAgInN0cm9rZVN0eWxlIjogInNvbGlkIiwKICAgICAgInJvdWdobmVzcyI6IDEsCiAgICAgICJvcGFjaXR5IjogMTAwLAogICAgICAiZ3JvdXBJZHMiOiBbXSwKICAgICAgImZyYW1lSWQiOiBudWxsLAogICAgICAicm91bmRuZXNzIjogbnVsbCwKICAgICAgInNlZWQiOiAxMDE1LAogICAgICAidmVyc2lvbiI6IDEsCiAgICAgICJ2ZXJzaW9uTm9uY2UiOiAyMDE1LAogICAgICAiaXNEZWxldGVkIjogZmFsc2UsCiAgICAgICJib3VuZEVsZW1lbnRzIjogbnVsbCwKICAgICAgInVwZGF0ZWQiOiAxLAogICAgICAibGluayI6IG51bGwsCiAgICAgICJsb2NrZWQiOiBmYWxzZSwKICAgICAgInBvaW50cyI6IFsKICAgICAgICBbCiAgICAgICAgICAwLAogICAgICAgICAgMAogICAgICAgIF0sCiAgICAgICAgWwogICAgICAgICAgOTUsCiAgICAgICAgICAwCiAgICAgICAgXQogICAgICBdLAogICAgICAibGFzdENvbW1pdHRlZFBvaW50IjogbnVsbCwKICAgICAgInN0YXJ0QmluZGluZyI6IHsKICAgICAgICAiZWxlbWVudElkIjogImU1IiwKICAgICAgICAiZm9jdXMiOiAwLAogICAgICAgICJnYXAiOiAxCiAgICAgIH0sCiAgICAgICJlbmRCaW5kaW5nIjogewogICAgICAgICJlbGVtZW50SWQiOiAiZTciLAogICAgICAgICJmb2N1cyI6IDAsCiAgICAgICAgImdhcCI6IDEKICAgICAgfSwKICAgICAgInN0YXJ0QXJyb3doZWFkIjogbnVsbCwKICAgICAgImVuZEFycm93aGVhZCI6ICJhcnJvdyIsCiAgICAgICJlbGJvd2VkIjogZmFsc2UKICAgIH0sCiAgICB7CiAgICAgICJpZCI6ICJlMTYiLAogICAgICAidHlwZSI6ICJhcnJvdyIsCiAgICAgICJ4IjogNDcwLAogICAgICAieSI6IDMwMiwKICAgICAgIndpZHRoIjogNzUsCiAgICAgICJoZWlnaHQiOiAwLAogICAgICAiYW5nbGUiOiAwLAogICAgICAic3Ryb2tlQ29sb3IiOiAiIzQzNTQ2ZSIsCiAgICAgICJiYWNrZ3JvdW5kQ29sb3IiOiAidHJhbnNwYXJlbnQiLAogICAgICAiZmlsbFN0eWxlIjogInNvbGlkIiwKICAgICAgInN0cm9rZVdpZHRoIjogMS41LAogICAgICAic3Ryb2tlU3R5bGUiOiAic29saWQiLAogICAgICAicm91Z2huZXNzIjogMSwKICAgICAgIm9wYWNpdHkiOiAxMDAsCiAgICAgICJncm91cElkcyI6IFtdLAogICAgICAiZnJhbWVJZCI6IG51bGwsCiAgICAgICJyb3VuZG5lc3MiOiBudWxsLAogICAgICAic2VlZCI6IDEwMTYsCiAgICAgICJ2ZXJzaW9uIjogMSwKICAgICAgInZlcnNpb25Ob25jZSI6IDIwMTYsCiAgICAgICJpc0RlbGV0ZWQiOiBmYWxzZSwKICAgICAgImJvdW5kRWxlbWVudHMiOiBudWxsLAogICAgICAidXBkYXRlZCI6IDEsCiAgICAgICJsaW5rIjogbnVsbCwKICAgICAgImxvY2tlZCI6IGZhbHNlLAogICAgICAicG9pbnRzIjogWwogICAgICAgIFsKICAgICAgICAgIDAsCiAgICAgICAgICAwCiAgICAgICAgXSwKICAgICAgICBbCiAgICAgICAgICA3NSwKICAgICAgICAgIDAKICAgICAgICBdCiAgICAgIF0sCiAgICAgICJsYXN0Q29tbWl0dGVkUG9pbnQiOiBudWxsLAogICAgICAic3RhcnRCaW5kaW5nIjogewogICAgICAgICJlbGVtZW50SWQiOiAiZTciLAogICAgICAgICJmb2N1cyI6IDAsCiAgICAgICAgImdhcCI6IDEKICAgICAgfSwKICAgICAgImVuZEJpbmRpbmciOiB7CiAgICAgICAgImVsZW1lbnRJZCI6ICJlOSIsCiAgICAgICAgImZvY3VzIjogMCwKICAgICAgICAiZ2FwIjogMQogICAgICB9LAogICAgICAic3RhcnRBcnJvd2hlYWQiOiBudWxsLAogICAgICAiZW5kQXJyb3doZWFkIjogImFycm93IiwKICAgICAgImVsYm93ZWQiOiBmYWxzZQogICAgfSwKICAgIHsKICAgICAgImlkIjogImUxNyIsCiAgICAgICJ0eXBlIjogImFycm93IiwKICAgICAgIngiOiA3MzAsCiAgICAgICJ5IjogMjg1LAogICAgICAid2lkdGgiOiAxMDUsCiAgICAgICJoZWlnaHQiOiA2OCwKICAgICAgImFuZ2xlIjogMCwKICAgICAgInN0cm9rZUNvbG9yIjogIiM0MzU0NmUiLAogICAgICAiYmFja2dyb3VuZENvbG9yIjogInRyYW5zcGFyZW50IiwKICAgICAgImZpbGxTdHlsZSI6ICJzb2xpZCIsCiAgICAgICJzdHJva2VXaWR0aCI6IDEuNSwKICAgICAgInN0cm9rZVN0eWxlIjogInNvbGlkIiwKICAgICAgInJvdWdobmVzcyI6IDEsCiAgICAgICJvcGFjaXR5IjogMTAwLAogICAgICAiZ3JvdXBJZHMiOiBbXSwKICAgICAgImZyYW1lSWQiOiBudWxsLAogICAgICAicm91bmRuZXNzIjogbnVsbCwKICAgICAgInNlZWQiOiAxMDE3LAogICAgICAidmVyc2lvbiI6IDEsCiAgICAgICJ2ZXJzaW9uTm9uY2UiOiAyMDE3LAogICAgICAiaXNEZWxldGVkIjogZmFsc2UsCiAgICAgICJib3VuZEVsZW1lbnRzIjogbnVsbCwKICAgICAgInVwZGF0ZWQiOiAxLAogICAgICAibGluayI6IG51bGwsCiAgICAgICJsb2NrZWQiOiBmYWxzZSwKICAgICAgInBvaW50cyI6IFsKICAgICAgICBbCiAgICAgICAgICAwLAogICAgICAgICAgMAogICAgICAgIF0sCiAgICAgICAgWwogICAgICAgICAgNDgsCiAgICAgICAgICAwCiAgICAgICAgXSwKICAgICAgICBbCiAgICAgICAgICA0OCwKICAgICAgICAgIC02OAogICAgICAgIF0sCiAgICAgICAgWwogICAgICAgICAgMTA1LAogICAgICAgICAgLTY4CiAgICAgICAgXQogICAgICBdLAogICAgICAibGFzdENvbW1pdHRlZFBvaW50IjogbnVsbCwKICAgICAgInN0YXJ0QmluZGluZyI6IHsKICAgICAgICAiZWxlbWVudElkIjogImU5IiwKICAgICAgICAiZm9jdXMiOiAwLAogICAgICAgICJnYXAiOiAxCiAgICAgIH0sCiAgICAgICJlbmRCaW5kaW5nIjogewogICAgICAgICJlbGVtZW50SWQiOiAiZTExIiwKICAgICAgICAiZm9jdXMiOiAwLAogICAgICAgICJnYXAiOiAxCiAgICAgIH0sCiAgICAgICJzdGFydEFycm93aGVhZCI6IG51bGwsCiAgICAgICJlbmRBcnJvd2hlYWQiOiAiYXJyb3ciLAogICAgICAiZWxib3dlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAiaWQiOiAiZTE4IiwKICAgICAgInR5cGUiOiAiYXJyb3ciLAogICAgICAieCI6IDczMCwKICAgICAgInkiOiAzMjAsCiAgICAgICJ3aWR0aCI6IDEwNSwKICAgICAgImhlaWdodCI6IDkyLAogICAgICAiYW5nbGUiOiAwLAogICAgICAic3Ryb2tlQ29sb3IiOiAiIzQzNTQ2ZSIsCiAgICAgICJiYWNrZ3JvdW5kQ29sb3IiOiAidHJhbnNwYXJlbnQiLAogICAgICAiZmlsbFN0eWxlIjogInNvbGlkIiwKICAgICAgInN0cm9rZVdpZHRoIjogMS41LAogICAgICAic3Ryb2tlU3R5bGUiOiAic29saWQiLAogICAgICAicm91Z2huZXNzIjogMSwKICAgICAgIm9wYWNpdHkiOiAxMDAsCiAgICAgICJncm91cElkcyI6IFtdLAogICAgICAiZnJhbWVJZCI6IG51bGwsCiAgICAgICJyb3VuZG5lc3MiOiBudWxsLAogICAgICAic2VlZCI6IDEwMTgsCiAgICAgICJ2ZXJzaW9uIjogMSwKICAgICAgInZlcnNpb25Ob25jZSI6IDIwMTgsCiAgICAgICJpc0RlbGV0ZWQiOiBmYWxzZSwKICAgICAgImJvdW5kRWxlbWVudHMiOiBudWxsLAogICAgICAidXBkYXRlZCI6IDEsCiAgICAgICJsaW5rIjogbnVsbCwKICAgICAgImxvY2tlZCI6IGZhbHNlLAogICAgICAicG9pbnRzIjogWwogICAgICAgIFsKICAgICAgICAgIDAsCiAgICAgICAgICAwCiAgICAgICAgXSwKICAgICAgICBbCiAgICAgICAgICA0OCwKICAgICAgICAgIDAKICAgICAgICBdLAogICAgICAgIFsKICAgICAgICAgIDQ4LAogICAgICAgICAgOTIKICAgICAgICBdLAogICAgICAgIFsKICAgICAgICAgIDEwNSwKICAgICAgICAgIDkyCiAgICAgICAgXQogICAgICBdLAogICAgICAibGFzdENvbW1pdHRlZFBvaW50IjogbnVsbCwKICAgICAgInN0YXJ0QmluZGluZyI6IHsKICAgICAgICAiZWxlbWVudElkIjogImU5IiwKICAgICAgICAiZm9jdXMiOiAwLAogICAgICAgICJnYXAiOiAxCiAgICAgIH0sCiAgICAgICJlbmRCaW5kaW5nIjogewogICAgICAgICJlbGVtZW50SWQiOiAiZTEzIiwKICAgICAgICAiZm9jdXMiOiAwLAogICAgICAgICJnYXAiOiAxCiAgICAgIH0sCiAgICAgICJzdGFydEFycm93aGVhZCI6IG51bGwsCiAgICAgICJlbmRBcnJvd2hlYWQiOiAiYXJyb3ciLAogICAgICAiZWxib3dlZCI6IGZhbHNlCiAgICB9LAogICAgewogICAgICAiaWQiOiAiZTE5IiwKICAgICAgInR5cGUiOiAidGV4dCIsCiAgICAgICJ4IjogMTk4LAogICAgICAieSI6IDI2NywKICAgICAgIndpZHRoIjogODUsCiAgICAgICJoZWlnaHQiOiAyNiwKICAgICAgImFuZ2xlIjogMCwKICAgICAgInN0cm9rZUNvbG9yIjogIiM0MzU0NmUiLAogICAgICAiYmFja2dyb3VuZENvbG9yIjogInRyYW5zcGFyZW50IiwKICAgICAgImZpbGxTdHlsZSI6ICJzb2xpZCIsCiAgICAgICJzdHJva2VXaWR0aCI6IDEuNSwKICAgICAgInN0cm9rZVN0eWxlIjogInNvbGlkIiwKICAgICAgInJvdWdobmVzcyI6IDEsCiAgICAgICJvcGFjaXR5IjogMTAwLAogICAgICAiZ3JvdXBJZHMiOiBbXSwKICAgICAgImZyYW1lSWQiOiBudWxsLAogICAgICAicm91bmRuZXNzIjogbnVsbCwKICAgICAgInNlZWQiOiAxMDE5LAogICAgICAidmVyc2lvbiI6IDEsCiAgICAgICJ2ZXJzaW9uTm9uY2UiOiAyMDE5LAogICAgICAiaXNEZWxldGVkIjogZmFsc2UsCiAgICAgICJib3VuZEVsZW1lbnRzIjogbnVsbCwKICAgICAgInVwZGF0ZWQiOiAxLAogICAgICAibGluayI6IG51bGwsCiAgICAgICJsb2NrZWQiOiBmYWxzZSwKICAgICAgInRleHQiOiAiSFRUUFMiLAogICAgICAiZm9udFNpemUiOiAxNiwKICAgICAgImZvbnRGYW1pbHkiOiAyLAogICAgICAidGV4dEFsaWduIjogImNlbnRlciIsCiAgICAgICJ2ZXJ0aWNhbEFsaWduIjogIm1pZGRsZSIsCiAgICAgICJjb250YWluZXJJZCI6IG51bGwsCiAgICAgICJvcmlnaW5hbFRleHQiOiAiSFRUUFMiLAogICAgICAiYXV0b1Jlc2l6ZSI6IHRydWUsCiAgICAgICJsaW5lSGVpZ2h0IjogMS4yNQogICAgfSwKICAgIHsKICAgICAgImlkIjogImUyMCIsCiAgICAgICJ0eXBlIjogInRleHQiLAogICAgICAieCI6IDQ1MSwKICAgICAgInkiOiAzNjAsCiAgICAgICJ3aWR0aCI6IDIyMCwKICAgICAgImhlaWdodCI6IDI2LAogICAgICAiYW5nbGUiOiAwLAogICAgICAic3Ryb2tlQ29sb3IiOiAiIzQzNTQ2ZSIsCiAgICAgICJiYWNrZ3JvdW5kQ29sb3IiOiAidHJhbnNwYXJlbnQiLAogICAgICAiZmlsbFN0eWxlIjogInNvbGlkIiwKICAgICAgInN0cm9rZVdpZHRoIjogMS41LAogICAgICAic3Ryb2tlU3R5bGUiOiAic29saWQiLAogICAgICAicm91Z2huZXNzIjogMSwKICAgICAgIm9wYWNpdHkiOiAxMDAsCiAgICAgICJncm91cElkcyI6IFtdLAogICAgICAiZnJhbWVJZCI6IG51bGwsCiAgICAgICJyb3VuZG5lc3MiOiBudWxsLAogICAgICAic2VlZCI6IDEwMjAsCiAgICAgICJ2ZXJzaW9uIjogMSwKICAgICAgInZlcnNpb25Ob25jZSI6IDIwMjAsCiAgICAgICJpc0RlbGV0ZWQiOiBmYWxzZSwKICAgICAgImJvdW5kRWxlbWVudHMiOiBudWxsLAogICAgICAidXBkYXRlZCI6IDEsCiAgICAgICJsaW5rIjogbnVsbCwKICAgICAgImxvY2tlZCI6IGZhbHNlLAogICAgICAidGV4dCI6ICJBdXRoZW50aWNhdGVkIHJlcXVlc3QiLAogICAgICAiZm9udFNpemUiOiAxNiwKICAgICAgImZvbnRGYW1pbHkiOiAyLAogICAgICAidGV4dEFsaWduIjogImNlbnRlciIsCiAgICAgICJ2ZXJ0aWNhbEFsaWduIjogIm1pZGRsZSIsCiAgICAgICJjb250YWluZXJJZCI6IG51bGwsCiAgICAgICJvcmlnaW5hbFRleHQiOiAiQXV0aGVudGljYXRlZCByZXF1ZXN0IiwKICAgICAgImF1dG9SZXNpemUiOiB0cnVlLAogICAgICAibGluZUhlaWdodCI6IDEuMjUKICAgIH0sCiAgICB7CiAgICAgICJpZCI6ICJlMjEiLAogICAgICAidHlwZSI6ICJ0ZXh0IiwKICAgICAgIngiOiA3MjksCiAgICAgICJ5IjogMTQ1LAogICAgICAid2lkdGgiOiAxNTYsCiAgICAgICJoZWlnaHQiOiAyNiwKICAgICAgImFuZ2xlIjogMCwKICAgICAgInN0cm9rZUNvbG9yIjogIiM0MzU0NmUiLAogICAgICAiYmFja2dyb3VuZENvbG9yIjogInRyYW5zcGFyZW50IiwKICAgICAgImZpbGxTdHlsZSI6ICJzb2xpZCIsCiAgICAgICJzdHJva2VXaWR0aCI6IDEuNSwKICAgICAgInN0cm9rZVN0eWxlIjogInNvbGlkIiwKICAgICAgInJvdWdobmVzcyI6IDEsCiAgICAgICJvcGFjaXR5IjogMTAwLAogICAgICAiZ3JvdXBJZHMiOiBbXSwKICAgICAgImZyYW1lSWQiOiBudWxsLAogICAgICAicm91bmRuZXNzIjogbnVsbCwKICAgICAgInNlZWQiOiAxMDIxLAogICAgICAidmVyc2lvbiI6IDEsCiAgICAgICJ2ZXJzaW9uTm9uY2UiOiAyMDIxLAogICAgICAiaXNEZWxldGVkIjogZmFsc2UsCiAgICAgICJib3VuZEVsZW1lbnRzIjogbnVsbCwKICAgICAgInVwZGF0ZWQiOiAxLAogICAgICAibGluayI6IG51bGwsCiAgICAgICJsb2NrZWQiOiBmYWxzZSwKICAgICAgInRleHQiOiAiUzMgLyBIVFRQUyIsCiAgICAgICJmb250U2l6ZSI6IDE2LAogICAgICAiZm9udEZhbWlseSI6IDIsCiAgICAgICJ0ZXh0QWxpZ24iOiAiY2VudGVyIiwKICAgICAgInZlcnRpY2FsQWxpZ24iOiAibWlkZGxlIiwKICAgICAgImNvbnRhaW5lcklkIjogbnVsbCwKICAgICAgIm9yaWdpbmFsVGV4dCI6ICJTMyAvIEhUVFBTIiwKICAgICAgImF1dG9SZXNpemUiOiB0cnVlLAogICAgICAibGluZUhlaWdodCI6IDEuMjUKICAgIH0sCiAgICB7CiAgICAgICJpZCI6ICJlMjIiLAogICAgICAidHlwZSI6ICJ0ZXh0IiwKICAgICAgIngiOiA3NDgsCiAgICAgICJ5IjogNDUwLAogICAgICAid2lkdGgiOiAxMjAsCiAgICAgICJoZWlnaHQiOiAyNiwKICAgICAgImFuZ2xlIjogMCwKICAgICAgInN0cm9rZUNvbG9yIjogIiM0MzU0NmUiLAogICAgICAiYmFja2dyb3VuZENvbG9yIjogInRyYW5zcGFyZW50IiwKICAgICAgImZpbGxTdHlsZSI6ICJzb2xpZCIsCiAgICAgICJzdHJva2VXaWR0aCI6IDEuNSwKICAgICAgInN0cm9rZVN0eWxlIjogInNvbGlkIiwKICAgICAgInJvdWdobmVzcyI6IDEsCiAgICAgICJvcGFjaXR5IjogMTAwLAogICAgICAiZ3JvdXBJZHMiOiBbXSwKICAgICAgImZyYW1lSWQiOiBudWxsLAogICAgICAicm91bmRuZXNzIjogbnVsbCwKICAgICAgInNlZWQiOiAxMDIyLAogICAgICAidmVyc2lvbiI6IDEsCiAgICAgICJ2ZXJzaW9uTm9uY2UiOiAyMDIyLAogICAgICAiaXNEZWxldGVkIjogZmFsc2UsCiAgICAgICJib3VuZEVsZW1lbnRzIjogbnVsbCwKICAgICAgInVwZGF0ZWQiOiAxLAogICAgICAibGluayI6IG51bGwsCiAgICAgICJsb2NrZWQiOiBmYWxzZSwKICAgICAgInRleHQiOiAiTWV0YWRhdGEiLAogICAgICAiZm9udFNpemUiOiAxNiwKICAgICAgImZvbnRGYW1pbHkiOiAyLAogICAgICAidGV4dEFsaWduIjogImNlbnRlciIsCiAgICAgICJ2ZXJ0aWNhbEFsaWduIjogIm1pZGRsZSIsCiAgICAgICJjb250YWluZXJJZCI6IG51bGwsCiAgICAgICJvcmlnaW5hbFRleHQiOiAiTWV0YWRhdGEiLAogICAgICAiYXV0b1Jlc2l6ZSI6IHRydWUsCiAgICAgICJsaW5lSGVpZ2h0IjogMS4yNQogICAgfSwKICAgIHsKICAgICAgImlkIjogImUyMyIsCiAgICAgICJ0eXBlIjogInRleHQiLAogICAgICAieCI6IDMyLAogICAgICAieSI6IDU0MCwKICAgICAgIndpZHRoIjogMTA1MCwKICAgICAgImhlaWdodCI6IDI4LAogICAgICAiYW5nbGUiOiAwLAogICAgICAic3Ryb2tlQ29sb3IiOiAiIzQzNTQ2ZSIsCiAgICAgICJiYWNrZ3JvdW5kQ29sb3IiOiAidHJhbnNwYXJlbnQiLAogICAgICAiZmlsbFN0eWxlIjogInNvbGlkIiwKICAgICAgInN0cm9rZVdpZHRoIjogMS41LAogICAgICAic3Ryb2tlU3R5bGUiOiAic29saWQiLAogICAgICAicm91Z2huZXNzIjogMSwKICAgICAgIm9wYWNpdHkiOiAxMDAsCiAgICAgICJncm91cElkcyI6IFtdLAogICAgICAiZnJhbWVJZCI6IG51bGwsCiAgICAgICJyb3VuZG5lc3MiOiBudWxsLAogICAgICAic2VlZCI6IDEwMjMsCiAgICAgICJ2ZXJzaW9uIjogMSwKICAgICAgInZlcnNpb25Ob25jZSI6IDIwMjMsCiAgICAgICJpc0RlbGV0ZWQiOiBmYWxzZSwKICAgICAgImJvdW5kRWxlbWVudHMiOiBudWxsLAogICAgICAidXBkYXRlZCI6IDEsCiAgICAgICJsaW5rIjogbnVsbCwKICAgICAgImxvY2tlZCI6IGZhbHNlLAogICAgICAidGV4dCI6ICJOb3QgYSBoaWdoLWF2YWlsYWJpbGl0eSBkZXNpZ24uIEFkZCBzZXBhcmF0ZSBzZWN1cml0eSwgZGVwbG95bWVudCwgYmFja3VwIGFuZCBtb25pdG9yaW5nIHZpZXdzLiIsCiAgICAgICJmb250U2l6ZSI6IDE2LAogICAgICAiZm9udEZhbWlseSI6IDIsCiAgICAgICJ0ZXh0QWxpZ24iOiAibGVmdCIsCiAgICAgICJ2ZXJ0aWNhbEFsaWduIjogIm1pZGRsZSIsCiAgICAgICJjb250YWluZXJJZCI6IG51bGwsCiAgICAgICJvcmlnaW5hbFRleHQiOiAiTm90IGEgaGlnaC1hdmFpbGFiaWxpdHkgZGVzaWduLiBBZGQgc2VwYXJhdGUgc2VjdXJpdHksIGRlcGxveW1lbnQsIGJhY2t1cCBhbmQgbW9uaXRvcmluZyB2aWV3cy4iLAogICAgICAiYXV0b1Jlc2l6ZSI6IHRydWUsCiAgICAgICJsaW5lSGVpZ2h0IjogMS4yNQogICAgfQogIF0sCiAgImFwcFN0YXRlIjogewogICAgInZpZXdCYWNrZ3JvdW5kQ29sb3IiOiAiI2ZmZmZmZiIsCiAgICAiZ3JpZFNpemUiOiBudWxsCiAgfSwKICAiZmlsZXMiOiB7fQp9", "diagrams/document-platform.svg": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMTM1IDU5NSIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsbGVkYnk9ImRpYWdyYW0tdGl0bGUgZGlhZ3JhbS1kZXNjIj4KPHRpdGxlIGlkPSJkaWFncmFtLXRpdGxlIj5Db25jZXB0dWFsIHByaXZhdGUgZG9jdW1lbnQgcGxhdGZvcm08L3RpdGxlPjxkZXNjIGlkPSJkaWFncmFtLWRlc2MiPkFuIGludGVybmFsIHVzZXIgcmVhY2hlcyBhIGdhdGV3YXkgb3ZlciBIVFRQUy4gVGhlIGdhdGV3YXkgY2FsbHMgYSBkb2N1bWVudCBBUEkuIFRoZSBBUEkgc3RvcmVzIGJ5dGVzIGluIE1pbklPIGFuZCBtZXRhZGF0YSBpbiBhIHNlcGFyYXRlIGRhdGFiYXNlLiBUaGlzIGlzIGEgY29uY2VwdHVhbCBhcHBsaWNhdGlvbiB2aWV3LCBub3QgdGhlIG9uZS1jb250YWluZXIgbGFiIGRlcGxveW1lbnQuPC9kZXNjPgo8ZGVmcz48bWFya2VyIGlkPSJhaCIgbWFya2VyV2lkdGg9IjkiIG1hcmtlckhlaWdodD0iOSIgcmVmWD0iNyIgcmVmWT0iNCIgb3JpZW50PSJhdXRvIj48cGF0aCBkPSJNMCwwIEw4LDQgTDAsOCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNTM2MTc5IiBzdHJva2Utd2lkdGg9IjEuNSIvPjwvbWFya2VyPjwvZGVmcz4KPHJlY3Qgd2lkdGg9IjExMzUiIGhlaWdodD0iNTk1IiByeD0iMTYiIGZpbGw9IiNmZmYiLz4KPHRleHQgeD0iMzIiIHk9IjQ0IiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyMyIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzE4Mjk0MCI+RG9jdW1lbnQgcGxhdGZvcm0gLyBsb2dpY2FsIHZpZXc8L3RleHQ+Cjx0ZXh0IHg9IjMyIiB5PSI3NSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTUiIGZpbGw9IiM1YjY3N2EiPkNvbmNlcHR1YWwgZGVzaWduIC0gb25seSB0aGUgb2JqZWN0IHN0b3JlIGlzIGRlcGxveWVkIGJ5IHRoZSBzdXBwbGllZCBsYWIuPC90ZXh0Pgo8cmVjdCB4PSIyNDciIHk9IjExMCIgd2lkdGg9Ijg1NSIgaGVpZ2h0PSI0MDAiIHJ4PSIxNCIgZmlsbD0iI2Y3ZjlmYyIgc3Ryb2tlPSIjOWJhOGJiIiBzdHJva2Utd2lkdGg9IjEuNSIgc3Ryb2tlLWRhc2hhcnJheT0iOCA2Ii8+Cjx0ZXh0IHg9IjI3MCIgeT0iMTQzIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNSIgZm9udC13ZWlnaHQ9IjcwMCIgZmlsbD0iIzQzNTQ2ZSI+UFJJVkFURSBBUFBMSUNBVElPTiBFTlZJUk9OTUVOVDwvdGV4dD48cG9seWxpbmUgcG9pbnRzPSIxOTAsMzAyIDI4NSwzMDIiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzUzNjE3OSIgc3Ryb2tlLXdpZHRoPSIyIiBtYXJrZXItZW5kPSJ1cmwoI2FoKSIvPjxwb2x5bGluZSBwb2ludHM9IjQ3MCwzMDIgNTQ1LDMwMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNTM2MTc5IiBzdHJva2Utd2lkdGg9IjIiIG1hcmtlci1lbmQ9InVybCgjYWgpIi8+PHBvbHlsaW5lIHBvaW50cz0iNzMwLDI4NSA3NzgsMjg1IDc3OCwyMTcgODM1LDIxNyIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNTM2MTc5IiBzdHJva2Utd2lkdGg9IjIiIG1hcmtlci1lbmQ9InVybCgjYWgpIi8+PHBvbHlsaW5lIHBvaW50cz0iNzMwLDMyMCA3NzgsMzIwIDc3OCw0MTIgODM1LDQxMiIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNTM2MTc5IiBzdHJva2Utd2lkdGg9IjIiIG1hcmtlci1lbmQ9InVybCgjYWgpIi8+PHJlY3QgeD0iMzUiIHk9IjI2MCIgd2lkdGg9IjE1NSIgaGVpZ2h0PSI4NSIgcng9IjEwIiBmaWxsPSIjZmZmN2VkIiBzdHJva2U9IiM2OTdkOTgiIHN0cm9rZS13aWR0aD0iMS42Ii8+PHRleHQgeD0iMTEyLjUiIHk9IjMwMi41IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNyIgZmlsbD0iIzE4Mjk0MCI+SW50ZXJuYWwgdXNlcjwvdGV4dD48cmVjdCB4PSIyODUiIHk9IjI2MCIgd2lkdGg9IjE4NSIgaGVpZ2h0PSI4NSIgcng9IjEwIiBmaWxsPSIjZWVmMmZmIiBzdHJva2U9IiM2OTdkOTgiIHN0cm9rZS13aWR0aD0iMS42Ii8+PHRleHQgeD0iMzc3LjUiIHk9IjI5MS41IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNyIgZmlsbD0iIzE4Mjk0MCI+R2F0ZXdheSAvPC90ZXh0Pjx0ZXh0IHg9IjM3Ny41IiB5PSIzMTUuNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTciIGZpbGw9IiMxODI5NDAiPnJldmVyc2UgcHJveHk8L3RleHQ+PHJlY3QgeD0iNTQ1IiB5PSIyNjAiIHdpZHRoPSIxODUiIGhlaWdodD0iODUiIHJ4PSIxMCIgZmlsbD0iI2VlZjJmZiIgc3Ryb2tlPSIjNjk3ZDk4IiBzdHJva2Utd2lkdGg9IjEuNiIvPjx0ZXh0IHg9IjYzNy41IiB5PSIzMDIuNSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTciIGZpbGw9IiMxODI5NDAiPkRvY3VtZW50IEFQSTwvdGV4dD48cmVjdCB4PSI4MzUiIHk9IjE3MCIgd2lkdGg9IjIzMCIgaGVpZ2h0PSI5NSIgcng9IjEwIiBmaWxsPSIjZTZmNWYwIiBzdHJva2U9IiM2OTdkOTgiIHN0cm9rZS13aWR0aD0iMS42Ii8+PHRleHQgeD0iOTUwLjAiIHk9IjIwNi41IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNyIgZmlsbD0iIzE4Mjk0MCI+TWluSU8gLyBBSVN0b3I8L3RleHQ+PHRleHQgeD0iOTUwLjAiIHk9IjIzMC41IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkb21pbmFudC1iYXNlbGluZT0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNyIgZmlsbD0iIzE4Mjk0MCI+T2JqZWN0IGJ5dGVzPC90ZXh0PjxyZWN0IHg9IjgzNSIgeT0iMzY1IiB3aWR0aD0iMjMwIiBoZWlnaHQ9Ijk1IiByeD0iMTAiIGZpbGw9IiNmM2YxZmMiIHN0cm9rZT0iIzY5N2Q5OCIgc3Ryb2tlLXdpZHRoPSIxLjYiLz48dGV4dCB4PSI5NTAuMCIgeT0iNDAxLjUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE3IiBmaWxsPSIjMTgyOTQwIj5NZXRhZGF0YSBkYXRhYmFzZTwvdGV4dD48dGV4dCB4PSI5NTAuMCIgeT0iNDI1LjUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGRvbWluYW50LWJhc2VsaW5lPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE3IiBmaWxsPSIjMTgyOTQwIj5JRHMsIG93bmVycywga2V5czwvdGV4dD48dGV4dCB4PSIyMDciIHk9IjI4OCIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM1MzYxNzkiPkhUVFBTPC90ZXh0Pjx0ZXh0IHg9IjQ3MyIgeT0iMzcxIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgZmlsbD0iIzUzNjE3OSI+QXV0aGVudGljYXRlZCByZXF1ZXN0PC90ZXh0Pjx0ZXh0IHg9Ijc0NSIgeT0iMTgxIiBmb250LWZhbWlseT0iQXJpYWwsc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxMyIgZmlsbD0iIzUzNjE3OSI+UzMgLyBIVFRQUzwvdGV4dD48dGV4dCB4PSI3NDciIHk9IjQ0NCIgZm9udC1mYW1pbHk9IkFyaWFsLHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTMiIGZpbGw9IiM1MzYxNzkiPk1ldGFkYXRhPC90ZXh0Pjx0ZXh0IHg9IjMyIiB5PSI1NTIiIGZvbnQtZmFtaWx5PSJBcmlhbCxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE0IiBmaWxsPSIjNWI2NzdhIj5TZXBhcmF0ZSB2aWV3cyBzdGlsbCBuZWVkZWQ6IGFkbWluIGFjY2VzcywgaWRlbnRpdHksIFRMUyB0ZXJtaW5hdGlvbiwgYmFja3VwcywgbW9uaXRvcmluZyBhbmQgZmFpbHVyZSBkb21haW5zLjwvdGV4dD48L3N2Zz4=", "templates/adr.md": "IyBBRFItMDAxOiBDaG9vc2UgdGhlIHN0b3JhZ2UgYW5kIGRpYWdyYW0gc291cmNlIG9mIHRydXRoCgpTdGF0dXM6IFByb3Bvc2VkCkRhdGU6IFlZWVktTU0tREQKT3duZXI6CgojIyBDb250ZXh0CldoYXQgcHJvYmxlbSBhbmQgY29uc3RyYWludHMgbXVzdCBiZSBhZGRyZXNzZWQ/CgojIyBPcHRpb25zCkNvbXBhcmUgbWFuYWdlZCBTMywgc2VsZi1tYW5hZ2VkIEFJU3RvciwgYW5kIGFueSBhcHByb3ZlZCBhbHRlcm5hdGl2ZS4KCiMjIERlY2lzaW9uClN0YXRlIHRoZSBjaG9pY2UsIG5vdCBvbmx5IHRoZSBwcmVmZXJlbmNlLgoKIyMgRXZpZGVuY2UKTGluayBleGFjdCBvZmZpY2lhbCBzb3VyY2VzLCBtZWFzdXJlZCB0ZXN0cywgYW5kIGFydGlmYWN0IHZlcnNpb25zLgoKIyMgQ29uc2VxdWVuY2VzCkJlbmVmaXRzLCBjb3N0cywgb3BlcmF0aW9uYWwgZHV0aWVzLCBhbmQgcmVtYWluaW5nIHJpc2tzLgoKIyMgUmV2aXNpdCB0cmlnZ2VycwpMaWNlbnNlIGNoYW5nZSwgd29ya2xvYWQgZ3Jvd3RoLCBhdmFpbGFiaWxpdHkgcmVxdWlyZW1lbnQsIHNlY3VyaXR5IGZpbmRpbmcuCg==", "templates/diagram-review.md": "IyBEaWFncmFtIHJldmlldwoKLSBbIF0gVGl0bGUsIG93bmVyLCBkYXRlLCB2ZXJzaW9uLCBlbnZpcm9ubWVudCwgYW5kIHN0YXR1cyBhcmUgdmlzaWJsZS4KLSBbIF0gRXZlcnkgYm94IGhhcyBhIGNsZWFyIHJlc3BvbnNpYmlsaXR5LgotIFsgXSBFYWNoIGxpbmUgaGFzIGEgZGlyZWN0aW9uIGFuZCBtZWFuaW5nZnVsIGxhYmVsLgotIFsgXSBUcnVzdCwgYWNjb3VudCwgUmVnaW9uLCBuZXR3b3JrLCBhbmQgZmFpbHVyZSBib3VuZGFyaWVzIGFyZSBub3QgY29uZmxhdGVkLgotIFsgXSBNYW5hZ2VkIHJlZ2lvbmFsIHNlcnZpY2VzIGFyZSBub3QgaW5jb3JyZWN0bHkgcGxhY2VkIGluc2lkZSBhIHN1Ym5ldC4KLSBbIF0gQWRtaW5pc3RyYXRpdmUgYWNjZXNzIGlzIHNlcGFyYXRlZCBmcm9tIGFwcGxpY2F0aW9uIHRyYWZmaWMuCi0gWyBdIFNlY3JldHMgYW5kIHByaXZhdGUgaWRlbnRpZmllcnMgYXJlIHJlbW92ZWQgZnJvbSBzaGFyZWQgY29waWVzLgotIFsgXSBQcmVzaWduZWQgVVJMIHJlY2lwaWVudHMgY2FuIGFjdHVhbGx5IHJlYWNoIHRoZSBzaWduZWQgZW5kcG9pbnQuCi0gWyBdIEEgc2luZ2xlIGhvc3QgaXMgbm90IGxhYmVsbGVkIGhpZ2hseSBhdmFpbGFibGUuCi0gWyBdIEJhY2t1cC9yZXN0b3JlIGFuZCBvYnNlcnZlZCBydW50aW1lIGV2aWRlbmNlIGFyZSBkaXN0aW5ndWlzaGVkIGZyb20gaW50ZW50LgotIFsgXSBUaGUgZWRpdGFibGUgc291cmNlIGFuZCByZWFkYWJsZSBleHBvcnQgYXJlIGJvdGggc2F2ZWQuCi0gWyBdIFRoZSBhdXRob3JpdGF0aXZlIGZvcm1hdCBpcyBkZWNsYXJlZDsgY29udmVyc2lvbiBpcyBub3QgYXNzdW1lZCBsb3NzbGVzcy4K", "templates/notebook-prompts.md": "IyBOb3RlYm9va0xNIHByYWN0aWNlIHByb21wdHMKCiMjIFByb21wdCAxCgpgYGB0ZXh0ClVzaW5nIG9ubHkgdGhlIHNvdXJjZXMgaW4gdGhpcyBub3RlYm9vaywgZXhwbGFpbiBvYmplY3Qgc3RvcmFnZSB0byBhCmJlZ2lubmVyLiBEaXN0aW5ndWlzaCBidWNrZXQsIG9iamVjdCBrZXksIHByZWZpeCwgZW5kcG9pbnQsIGFuZCB2ZXJzaW9uIElELgpGb3IgZWFjaCBkZWZpbml0aW9uLCBjaXRlIHRoZSBzdXBwb3J0aW5nIHNvdXJjZS4gQ2xlYXJseSBtYXJrIGFueXRoaW5nCnRoYXQgdGhlIHNvdXJjZXMgZG8gbm90IGV4cGxhaW4uCmBgYAoKIyMgUHJvbXB0IDIKCmBgYHRleHQKQ3JlYXRlIGFuIGV2aWRlbmNlIHRhYmxlIGZvciBvdXIgcHJpdmF0ZSBkb2N1bWVudCBwbGF0Zm9ybToKY2xhaW0gfCBzb3VyY2UgYW5kIHJlbGV2YW50IHBhc3NhZ2UgfCBsaW1pdGF0aW9uIHwgZGVzaWduIGltcGxpY2F0aW9uLgpTZXBhcmF0ZSBkb2N1bWVudGVkIHByb2R1Y3QgY2FwYWJpbGl0aWVzIGZyb20gcHJvcG9zZWQgZGVzaWduIGNob2ljZXMuCkRvIG5vdCBpbmZlciBoaWdoIGF2YWlsYWJpbGl0eSBmcm9tIHRoZSBwcmVzZW5jZSBvZiBtdWx0aXBsZSBib3hlcy4KYGBgCgojIyBQcm9tcHQgMwoKYGBgdGV4dApDb21wYXJlIHRoZSByZXNwb25zaWJpbGl0aWVzIG9mIGEgbWFuYWdlZCBvYmplY3Qtc3RvcmFnZSBzZXJ2aWNlIGFuZApzZWxmLW1hbmFnZWQgTWluSU8vQUlTdG9yLiBSZXN0cmljdCBmYWN0dWFsIGNsYWltcyB0byB0aGUgc291cmNlcy4KSW5jbHVkZSBwYXRjaGluZywgZGlza3MsIGFjY2VzcyBwb2xpY2llcywgbW9uaXRvcmluZywgYmFja3VwLCBhbmQgcmVzdG9yZS4KTGlzdCBxdWVzdGlvbnMgdGhhdCBzdGlsbCByZXF1aXJlIGN1cnJlbnQgdmVuZG9yIGRvY3VtZW50YXRpb24uCmBgYAoKIyMgUHJvbXB0IDQKCmBgYHRleHQKRHJhZnQgYSBjb21wb25lbnQtYW5kLXJlbGF0aW9uc2hpcCBpbnZlbnRvcnksIG5vdCBhIHBpY3R1cmUuCkZvciBlYWNoIGNvbXBvbmVudDogbmFtZSwgcmVzcG9uc2liaWxpdHksIGlucHV0cywgb3V0cHV0cywgdHJ1c3QgYm91bmRhcnkuCkZvciBlYWNoIHJlbGF0aW9uc2hpcDogY2FsbGVyLCByZWNlaXZlciwgb3BlcmF0aW9uLCBwcm90b2NvbCwgYW5kIGlkZW50aXR5LgpNYXJrIG1pc3NpbmcgaW5mb3JtYXRpb24gaW5zdGVhZCBvZiBpbnZlbnRpbmcgYSBuZXR3b3JrIG9yIHNlcnZpY2UuCmBgYAoKIyMgUHJvbXB0IDUKCmBgYHRleHQKUXVpeiBtZSB3aXRoIGZpdmUgcXVlc3Rpb25zLCBvbmUgYXQgYSB0aW1lLiBXYWl0IGZvciBteSBhbnN3ZXIgYmVmb3JlCnNob3dpbmcgdGhlIGV4cGxhbmF0aW9uLiBBc2sgYXQgbGVhc3Qgb25lIHF1ZXN0aW9uIGFib3V0IHRoZSBkaWZmZXJlbmNlCmJldHdlZW4gdmVyc2lvbmluZywgYmFja3VwLCBhbmQgaGlnaCBhdmFpbGFiaWxpdHkuIENpdGUgdGhlIGV4cGxhbmF0aW9uLgpgYGAKCiMjIFByb21wdCA2CgpgYGB0ZXh0ClJldmlldyB0aGlzIGFyY2hpdGVjdHVyZSBicmllZiBhZ2FpbnN0IHRoZSBub3RlYm9vayBzb3VyY2VzLgpJZGVudGlmeSB1bnN1cHBvcnRlZCBzdGF0ZW1lbnRzLCBpbmNvbnNpc3RlbnQgdGVybWlub2xvZ3ksIHNlY3VyaXR5CmFzc3VtcHRpb25zLCBhbmQgZmFjdHMgdGhhdCBtYXkgZGVwZW5kIG9uIHByb2R1Y3QgdmVyc2lvbiBvciBsaWNlbnNlLgpEbyBub3QgcmV3cml0ZSBhbiB1bmNlcnRhaW4gY2xhaW0gYXMgYSB2ZXJpZmllZCBmYWN0LgpgYGA=", "templates/requirements.md": "IyBEb2N1bWVudCBwbGF0Zm9ybSByZXF1aXJlbWVudHMKCiMjIFB1cnBvc2UgYW5kIGF1ZGllbmNlCkRlc2NyaWJlIHRoZSB1c2VyIHByb2JsZW0gYW5kIHRoZSByZWFkZXIgb2YgdGhlIGRpYWdyYW0uCgojIyBJbiBzY29wZSAvIG91dCBvZiBzY29wZQpTcGVjaWZ5IGJvdGggZXhwbGljaXRseS4KCiMjIEZ1bmN0aW9uYWwgcmVxdWlyZW1lbnRzClVwbG9hZCwgcmV0cmlldmUsIGF1dGhvcml6ZSwgcmV0YWluLCBhbmQgYXVkaXQuIEFkZCBtZWFzdXJhYmxlIGFjY2VwdGFuY2UgY3JpdGVyaWEuCgojIyBOb24tZnVuY3Rpb25hbCByZXF1aXJlbWVudHMKQXZhaWxhYmlsaXR5IHRhcmdldCwgbGF0ZW5jeSB0YXJnZXQsIGV4cGVjdGVkIGJ5dGVzL2RheSwgb2JqZWN0IHNpemVzLCByZXN0b3JlIG9iamVjdGl2ZXMuCkFsbCBudW1iZXJzIGFyZSByZXF1aXJlbWVudHMgdG8gZGVjaWRlLCBub3QgcHJvZHVjdCBndWFyYW50ZWVzLgoKIyMgRGF0YSBjbGFzc2lmaWNhdGlvbgpBcHByb3ZlZCBmb3IgZXh0ZXJuYWwgQUkgdG9vbHM/IFJldGVudGlvbiBvd25lcj8gV2hlcmUgYXJlIGtleXMgaGVsZD8KCiMjIENvbnN0cmFpbnRzIGFuZCBhc3N1bXB0aW9ucwpDbG91ZC9vbi1wcmVtaXNlcywgbmV0d29yayBhY2Nlc3MsIGxpY2Vuc2luZywgYnVkZ2V0LCB0ZWFtIGNhcGFjaXR5LgoKIyMgT3BlbiBxdWVzdGlvbnMKUmVjb3JkIGVhY2ggcXVlc3Rpb24sIG93bmVyLCBhbmQgZXZpZGVuY2UgbmVlZGVkLgo=", "templates/source-register.md": "IyBTb3VyY2UgcmVnaXN0ZXIKCnwgSUQgfCBUaXRsZSBhbmQgZXhhY3QgVVJML2ZpbGUgfCBQdWJsaXNoZXIgfCBBY2Nlc3NlZCB8IFZlcnNpb24vZGF0ZSB8IFJlbGV2YW50IGNsYWltcyB8IFNlbnNpdGl2aXR5IHwgR2FwcyB8CnwtLS18LS0tfC0tLXwtLS18LS0tfC0tLXwtLS18LS0tfAp8IFMwMSB8IHwgfCB8IHwgfCB8IHwKCkRpc3Rpbmd1aXNoIHZlcmlmaWVkIGZhY3RzLCBwcm9wb3NlZCBkZXNpZ24gY2hvaWNlcywgYW5kIHVudmVyaWZpZWQgYXNzdW1wdGlvbnMuCkEgcm9vdCBkb2N1bWVudGF0aW9uIFVSTCBkb2VzIG5vdCBndWFyYW50ZWUgdGhhdCBuZXN0ZWQgcGFnZXMgd2VyZSBpbXBvcnRlZC4K"}</script><script>
+(function(){
+  const toast = document.getElementById('toast'); let timer;
+  function announce(msg){toast.textContent=msg;toast.classList.add('show');clearTimeout(timer);timer=setTimeout(()=>toast.classList.remove('show'),2500)}
+  document.querySelectorAll('pre').forEach(pre=>{
+    const code=pre.querySelector('code'); const wrap=document.createElement('div');wrap.className='code-wrap';
+    const bar=document.createElement('div');bar.className='codebar';
+    const label=document.createElement('span');label.textContent=(code.className||'example').replace('language-','');
+    const btn=document.createElement('button');btn.type='button';btn.className='copy';btn.textContent='Copy';btn.setAttribute('aria-label','Copy code example');
+    bar.append(label,btn);pre.before(wrap);wrap.append(bar,pre);
+    btn.addEventListener('click',async()=>{const val=code.textContent;try{if(navigator.clipboard&&window.isSecureContext){await navigator.clipboard.writeText(val)}else{const ta=document.createElement('textarea');ta.value=val;ta.style.position='fixed';ta.style.left='-9999px';document.body.append(ta);ta.select();const ok=document.execCommand('copy');ta.remove();if(!ok)throw new Error('copy')}announce('Code copied')}catch(e){announce('Select the code and copy it manually')}})
+  });
+  const data=JSON.parse(document.getElementById('embedded-files').textContent);
+  document.querySelectorAll('[data-file]').forEach(btn=>btn.addEventListener('click',()=>{const path=btn.dataset.file;const entry=data[path];if(!entry){announce('This file is available in the complete ZIP.');return}const bytes=Uint8Array.from(atob(entry),c=>c.charCodeAt(0));const url=URL.createObjectURL(new Blob([bytes],{type:'application/octet-stream'}));const a=document.createElement('a');a.href=url;a.download=path.split('/').pop();document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),10000);announce('Saved '+path.split('/').pop())}));
+  const keys='cloud-learning-kit-progress-v1';let state={};try{state=JSON.parse(localStorage.getItem(keys)||'{}')}catch(e){}
+  document.querySelectorAll('[data-milestone]').forEach(box=>{box.checked=Boolean(state[box.dataset.milestone]);box.addEventListener('change',()=>{state[box.dataset.milestone]=box.checked;try{localStorage.setItem(keys,JSON.stringify(state))}catch(e){announce('Progress is kept only for this open page in this browser.')}})});
+  const nav=[...document.querySelectorAll('nav a[data-section]')];const filter=document.getElementById('chapter-filter');
+  filter.addEventListener('input',()=>{const q=filter.value.trim().toLowerCase();let count=0;nav.forEach(a=>{const match=document.getElementById(a.dataset.section).textContent.toLowerCase().includes(q);a.hidden=!match;if(match)count++});document.getElementById('filter-status').textContent=q?count+' chapters match':'Filter navigation, or use browser Find'});
+  const progress=document.getElementById('reading-progress');
+  function update(){const total=document.documentElement.scrollHeight-innerHeight;progress.style.width=(total>0?Math.min(100,100*scrollY/total):0)+'%';let current=nav[0];nav.forEach(a=>{if(document.getElementById(a.dataset.section).getBoundingClientRect().top<=150)current=a});nav.forEach(a=>{a.classList.toggle('active',a===current);if(a===current)a.setAttribute('aria-current','location');else a.removeAttribute('aria-current')})}window.addEventListener('scroll',update,{passive:true});update();
+  document.getElementById('print').addEventListener('click',()=>window.print());
+})();
+</script></body></html>
