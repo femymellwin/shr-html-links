@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="A practical 24-month AI and Data Science certification roadmap for a third-year university student in India, October 2026 to September 2028.">
+  <title>AI & Data Science | 24-Month Certification Roadmap</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #fbfcff; --paper: #ffffff; --ink: #172238; --muted: #67738a;
+      --line: #e5eaf2; --brand: #5145d9; --brand-dark: #3d34ad;
+      --blue-soft: #eff0ff; --teal: #078b91; --teal-soft: #e7f8f7;
+      --amber: #ab701a; --amber-soft: #fff5e4; --pink: #b34c8d; --pink-soft: #fdf0f8;
+      --shadow: 0 15px 44px rgba(30, 40, 86, .055);
+      --radius: 20px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; color: var(--ink); background: var(--bg); font: 15px/1.62 Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; text-decoration: none; }
+    button { font: inherit; }
+    .svg-icons { position: absolute; width: 0; height: 0; overflow: hidden; }
+    .ico { display: inline-block; flex: 0 0 auto; width: 19px; height: 19px; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; fill: none; vertical-align: middle; }
+    .ico.sm { width: 15px; height: 15px; }
+    .ico.lg { width: 25px; height: 25px; }
+    .shell { width: min(1170px, calc(100% - 52px)); margin: 0 auto; }
+    .topbar { background: rgba(255,255,255,.94); backdrop-filter: blur(18px); position: sticky; top: 0; z-index: 20; border-bottom: 1px solid #edf0f6; }
+    .nav { display: flex; align-items: center; justify-content: space-between; min-height: 73px; gap: 18px; }
+    .brand { display: inline-flex; align-items: center; gap: 11px; font-size: 14px; font-weight: 850; letter-spacing: -.3px; white-space: nowrap; }
+    .brand-logo { width: 37px; height: 37px; border-radius: 12px; display: grid; place-items: center; color: #fff; background: var(--brand); box-shadow: 0 7px 17px #5145d92a; }
+    .brand small { display:block; font-size: 10px; font-weight: 720; letter-spacing: 1.8px; color: #778197; line-height: 1.2; margin-top: 2px; }
+    .nav-links { display: flex; align-items: center; gap: clamp(12px, 2vw, 28px); font-size: 12px; color: #5b657a; font-weight: 740; }
+    .nav-links a:hover, .nav-links a:focus-visible { color: var(--brand); }
+    .nav-action, .primary-btn, .outline-btn { border: 1px solid transparent; display: inline-flex; align-items: center; justify-content: center; gap: 9px; font-weight: 760; cursor: pointer; }
+    .nav-action { padding: 9px 13px; background: #f2f3fe; color: var(--brand); border-radius: 10px; font-size: 12px; }
+    .nav-action:hover { background: #e9e9fe; }
+    .hero { padding: 66px 0 58px; overflow: hidden; background: radial-gradient(ellipse 670px 380px at 82% 8%, #efedff 0, transparent 72%), linear-gradient(180deg, #fff, #fafbff); border-bottom: 1px solid var(--line); }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 66px; align-items: center; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; border-radius: 100px; padding: 7px 13px; border: 1px solid #e5e4ff; background: #f5f4ff; color: var(--brand-dark); font-size: 11px; font-weight: 830; letter-spacing: .72px; text-transform: uppercase; }
+    .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #2ac4a0; box-shadow: 0 0 0 3px #2ac4a024; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { font-size: clamp(42px, 5.5vw, 71px); letter-spacing: -3.5px; font-weight: 840; line-height: 1.09; margin: 24px 0 23px; max-width: 740px; }
+    h1 em { font-style: normal; color: var(--brand); }
+    .lead { color: #677388; font-size: 16px; line-height: 1.85; max-width: 610px; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 27px; }
+    .primary-btn, .outline-btn { padding: 12px 18px; border-radius: 11px; font-size: 13px; }
+    .primary-btn { background: var(--brand); color: #fff; box-shadow: 0 7px 15px #5145d926; }
+    .primary-btn:hover { background: var(--brand-dark); }
+    .outline-btn { background: #fff; border-color: #dfe4ef; color: #3f4b64; }
+    .outline-btn:hover { border-color: #a7a3ed; color: var(--brand); }
+    .hero-footnote { font-size: 11.5px; color: #8993a5; margin: 19px 0 0; }
+    .journey { background: #fff; border: 1px solid #e5e9f5; border-radius: 23px; padding: 28px 29px 25px; box-shadow: 0 24px 70px rgba(70, 72, 154, .095); transform: rotate(1.2deg); }
+    .journey-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px; }
+    .tiny-label { font-size: 10px; font-weight: 840; text-transform: uppercase; letter-spacing: 1.55px; color: #8994a7; }
+    .journey-head h3 { font-size: 23px; letter-spacing: -.8px; line-height: 1.2; margin: 7px 0 0; }
+    .small-pictogram { display: grid; place-items: center; width: 42px; height: 42px; color: var(--brand); background: var(--blue-soft); border-radius: 14px; }
+    .j-steps { display: grid; gap: 18px; margin: 0 0 24px; position: relative; }
+    .j-steps:before { content: ''; position: absolute; top: 17px; bottom: 20px; left: 18px; border-left: 1px dashed #d9dff1; }
+    .j-step { display: flex; gap: 14px; align-items: center; position: relative; }
+    .j-icon { flex: 0 0 37px; width: 37px; height: 37px; display: grid; place-items: center; border-radius: 12px; background: #f1f1ff; color: var(--brand); border: 3px solid #fff; box-shadow: 0 1px 0 #e9eafd; }
+    .j-step:nth-child(2) .j-icon { background: var(--teal-soft); color: var(--teal); }
+    .j-step:nth-child(3) .j-icon { background: var(--amber-soft); color: var(--amber); }
+    .j-step:nth-child(4) .j-icon { background: var(--pink-soft); color: var(--pink); }
+    .j-step strong { display: block; font-size: 12.5px; letter-spacing: -.1px; line-height: 1.3; }
+    .j-step span { display: block; color: #8a93a5; font-size: 11px; margin-top: 3px; }
+    .journey-bottom { border-top: 1px solid var(--line); padding-top: 20px; display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+    .journey-bottom b { font-size: 14px; color: var(--brand); }
+    .journey-bottom span { font-size: 11px; color: #75819a; }
+    .metrics { display: grid; grid-template-columns: repeat(4,1fr); gap: 13px; margin-top: 43px; }
+    .metric { background: white; border: 1px solid var(--line); padding: 19px 22px; border-radius: 15px; display: flex; align-items: center; gap: 14px; }
+    .metric-icon { color: var(--brand); background: var(--blue-soft); border-radius: 11px; width: 41px; height: 41px; display: grid; place-items: center; }
+    .metric:nth-child(2) .metric-icon { color: var(--teal); background: var(--teal-soft); }
+    .metric:nth-child(3) .metric-icon { color: var(--amber); background: var(--amber-soft); }
+    .metric:nth-child(4) .metric-icon { color: var(--pink); background: var(--pink-soft); }
+    .metric b { font-size: 19px; letter-spacing: -.5px; display: block; line-height: 1.17; }
+    .metric small { color: #8a93a5; font-size: 11px; }
+    section.content-section { padding: 76px 0 10px; scroll-margin-top: 86px; }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; margin-bottom: 27px; }
+    .section-kicker { font-size: 11px; font-weight: 820; letter-spacing: 2px; color: var(--brand); text-transform: uppercase; margin-bottom: 7px; }
+    .section-head h2, .section-only-head h2 { font-size: clamp(27px, 3vw, 35px); line-height: 1.2; letter-spacing: -1.35px; font-weight: 825; margin: 0; }
+    .section-head p, .section-only-head p { font-size: 13px; color: #7a8598; margin: 7px 0 0; max-width: 560px; }
+    .note-chip { border: 1px solid #e0e5ef; background: white; border-radius: 100px; color: #788399; font-size: 11px; font-weight: 710; white-space: nowrap; padding: 9px 14px; }
+    .credentials { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .credential { position: relative; border: 1px solid var(--line); background: #fff; padding: 24px 22px 20px; border-radius: 18px; min-height: 348px; box-shadow: 0 5px 19px rgba(28, 36, 77, .025); display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s; }
+    .credential:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+    .credential:before { content: ''; height: 4px; position: absolute; top: 0; left: 24px; right: 24px; background: var(--brand); border-radius: 0 0 4px 4px; }
+    .credential[data-color="teal"]:before { background: var(--teal); }
+    .credential[data-color="amber"]:before { background: #d49a39; }
+    .credential[data-color="pink"]:before { background: var(--pink); }
+    .cred-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 17px; }
+    .cred-mark { height: 43px; width: 43px; border-radius: 12px; display: grid; place-items: center; background: #f0eeff; color: var(--brand); }
+    .credential[data-color="teal"] .cred-mark { color: var(--teal); background: var(--teal-soft); }
+    .credential[data-color="amber"] .cred-mark { color: var(--amber); background: var(--amber-soft); }
+    .credential[data-color="pink"] .cred-mark { color: var(--pink); background: var(--pink-soft); }
+    .step-number { font-size: 11px; font-weight: 850; color: #a1a9b8; letter-spacing: 1px; }
+    .cred-kind { text-transform: uppercase; letter-spacing: 1px; font-size: 10px; font-weight: 810; color: #8791a5; }
+    .credential h3 { font-size: 17px; letter-spacing: -.35px; margin: 7px 0 6px; line-height: 1.36; }
+    .issuer { font-size: 11.5px; color: #8994a4; margin-bottom: 16px; }
+    .credential p.body { font-size: 12px; color: #647087; line-height: 1.69; margin: 0 0 15px; }
+    .skills-list { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 17px; }
+    .skill { padding: 4px 8px; border-radius: 6px; font-size: 10px; font-weight: 740; color: #5b6680; background: #f4f6fa; }
+    .cred-footer { margin-top: auto; border-top: 1px solid #edf0f4; padding-top: 14px; }
+    .cred-date { font-size: 11px; color: #8791a4; display: flex; gap: 6px; align-items: center; }
+    .cred-link { font-size: 12px; font-weight: 800; color: var(--brand); display: inline-flex; align-items: center; gap: 5px; margin-top: 10px; }
+    .cred-link:hover { text-decoration: underline; }
+    .info-strip { display: flex; align-items: flex-start; gap: 13px; padding: 18px 21px; margin-top: 16px; border-radius: 12px; background: #f4f3ff; color: #49468e; font-size: 12.5px; }
+    .info-strip strong { color: #33316d; }
+    .split-head { align-items: center; }
+    .filters { display: inline-flex; gap: 5px; background: #eef1f7; padding: 4px; border-radius: 10px; }
+    .filter { font-size: 11px; color: #768096; cursor: pointer; padding: 7px 12px; border-radius: 7px; background: none; border: 0; font-weight: 760; }
+    .filter.active { background: #fff; color: var(--brand); box-shadow: 0 2px 8px #1f29420f; }
+    .progress-wrap { display: grid; grid-template-columns: 1fr auto; gap: 16px; border: 1px solid #e7e9f2; border-radius: 15px; padding: 18px 22px; background: white; margin: 0 0 20px; align-items: center; }
+    .progress-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 9px; }
+    .progress-header strong { font-size: 12.5px; }
+    .progress-header span { font-size: 11px; color: #7e8a9e; font-variant-numeric: tabular-nums; }
+    .progress-track { width: 100%; height: 9px; border-radius: 100px; background: #eef0f8; overflow: hidden; }
+    .progress-fill { height: 100%; width: 0%; border-radius: 100px; background: linear-gradient(90deg, #5145d9, #27b9b1); transition: width .25s; }
+    .reset { border: 1px solid #e3e8f0; padding: 9px 12px; background: #fff; border-radius: 8px; display: flex; align-items: center; gap: 7px; font-size: 11px; color: #778198; font-weight: 730; cursor: pointer; }
+    .reset:hover { color: var(--brand); border-color: #cdc9ff; }
+    .quarter-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; align-items: stretch; }
+    .quarter { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 17px; background: #fff; padding: 22px 19px 18px; min-height: 322px; position: relative; }
+    .quarter[hidden] { display: none !important; }
+    .quarter-top { display: flex; justify-content: space-between; align-items: start; }
+    .q-num { color: #e2e5ed; font-size: 41px; line-height: 1; font-weight: 900; letter-spacing: -2px; }
+    .q-date { font-size: 10px; font-weight: 820; color: #828da1; background: #f4f6fa; border-radius: 6px; padding: 5px 9px; margin-top: 4px; }
+    .q-category { font-size: 10px; font-weight: 810; text-transform: uppercase; letter-spacing: 1.1px; color: var(--brand); margin: 14px 0 4px; }
+    .quarter[data-theme="teal"] .q-category { color: var(--teal); }
+    .quarter[data-theme="amber"] .q-category { color: var(--amber); }
+    .quarter[data-theme="pink"] .q-category { color: var(--pink); }
+    .quarter h3 { font-size: 15px; line-height: 1.36; letter-spacing: -.18px; margin: 0 0 17px; }
+    .q-checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 11px; }
+    .q-checks label { display: flex; gap: 9px; align-items: flex-start; font-size: 11.5px; color: #6d788c; line-height: 1.5; cursor: pointer; }
+    .q-checks input { width: 15px; height: 15px; accent-color: var(--brand); flex-shrink: 0; margin: 1px 0 0; cursor: pointer; }
+    .q-checks input:checked + span { text-decoration: line-through; color: #9ea8b6; }
+    .output { font-size: 10.5px; line-height: 1.4; color: #5f6980; font-weight: 730; display: flex; align-items: center; gap: 7px; border-top: 1px solid #eef0f4; padding-top: 14px; margin-top: auto; margin-bottom: 0; }
+    .output .ico { color: var(--teal); }
+    .projects { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .project { background: white; border: 1px solid var(--line); padding: 25px; border-radius: 18px; }
+    .project-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .project-icon { display: grid; place-items: center; width: 45px; height: 45px; border-radius: 13px; color: var(--brand); background: var(--blue-soft); }
+    .project:nth-child(2) .project-icon { color: var(--teal); background: var(--teal-soft); }
+    .project:nth-child(3) .project-icon { color: var(--pink); background: var(--pink-soft); }
+    .project-index { color: #a9b0bf; font-size: 11px; letter-spacing: 1.1px; font-weight: 810; }
+    .project h3 { font-size: 17px; letter-spacing: -.4px; line-height: 1.35; margin-bottom: 9px; }
+    .project p { font-size: 12px; color: #788497; min-height: 60px; line-height: 1.72; margin: 0 0 15px; }
+    .project .skills-list { margin-bottom: 13px; }
+    .project-due { border-top: 1px solid var(--line); padding-top: 14px; display: flex; align-items: center; gap: 7px; color: #808ca2; font-size: 11px; font-weight: 730; }
+    .two-col { display: grid; grid-template-columns: 1.07fr .93fr; gap: 17px; }
+    .panel { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 26px; }
+    .panel-title { font-size: 17px; letter-spacing: -.4px; margin: 0 0 6px; display: flex; gap: 10px; align-items: center; }
+    .panel-title .ico { color: var(--brand); }
+    .panel-sub { font-size: 12px; color: #8994a6; margin: 0 0 22px; }
+    .weekly-row { display: grid; grid-template-columns: 105px 1fr 42px; align-items: center; gap: 12px; padding: 13px 0; border-top: 1px solid #f0f2f6; }
+    .weekly-row:first-of-type { border-top: 0; }
+    .weekday { font-size: 11.5px; font-weight: 760; color: #66738a; }
+    .study-label { font-size: 11.5px; color: #566279; }
+    .hours { color: var(--brand); font-weight: 840; font-size: 12px; text-align: right; }
+    .focus-tip { margin-top: 20px; display: flex; gap: 10px; color: #65538a; background: #f7f5ff; border-radius: 9px; padding: 12px; font-size: 11px; }
+    .budget-table { width: 100%; border-collapse: collapse; }
+    .budget-table th { font-size: 10px; color: #959dad; font-weight: 820; letter-spacing: 1px; text-align: left; text-transform: uppercase; padding: 11px 0; border-bottom: 1px solid #edf0f5; }
+    .budget-table td { padding: 12px 0; font-size: 11.5px; border-bottom: 1px solid #f0f1f6; color: #69758b; }
+    .budget-table td:last-child { text-align: right; font-weight: 800; color: #3a4864; white-space: nowrap; }
+    .budget-table strong { color: #404e65; font-weight: 780; }
+    .budget-note { color: #788599; font-size: 11px; line-height: 1.7; margin: 17px 0 0; }
+    .callout { margin-top: 16px; display: flex; gap: 9px; align-items: flex-start; background: #eaf8f3; color: #2b7360; padding: 12px 14px; font-size: 11px; border-radius: 9px; }
+    .bottom-banner { margin: 56px 0 60px; padding: 32px 36px; background: #302a79; color: #fff; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; gap: 20px; background-image: radial-gradient(circle at 95% 13%, #7464c9 0, transparent 37%), linear-gradient(135deg, #3e35a4, #292464); }
+    .bottom-banner h2 { font-size: 25px; letter-spacing: -.8px; margin: 0 0 7px; }
+    .bottom-banner p { color: #d4d0f5; font-size: 12.5px; margin: 0; max-width: 670px; }
+    .banner-link { background: #fff; color: #3d359a; padding: 12px 17px; border-radius: 9px; font-size: 12px; font-weight: 810; display: flex; gap: 8px; align-items: center; white-space: nowrap; }
+    .banner-link:hover { background: #f0edff; }
+    footer { border-top: 1px solid var(--line); background: #fff; }
+    .footer-inside { padding: 27px 0 35px; display: grid; grid-template-columns: 1fr auto; gap: 25px; }
+    .footer-inside strong { font-size: 12px; }
+    .footer-inside p { color: #939eae; font-size: 10.5px; max-width: 690px; margin: 7px 0 0; line-height: 1.8; }
+    .source-links { max-width: 440px; display: flex; flex-wrap: wrap; gap: 11px 16px; justify-content: flex-end; }
+    .source-links a { color: #727f96; font-size: 10.5px; display: inline-flex; align-items: center; gap: 3px; }
+    .source-links a:hover { color: var(--brand); }
+    :focus-visible { outline: 3px solid #b7b0ff; outline-offset: 3px; }
+    @media (max-width: 1080px) {
+      .nav-links { gap: 14px; }
+      .hero-grid { gap: 35px; }
+      .credentials, .quarter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .credential { min-height: 320px; }
+      .projects { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+    @media (max-width: 780px) {
+      .shell { width: min(100% - 36px, 650px); }
+      .nav { min-height: 65px; }
+      .nav-links { display: none; }
+      .hero { padding: 50px 0 42px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 35px; }
+      h1 { letter-spacing: -2.5px; font-size: clamp(40px, 9vw, 61px); }
+      .journey { transform: none; }
+      .metrics { grid-template-columns: 1fr 1fr; margin-top: 26px; }
+      .projects, .two-col { grid-template-columns: 1fr; }
+      .project p { min-height: auto; }
+      .section-head { align-items: flex-start; flex-direction: column; gap: 14px; }
+      section.content-section { padding-top: 60px; }
+      .bottom-banner { margin: 47px 0; flex-direction: column; align-items: flex-start; }
+      .footer-inside { grid-template-columns: 1fr; }
+      .source-links { justify-content: flex-start; }
+    }
+    @media (max-width: 520px) {
+      .shell { width: calc(100% - 28px); }
+      .nav-action { padding: 9px 11px; }
+      .brand { font-size: 12.5px; }
+      .brand-logo { width: 34px; height: 34px; }
+      .hero { padding-top: 38px; }
+      .hero-actions > a { flex-grow: 1; }
+      .metrics { gap: 9px; }
+      .metric { flex-direction: column; align-items: flex-start; gap: 9px; padding: 14px; }
+      .metric b { font-size: 17px; }
+      .credentials, .quarter-grid { grid-template-columns: 1fr; }
+      .quarter { min-height: 285px; }
+      .credential { min-height: 0; }
+      .filters { width: 100%; }
+      .filter { flex: 1; }
+      .note-chip { white-space: normal; }
+      .journey { padding: 22px; }
+      .progress-wrap { grid-template-columns: 1fr; }
+      .panel { padding: 20px; }
+      .bottom-banner { padding: 25px; }
+    }
+    @media print {
+      :root { --bg: #fff; }
+      html { scroll-behavior: auto; }
+      body { background: white; font-size: 10px; }
+      .topbar, .hero-actions, .filters, .reset, .banner-link, .hero-footnote { display: none !important; }
+      .shell { width: 100%; max-width: 100%; }
+      .hero { padding: 12px 0 16px; background: white; }
+      .hero-grid { grid-template-columns: 1.1fr .9fr; gap: 18px; }
+      h1 { font-size: 36px; letter-spacing: -1.8px; margin: 12px 0; }
+      .lead { font-size: 10px; }
+      .journey { box-shadow: none; transform: none; padding: 14px; }
+      .journey-head { margin-bottom: 13px; }
+      .j-steps { gap: 9px; margin-bottom: 10px; }
+      .metrics { margin-top: 12px; gap: 6px; }
+      .metric { padding: 10px; }
+      section.content-section { padding: 24px 0 0; }
+      .section-head { margin-bottom: 12px; }
+      .section-head h2 { font-size: 23px; }
+      .credentials, .quarter-grid { grid-template-columns: repeat(4,1fr); gap: 7px; }
+      .credential, .quarter { padding: 12px; min-height: auto; box-shadow: none; }
+      .credential h3 { font-size: 13px; }
+      .credential p.body, .issuer, .quarter h3 { font-size: 10px; }
+      .cred-link { font-size: 9px; }
+      .q-checks label { font-size: 9px; }
+      .q-num { font-size: 28px; }
+      .quarter[hidden] { display: flex !important; }
+      .project { padding: 14px; }
+      .panel { padding: 15px; }
+      .bottom-banner { display: none; }
+      footer { margin-top: 18px; }
+      .quarter, .credential, .project, .panel, .metric { break-inside: avoid; }
+      .projects { grid-template-columns: repeat(3, 1fr); }
+      .two-col { grid-template-columns: 1fr 1fr; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <!-- All icons are embedded, so this file works entirely offline. -->
+  <svg class="svg-icons" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 1.8 6.2L20 11l-6.2 1.8L12 19l-1.8-6.2L4 11l6.2-1.8L12 3Z"/><path d="m19 18 .7 2.3L22 21l-2.3.7L19 24l-.7-2.3L16 21l2.3-.7L19 18Z"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M20 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h6"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-checkcircle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="i-brain" viewBox="0 0 24 24"><path d="M12 18V6M8 9a3 3 0 0 0-5 2.3 4 4 0 0 0 1.4 7.4A4 4 0 0 0 12 19V6a4 4 0 0 0-7.6-1.7A4 4 0 0 0 4 9"/><path d="M16 9a3 3 0 0 1 5 2.3 4 4 0 0 1-1.4 7.4A4 4 0 0 1 12 19V6a4 4 0 0 1 7.6-1.7A4 4 0 0 1 20 9"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V4m0 16h16"/><rect x="8" y="12" width="3" height="5" rx=".4"/><rect x="13" y="8" width="3" height="9" rx=".4"/><path d="M19 17V5"/></symbol>
+    <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 19h11a4 4 0 0 0 .6-8 6.8 6.8 0 0 0-13-1A4.5 4.5 0 0 0 7 19Z"/></symbol>
+    <symbol id="i-database" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></symbol>
+    <symbol id="i-award" viewBox="0 0 24 24"><circle cx="12" cy="8" r="5"/><path d="m8.5 12-2 9 5.5-3 5.5 3-2-9"/></symbol>
+    <symbol id="i-grad" viewBox="0 0 24 24"><path d="m2 9 10-5 10 5-10 5L2 9Zm4 3v5c2.8 2.4 9.2 2.4 12 0v-5M22 9v7"/></symbol>
+    <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13c5 3 13 3 18 0"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 7-5 5 5 5m8-10 5 5-5 5m-3-14-2 18"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 2h8l5 5v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1Z"/><path d="M14 2v6h5M9 13h6m-6 4h6"/></symbol>
+    <symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M12 6C9 4 6 4 3 5v14c3-1 6-1 9 1 3-2 6-2 9-1V5c-3-1-6-1-9 1Zm0 0v14"/></symbol>
+    <symbol id="i-light" viewBox="0 0 24 24"><path d="M9 18h6m-5 3h4m-6.5-6c-1.2-1.2-2-3-2-5a6.5 6.5 0 0 1 13 0c0 2-.8 3.8-2 5-.8.8-1.5 1.3-1.5 3H9c0-1.7-.7-2.2-1.5-3Z"/></symbol>
+    <symbol id="i-printer" viewBox="0 0 24 24"><path d="M6 9V3h12v6M6 18H4V10a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8h-2"/><path d="M6 15h12v7H6zM17 12h1"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.4 9A7.5 7.5 0 0 1 19 7l1 5M4 12l1 5a7.5 7.5 0 0 0 13.6-2"/></symbol>
+    <symbol id="i-github" viewBox="0 0 24 24"><path d="M9 20c-4 1-4-2-6-2m6 2v-3c-4 0-6-2-6-6a5 5 0 0 1 1-3c-.2-1.5 0-2.5.5-3.5C6 4.5 7 5 8 5.5a14 14 0 0 1 8 0c1-.5 2-1 3.5-1 .5 1 .7 2 .5 3.5a5 5 0 0 1 1 3c0 4-2 6-6 6v3"/></symbol>
+  </svg>
+
+  <header class="topbar">
+    <div class="shell nav">
+      <a class="brand" href="#top" aria-label="AI Path home">
+        <span class="brand-logo"><svg class="ico lg"><use href="#i-spark"/></svg></span>
+        <span>AI / DATA SCIENCE <small>CAREER ROADMAP</small></span>
+      </a>
+      <nav class="nav-links" aria-label="Page sections">
+        <a href="#certifications">Certifications</a><a href="#roadmap">24-month plan</a><a href="#portfolio">Projects</a><a href="#study">Study &amp; cost</a>
+      </nav>
+      <button class="nav-action" type="button" id="printTop"><svg class="ico sm"><use href="#i-printer"/></svg> Print / PDF</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="shell">
+        <div class="hero-grid">
+          <div>
+            <span class="eyebrow"><span class="dot"></span> For a 3rd-year student · India · 2026–28</span>
+            <h1 id="hero-title">Learn AI.<br><em>Build proof.</em><br>Launch a career.</h1>
+            <p class="lead">A thoughtfully paced 24-month path from university coursework to practical data science, generative AI, cloud ML, and an interview-ready portfolio. Four meaningful credentials. No random certificate collecting.</p>
+            <div class="hero-actions">
+              <a class="primary-btn" href="#roadmap">Explore the 2-year plan <svg class="ico sm"><use href="#i-arrow"/></svg></a>
+              <a class="outline-btn" href="#certifications">See 4 credentials <svg class="ico sm"><use href="#i-award"/></svg></a>
+            </div>
+            <p class="hero-footnote">Plan: October 2026 – September 2028 · Built to fit around college semesters and exams.</p>
+          </div>
+          <div class="journey" aria-label="Certification journey preview">
+            <div class="journey-head">
+              <div><div class="tiny-label">YOUR JOURNEY</div><h3>Four steps forward.</h3></div>
+              <div class="small-pictogram"><svg class="ico lg"><use href="#i-target"/></svg></div>
+            </div>
+            <div class="j-steps">
+              <div class="j-step"><div class="j-icon"><svg class="ico"><use href="#i-brain"/></svg></div><div><strong>Master ML foundations</strong><span>DeepLearning.AI · Jan 2027</span></div></div>
+              <div class="j-step"><div class="j-icon"><svg class="ico"><use href="#i-chart"/></svg></div><div><strong>Prove data-science ability</strong><span>Google Advanced Analytics · Jun 2027</span></div></div>
+              <div class="j-step"><div class="j-icon"><svg class="ico"><use href="#i-cloud"/></svg></div><div><strong>Validate AI &amp; cloud fluency</strong><span>AWS AI Practitioner · Sep 2027</span></div></div>
+              <div class="j-step"><div class="j-icon"><svg class="ico"><use href="#i-award"/></svg></div><div><strong>Demonstrate ML engineering</strong><span>AWS ML Engineer Associate · Sep 2028</span></div></div>
+            </div>
+            <div class="journey-bottom"><span>Target roles: ML intern · Junior data scientist</span><b>2028 ↗</b></div>
+          </div>
+        </div>
+        <div class="metrics" aria-label="Roadmap overview">
+          <div class="metric"><span class="metric-icon"><svg class="ico"><use href="#i-calendar"/></svg></span><span><b>24 months</b><small>Structured timeline</small></span></div>
+          <div class="metric"><span class="metric-icon"><svg class="ico"><use href="#i-award"/></svg></span><span><b>04 credentials</b><small>2 courses + 2 exams</small></span></div>
+          <div class="metric"><span class="metric-icon"><svg class="ico"><use href="#i-code"/></svg></span><span><b>03 projects</b><small>Public GitHub portfolio</small></span></div>
+          <div class="metric"><span class="metric-icon"><svg class="ico"><use href="#i-clock"/></svg></span><span><b>8–10 hrs</b><small>Weekly study target</small></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="certifications" class="content-section">
+      <div class="shell">
+        <div class="section-head">
+          <div><div class="section-kicker">01 / The credentials</div><h2>Four credentials, in the right order.</h2><p>Start with practical ML and analytics; finish with a demanding cloud ML certification only after hands-on projects.</p></div>
+          <span class="note-chip">Curated for a student, not an experienced engineer</span>
+        </div>
+        <div class="credentials">
+          <article class="credential" data-color="purple">
+            <div class="cred-top"><span class="cred-mark"><svg class="ico lg"><use href="#i-brain"/></svg></span><span class="step-number">STEP 01</span></div>
+            <div class="cred-kind">Course certificate · Beginner</div>
+            <h3>Machine Learning Specialization</h3>
+            <div class="issuer">DeepLearning.AI + Stanford Online · Coursera</div>
+            <p class="body">Build intuition in regression, classification, neural networks, decision trees, clustering and model evaluation with Python.</p>
+            <div class="skills-list"><span class="skill">Python</span><span class="skill">scikit-learn</span><span class="skill">ML theory</span></div>
+            <div class="cred-footer"><div class="cred-date"><svg class="ico sm"><use href="#i-calendar"/></svg> Oct 2026 – Jan 2027 · 3–4 months</div><a class="cred-link" href="https://www.coursera.org/specializations/machine-learning-introduction" target="_blank" rel="noopener noreferrer">Official program <svg class="ico sm"><use href="#i-external"/></svg></a></div>
+          </article>
+          <article class="credential" data-color="teal">
+            <div class="cred-top"><span class="cred-mark"><svg class="ico lg"><use href="#i-chart"/></svg></span><span class="step-number">STEP 02</span></div>
+            <div class="cred-kind">Professional certificate · Advanced</div>
+            <h3>Google Advanced Data Analytics</h3>
+            <div class="issuer">Google · Coursera</div>
+            <p class="body">Go deeper into exploratory analysis, hypothesis testing, regression, machine learning, storytelling and an employer-facing capstone.</p>
+            <div class="skills-list"><span class="skill">Statistics</span><span class="skill">EDA</span><span class="skill">Tableau</span></div>
+            <div class="cred-footer"><div class="cred-date"><svg class="ico sm"><use href="#i-calendar"/></svg> Feb – Jun 2027 · ~5 months</div><a class="cred-link" href="https://www.coursera.org/professional-certificates/google-advanced-data-analytics" target="_blank" rel="noopener noreferrer">Official program <svg class="ico sm"><use href="#i-external"/></svg></a></div>
+          </article>
+          <article class="credential" data-color="amber">
+            <div class="cred-top"><span class="cred-mark"><svg class="ico lg"><use href="#i-cloud"/></svg></span><span class="step-number">STEP 03</span></div>
+            <div class="cred-kind">Proctored exam · Foundational</div>
+            <h3>AWS Certified AI Practitioner</h3>
+            <div class="issuer">Amazon Web Services · AIF-C01</div>
+            <p class="body">Show working knowledge of GenAI, foundation models, AWS AI services, responsible AI, cloud security and key use cases.</p>
+            <div class="skills-list"><span class="skill">GenAI</span><span class="skill">AWS</span><span class="skill">Responsible AI</span></div>
+            <div class="cred-footer"><div class="cred-date"><svg class="ico sm"><use href="#i-calendar"/></svg> Jul – Sep 2027 · ~2 months prep</div><a class="cred-link" href="https://aws.amazon.com/certification/certified-ai-practitioner/" target="_blank" rel="noopener noreferrer">Official certification <svg class="ico sm"><use href="#i-external"/></svg></a></div>
+          </article>
+          <article class="credential" data-color="pink">
+            <div class="cred-top"><span class="cred-mark"><svg class="ico lg"><use href="#i-award"/></svg></span><span class="step-number">STEP 04</span></div>
+            <div class="cred-kind">Proctored exam · Associate</div>
+            <h3>AWS Certified ML Engineer – Associate</h3>
+            <div class="issuer">Amazon Web Services · MLA-C02 track</div>
+            <p class="body">Aim for production-grade skills: SageMaker, Bedrock, ML pipelines, deployment, monitoring and GenAI/MLOps workflows.</p>
+            <div class="skills-list"><span class="skill">MLOps</span><span class="skill">SageMaker</span><span class="skill">RAG</span></div>
+            <div class="cred-footer"><div class="cred-date"><svg class="ico sm"><use href="#i-calendar"/></svg> Apr – Sep 2028 · ~6 months prep</div><a class="cred-link" href="https://aws.amazon.com/certification/certified-machine-learning-engineer-associate/" target="_blank" rel="noopener noreferrer">Official certification <svg class="ico sm"><use href="#i-external"/></svg></a></div>
+          </article>
+        </div>
+        <div class="info-strip"><svg class="ico"><use href="#i-light"/></svg><div><strong>Why this mix?</strong> Two course-completion credentials build technical ability; two formal AWS exams validate cloud AI knowledge. The associate-level exam is a stretch goal—not a shortcut. AWS recommends about a year of relevant hands-on experience for the updated ML Engineer exam, so the plan deliberately reserves time for projects and labs.</div></div>
+      </div>
+    </section>
+
+    <section id="roadmap" class="content-section">
+      <div class="shell">
+        <div class="section-head split-head">
+          <div><div class="section-kicker">02 / Quarterly execution plan</div><h2>Every 90 days, a visible result.</h2><p>Tick off tasks to track progress. Your checks are saved locally in this browser when permitted.</p></div>
+          <div class="filters" role="group" aria-label="Filter timeline by year"><button class="filter active" data-filter="all" type="button" aria-pressed="true">All</button><button class="filter" data-filter="2026" type="button" aria-pressed="false">2026</button><button class="filter" data-filter="2027" type="button" aria-pressed="false">2027</button><button class="filter" data-filter="2028" type="button" aria-pressed="false">2028</button></div>
+        </div>
+        <div class="progress-wrap">
+          <div><div class="progress-header"><strong>Roadmap completion</strong><span id="progressLabel" role="status" aria-live="polite">0 of 24 actions complete · 0%</span></div><div class="progress-track" role="progressbar" aria-label="Roadmap progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressBar"><div class="progress-fill" id="progressFill"></div></div></div>
+          <button class="reset" id="resetProgress" type="button"><svg class="ico sm"><use href="#i-refresh"/></svg> Reset checks</button>
+        </div>
+        <div class="quarter-grid">
+          <article class="quarter" data-year="2026" data-theme="purple"><div class="quarter-top"><span class="q-num">01</span><span class="q-date">OCT – DEC 2026</span></div><div class="q-category">Build the base</div><h3>Python, math and ML fundamentals</h3><ul class="q-checks"><li><label><input type="checkbox" data-task="q1a"><span>Refresh Python, NumPy, pandas, SQL and statistics.</span></label></li><li><label><input type="checkbox" data-task="q1b"><span>Complete ML Specialization courses 1–2.</span></label></li><li><label><input type="checkbox" data-task="q1c"><span>Publish a baseline ML notebook on GitHub.</span></label></li></ul><p class="output"><svg class="ico sm"><use href="#i-checkcircle"/></svg> Deliverable: clean, documented notebook</p></article>
+          <article class="quarter" data-year="2027" data-theme="teal"><div class="quarter-top"><span class="q-num">02</span><span class="q-date">JAN – MAR 2027</span></div><div class="q-category">Credential 01 + project 01</div><h3>Finish ML foundations; start analytics</h3><ul class="q-checks"><li><label><input type="checkbox" data-task="q2a"><span>Earn Machine Learning Specialization credential.</span></label></li><li><label><input type="checkbox" data-task="q2b"><span>Start Google Advanced Data Analytics coursework.</span></label></li><li><label><input type="checkbox" data-task="q2c"><span>Ship retail-demand forecasting project v1.</span></label></li></ul><p class="output"><svg class="ico sm"><use href="#i-checkcircle"/></svg> Deliverable: credential + first case study</p></article>
+          <article class="quarter" data-year="2027" data-theme="teal"><div class="quarter-top"><span class="q-num">03</span><span class="q-date">APR – JUN 2027</span></div><div class="q-category">Credential 02 + project 02</div><h3>Become internship-portfolio ready</h3><ul class="q-checks"><li><label><input type="checkbox" data-task="q3a"><span>Complete Google's analytics capstone and credential.</span></label></li><li><label><input type="checkbox" data-task="q3b"><span>Publish a churn-model dashboard with explanation.</span></label></li><li><label><input type="checkbox" data-task="q3c"><span>Apply for internships and polish LinkedIn/CV.</span></label></li></ul><p class="output"><svg class="ico sm"><use href="#i-checkcircle"/></svg> Deliverable: 2 projects + internship CV</p></article>
+          <article class="quarter" data-year="2027" data-theme="amber"><div class="quarter-top"><span class="q-num">04</span><span class="q-date">JUL – SEP 2027</span></div><div class="q-category">Credential 03</div><h3>Understand GenAI and the AWS ecosystem</h3><ul class="q-checks"><li><label><input type="checkbox" data-task="q4a"><span>Study AWS AI Practitioner guide and services.</span></label></li><li><label><input type="checkbox" data-task="q4b"><span>Build a tiny RAG demo; learn AI safety basics.</span></label></li><li><label><input type="checkbox" data-task="q4c"><span>Take mock tests, then attempt AIF-C01.</span></label></li></ul><p class="output"><svg class="ico sm"><use href="#i-checkcircle"/></svg> Deliverable: first proctored AWS certification</p></article>
+          <article class="quarter" data-year="2027" data-theme="pink"><div class="quarter-top"><span class="q-num">05</span><span class="q-date">OCT – DEC 2027</span></div><div class="q-category">Cloud practice</div><h3>Move from notebooks to systems</h3><ul class="q-checks"><li><label><input type="checkbox" data-task="q5a"><span>Practice S3, IAM, SageMaker AI and Bedrock.</span></label></li><li><label><input type="checkbox" data-task="q5b"><span>Containerize and deploy a small ML endpoint.</span></label></li><li><label><input type="checkbox" data-task="q5c"><span>Set cloud budgets, logging and access controls.</span></label></li></ul><p class="output"><svg class="ico sm"><use href="#i-checkcircle"/></svg> Deliverable: deployed ML API demo</p></article>
+          <article class="quarter" data-year="2028" data-theme="pink"><div class="quarter-top"><span class="q-num">06</span><span class="q-date">JAN – MAR 2028</span></div><div class="q-category">Project 03 + MLOps</div><h3>Show production-style engineering</h3><ul class="q-checks"><li><label><input type="checkbox" data-task="q6a"><span>Build document Q&amp;A with retrieval evaluation.</span></label></li><li><label><input type="checkbox" data-task="q6b"><span>Add tests, experiment tracking and monitoring.</span></label></li><li><label><input type="checkbox" data-task="q6c"><span>Write a strong architecture README and demo.</span></label></li></ul><p class="output"><svg class="ico sm"><use href="#i-checkcircle"/></svg> Deliverable: portfolio-grade RAG/MLOps app</p></article>
+          <article class="quarter" data-year="2028" data-theme="pink"><div class="quarter-top"><span class="q-num">07</span><span class="q-date">APR – JUN 2028</span></div><div class="q-category">Credential 04 preparation</div><h3>Prepare for AWS ML Engineer Associate</h3><ul class="q-checks"><li><label><input type="checkbox" data-task="q7a"><span>Review the current MLA-C02 exam blueprint.</span></label></li><li><label><input type="checkbox" data-task="q7b"><span>Complete hands-on pipeline and GenAI labs.</span></label></li><li><label><input type="checkbox" data-task="q7c"><span>Practice scenario questions; fix weak domains.</span></label></li></ul><p class="output"><svg class="ico sm"><use href="#i-checkcircle"/></svg> Deliverable: exam-ready lab evidence</p></article>
+          <article class="quarter" data-year="2028" data-theme="purple"><div class="quarter-top"><span class="q-num">08</span><span class="q-date">JUL – SEP 2028</span></div><div class="q-category">Credential 04 + career launch</div><h3>Certify, showcase and interview</h3><ul class="q-checks"><li><label><input type="checkbox" data-task="q8a"><span>Attempt current AWS ML Engineer Associate exam.</span></label></li><li><label><input type="checkbox" data-task="q8b"><span>Prepare 3 project walkthroughs + ML/SQL interviews.</span></label></li><li><label><input type="checkbox" data-task="q8c"><span>Apply for junior DS / ML roles with portfolio links.</span></label></li></ul><p class="output"><svg class="ico sm"><use href="#i-checkcircle"/></svg> Deliverable: 4 credentials + 3 solid demos</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="portfolio" class="content-section">
+      <div class="shell">
+        <div class="section-head"><div><div class="section-kicker">03 / Proof of work</div><h2>Projects recruiters can actually inspect.</h2><p>For each: a public dataset, reproducible code, evaluation metrics, a clear README, screenshots and a 2-minute demo.</p></div><span class="note-chip">Use public or synthetic data only</span></div>
+        <div class="projects">
+          <article class="project"><div class="project-head"><span class="project-icon"><svg class="ico lg"><use href="#i-chart"/></svg></span><span class="project-index">PROJECT / 01</span></div><h3>Indian retail demand forecasting</h3><p>Explore seasonal sales, compare baseline and ML forecasts, then explain model performance with business-focused charts.</p><div class="skills-list"><span class="skill">pandas</span><span class="skill">SQL</span><span class="skill">scikit-learn</span><span class="skill">Streamlit</span></div><div class="project-due"><svg class="ico sm"><use href="#i-calendar"/></svg> Target: March 2027</div></article>
+          <article class="project"><div class="project-head"><span class="project-icon"><svg class="ico lg"><use href="#i-database"/></svg></span><span class="project-index">PROJECT / 02</span></div><h3>Customer churn + explainability</h3><p>Predict churn, evaluate precision and recall, visualize main drivers, and present concise recommendations to stakeholders.</p><div class="skills-list"><span class="skill">Statistics</span><span class="skill">Classification</span><span class="skill">SHAP</span><span class="skill">Dashboard</span></div><div class="project-due"><svg class="ico sm"><use href="#i-calendar"/></svg> Target: June 2027</div></article>
+          <article class="project"><div class="project-head"><span class="project-icon"><svg class="ico lg"><use href="#i-code"/></svg></span><span class="project-index">PROJECT / 03</span></div><h3>Document Q&amp;A AI assistant</h3><p>Build a retrieval-augmented application over public documents, measure answer quality, and demonstrate deployment and monitoring.</p><div class="skills-list"><span class="skill">RAG</span><span class="skill">FastAPI</span><span class="skill">Docker</span><span class="skill">AWS</span></div><div class="project-due"><svg class="ico sm"><use href="#i-calendar"/></svg> Target: March 2028</div></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="study" class="content-section">
+      <div class="shell">
+        <div class="section-head"><div><div class="section-kicker">04 / Make it sustainable</div><h2>Fit it around a real college schedule.</h2><p>Consistency matters more than speed. During university exams, reduce new material and keep one short review session.</p></div></div>
+        <div class="two-col">
+          <article class="panel"><h3 class="panel-title"><svg class="ico"><use href="#i-calendar"/></svg> Suggested weekly rhythm</h3><p class="panel-sub">A realistic 10-hour example — shift days around labs and classes.</p>
+            <div class="weekly-row"><span class="weekday">Mon + Tue</span><span class="study-label">Python, SQL or course lessons</span><span class="hours">2 h</span></div>
+            <div class="weekly-row"><span class="weekday">Wednesday</span><span class="study-label">Statistics and ML fundamentals</span><span class="hours">2 h</span></div>
+            <div class="weekly-row"><span class="weekday">Friday</span><span class="study-label">Certification review / cloud labs</span><span class="hours">2 h</span></div>
+            <div class="weekly-row"><span class="weekday">Weekend</span><span class="study-label">Project building + GitHub updates</span><span class="hours">3 h</span></div>
+            <div class="weekly-row"><span class="weekday">Sunday</span><span class="study-label">Revise, document and plan the week</span><span class="hours">1 h</span></div>
+            <div class="focus-tip"><svg class="ico sm"><use href="#i-light"/></svg><span><strong>Placement rule:</strong> By June 2027, prioritize 2 explainable projects and SQL/Python interview practice over earning extra low-value badges.</span></div>
+          </article>
+          <article class="panel"><h3 class="panel-title"><svg class="ico"><use href="#i-book"/></svg> Budget &amp; free student resources</h3><p class="panel-sub">Indicative public list prices as checked in October 2026; confirm before purchasing.</p>
+            <table class="budget-table"><thead><tr><th>Credential or resource</th><th>Indicative cost</th></tr></thead><tbody>
+              <tr><td><strong>ML Specialization</strong><br>Coursera / DeepLearning.AI access</td><td>Subscription varies</td></tr>
+              <tr><td><strong>Google Advanced Analytics</strong><br>Coursera access</td><td>Subscription varies</td></tr>
+              <tr><td><strong>AWS AI Practitioner</strong><br>Foundational exam</td><td>US $100</td></tr>
+              <tr><td><strong>AWS ML Engineer Associate</strong><br>Standard associate exam</td><td>US $150*</td></tr>
+            </tbody></table>
+            <p class="budget-note">*Once AWS AI Practitioner is passed, AWS typically provides a <strong>50%-off voucher for a future AWS certification exam</strong>, potentially reducing a US $150 associate exam to US $75. Taxes, Indian checkout prices, subscriptions, future price changes and any retakes are extra. No purchases are required just to explore the official course pages.</p>
+            <div class="callout"><svg class="ico sm"><use href="#i-checkcircle"/></svg><span><strong>Save money:</strong> explore <a href="https://aws.amazon.com/education/awseducate/" target="_blank" rel="noopener noreferrer"><u>AWS Educate</u></a> for free learning and <a href="https://www.aboutamazon.com/news/aws/aws-student-rewards-free-cloud-ai-training" target="_blank" rel="noopener noreferrer"><u>AWS Student Rewards</u></a> for eligible verified university students; rewards are conditional.</span></div>
+          </article>
+        </div>
+      </div>
+    </section>
+    <div class="shell"><div class="bottom-banner"><div><h2>Certificate + project + explanation = career signal.</h2><p>Her strongest interview story should be how she solved a real problem, evaluated trade-offs, and shipped working code — not just how many course badges she earned.</p></div><a class="banner-link" href="#roadmap">Back to roadmap <svg class="ico sm"><use href="#i-arrow"/></svg></a></div></div>
+  </main>
+
+  <footer><div class="shell footer-inside"><div><strong>AI &amp; Data Science Certification Roadmap · India · 2026–2028</strong><p>Prepared as a practical study guide, not a guarantee of employment, passing exams or future certification availability. Provider syllabi, prices, vouchers and eligibility can change. As of October 2026 AWS's updated ML Engineer Associate MLA-C02 is in beta; the standard updated exam is scheduled for January 14, 2027. Recheck the official exam guide closer to the intended 2028 attempt. All page assets are built in; internet is only needed for the outbound official links. Progress is stored locally in this browser, not sent anywhere.</p></div><div class="source-links" aria-label="Official sources"><a href="https://www.coursera.org/specializations/machine-learning-introduction" target="_blank" rel="noopener noreferrer">ML Specialization <svg class="ico sm"><use href="#i-external"/></svg></a><a href="https://www.coursera.org/professional-certificates/google-advanced-data-analytics" target="_blank" rel="noopener noreferrer">Google certificate <svg class="ico sm"><use href="#i-external"/></svg></a><a href="https://aws.amazon.com/certification/certified-ai-practitioner/" target="_blank" rel="noopener noreferrer">AWS AI Practitioner <svg class="ico sm"><use href="#i-external"/></svg></a><a href="https://aws.amazon.com/blogs/training-and-certification/september-2026-new-offerings/" target="_blank" rel="noopener noreferrer">AWS MLA-C02 update <svg class="ico sm"><use href="#i-external"/></svg></a><a href="https://aws.amazon.com/certification/benefits/" target="_blank" rel="noopener noreferrer">AWS exam benefits <svg class="ico sm"><use href="#i-external"/></svg></a><a href="https://aws.amazon.com/certification/policies/before-testing/" target="_blank" rel="noopener noreferrer">Exam pricing <svg class="ico sm"><use href="#i-external"/></svg></a></div></div></footer>
+
+  <script>
+    (function () {
+      'use strict';
+      const STORE_KEY = 'ai-ds-student-roadmap-2026-28-v1';
+      const boxes = Array.from(document.querySelectorAll('input[data-task]'));
+      const label = document.getElementById('progressLabel');
+      const bar = document.getElementById('progressBar');
+      const fill = document.getElementById('progressFill');
+      let saved = {};
+      try { const v = JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); if (v && typeof v === 'object') saved = v; } catch (e) { /* Private browsing or local file restrictions. */ }
+      boxes.forEach(function (box) {
+        box.checked = Boolean(saved[box.dataset.task]);
+        box.addEventListener('change', function () { persist(); update(); });
+      });
+      function persist() {
+        const current = {};
+        boxes.forEach(function (b) { current[b.dataset.task] = b.checked; });
+        try { localStorage.setItem(STORE_KEY, JSON.stringify(current)); } catch (e) { /* Page remains usable without persistence. */ }
+      }
+      function update() {
+        const count = boxes.filter(function (b) { return b.checked; }).length;
+        const percent = Math.round((count / boxes.length) * 100);
+        label.textContent = count + ' of ' + boxes.length + ' actions complete · ' + percent + '%';
+        fill.style.width = percent + '%';
+        bar.setAttribute('aria-valuenow', String(percent));
+      }
+      update();
+      document.getElementById('resetProgress').addEventListener('click', function () {
+        if (!boxes.some(function (b) { return b.checked; })) return;
+        if (!window.confirm('Clear all roadmap checkmarks in this browser?')) return;
+        boxes.forEach(function (b) { b.checked = false; }); persist(); update();
+      });
+      document.querySelectorAll('button[data-filter]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          const value = button.dataset.filter;
+          document.querySelectorAll('button[data-filter]').forEach(function (b) {
+            const active = (b === button);
+            b.classList.toggle('active', active);
+            b.setAttribute('aria-pressed', String(active));
+          });
+          document.querySelectorAll('.quarter').forEach(function (card) { card.hidden = !(value === 'all' || card.dataset.year === value); });
+        });
+      });
+      document.getElementById('printTop').addEventListener('click', function () { window.print(); });
+    }());
+  </script>
+</body>
+</html>
