@@ -1,0 +1,792 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Simple Docker & Kubernetes: Break, Find, Fix</title>
+<style>
+:root{color-scheme:light}*{box-sizing:border-box}body{margin:0;background:#fff;color:#202632;font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif}
+main{max-width:930px;margin:0 auto;padding:30px 24px 70px}h1{font-size:31px;line-height:1.2;margin:0 0 8px}h2{font-size:25px;margin:42px 0 15px;border-bottom:2px solid #dedfe5;padding-bottom:8px}h3{font-size:21px;line-height:1.3;margin:0 0 12px}h4{font-size:16px;margin:21px 0 8px}p{margin:11px 0}a{color:#215f88}.subtitle{font-size:18px;color:#445064}.scenario{border-top:1px solid #d8dee6;padding:27px 0 29px;break-inside:avoid}.sid{font-size:13px;font-weight:600;color:#576b82;white-space:nowrap}.env{font-size:14px;color:#4d5565}.command{display:flex;gap:12px;align-items:flex-start;margin:6px 0;break-inside:avoid}.stepnum{font-weight:700;color:#495768;min-width:18px;padding-top:8px;font-size:13px}code{display:block;background:#f6f7f9;color:#1f2e3a;border:1px solid #e3e6eb;border-radius:5px;padding:8px 10px;overflow-wrap:anywhere;white-space:pre-wrap;word-break:break-word;font:13.3px/1.47 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;flex:1}.expect{margin-top:11px}.note{border-left:3px solid #8b94a6;padding:8px 12px;background:#fafafa;font-size:14px;color:#384352}.notice{font-size:14px;color:#725125}.remember{font-size:14.5px}.small{font-size:14px;color:#566171}.intro{border-bottom:1px solid #ddd;padding-bottom:18px}.setup{padding:2px 0 10px}p code,li code{display:inline;padding:1px 4px;font-size:13px;white-space:normal;word-break:normal}.quick{font-weight:600}ul{padding-left:23px}li{margin:6px 0}hr{border:0;border-top:2px solid #dedfe5;margin:30px 0} @media print{body{font-size:11pt}main{padding:0;max-width:none}.scenario{break-inside:auto}code{font-size:8pt;page-break-inside:avoid}h3,h4{break-after:avoid}a{color:#000;text-decoration:none}}
+</style></head><body><main>
+<div class="intro"><h1>Simple Docker & Kubernetes Troubleshooting Practice</h1>
+<p class="subtitle">60 interview questions. Type one command at a time. No dashboards or complex navigation.</p>
+<p><strong>Every question follows the same five steps:</strong> Start healthy → Break it → Find the cause → Fix it → Check recovery.</p>
+<p class="small">Scope: 10 Docker + 50 Kubernetes exercises. Most use one disposable Kind cluster. Optional Ingress, metrics, NetworkPolicy and actual node DiskPressure have clearly stated prerequisites or limitations. No commands were live-tested against Docker in the document-generation environment.</p></div>
+<section class="setup"><h2>Part 1. Install only once</h2>
+<p>Choose <strong>one</strong> of these computers. After installation, everyone runs <strong>the same commands</strong> in a Bash terminal.</p>
+<h3>A. Mac laptop</h3>
+<p>Install <a href="https://docs.docker.com/desktop/setup/install/mac-install/">Docker Desktop for Mac</a> and start it. Install Homebrew from <a href="https://brew.sh/">brew.sh</a> if needed. Open Terminal and type:</p>
+<div class="command"><span class="stepnum">1.</span><code>brew install kind kubectl</code></div>
+<div class="command"><span class="stepnum">2.</span><code>docker version</code></div>
+<div class="command"><span class="stepnum">3.</span><code>kind version</code></div>
+<div class="command"><span class="stepnum">4.</span><code>kubectl version --client</code></div>
+<h3>B. Windows laptop</h3>
+<p>Open <strong>PowerShell as Administrator</strong>, type the next command, then restart if prompted:</p>
+<div class="command"><span class="stepnum">1.</span><code>wsl --install -d Ubuntu</code></div>
+<p>Install <a href="https://docs.docker.com/desktop/setup/install/windows-install/">Docker Desktop for Windows</a>; enable its <strong>WSL 2 backend</strong> and <strong>Settings → Resources → WSL Integration → Ubuntu</strong>. Use Linux containers, not Windows containers. Open the <strong>Ubuntu (WSL)</strong> terminal, NOT PowerShell, for all subsequent practice commands.</p>
+<div class="command"><span class="stepnum">2.</span><code>sudo apt update</code></div>
+<div class="command"><span class="stepnum">3.</span><code>sudo apt install -y curl ca-certificates unzip</code></div>
+<p>Unzip the project into your Ubuntu home folder. The file <code>install-linux-tools.sh</code> is inside it. From the project folder:</p>
+<div class="command"><span class="stepnum">4.</span><code>./install-linux-tools.sh</code></div>
+<div class="command"><span class="stepnum">5.</span><code>docker version</code></div>
+<h3>C. Ubuntu Linux VM, including an Azure Ubuntu VM</h3>
+<p>Use Ubuntu 22.04/24.04 on a <strong>disposable</strong> VM with roughly 4 vCPUs, at least 8 GB RAM and about 30 GB free space. SSH to the VM. Do not expose Docker or Kubernetes API ports to the internet.</p>
+<div class="command"><span class="stepnum">1.</span><code>sudo apt update</code></div>
+<div class="command"><span class="stepnum">2.</span><code>sudo apt install -y docker.io curl ca-certificates unzip</code></div>
+<div class="command"><span class="stepnum">3.</span><code>sudo systemctl enable --now docker</code></div>
+<div class="command"><span class="stepnum">4.</span><code>sudo usermod -aG docker "$USER"</code></div>
+<div class="command"><span class="stepnum">5.</span><code>newgrp docker</code></div>
+<p>Unzip the project and change to its folder, then:</p>
+<div class="command"><span class="stepnum">6.</span><code>./install-linux-tools.sh</code></div>
+<div class="command"><span class="stepnum">7.</span><code>docker version</code></div>
+<p class="small">Cloud VMs can incur charges until deleted. This exercise uses Kind inside Docker on the VM; it does not create Azure AKS or AWS EKS.</p>
+<h3>All three computers: create your first Kubernetes cluster</h3>
+<p>Keep the terminal <strong>inside the unzipped project folder</strong>. Ensure Docker is running. Start with these four commands, one by one:</p>
+<div class="command"><span class="stepnum">1.</span><code>./lab setup</code></div>
+<div class="command"><span class="stepnum">2.</span><code>kubectl get nodes</code></div>
+<div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get pods</code></div>
+<div class="command"><span class="stepnum">4.</span><code>kubectl -n practice get services</code></div>
+<p>You should see one control-plane node, two workers, a <strong>Running / Ready</strong> web Pod and a <strong>web</strong> Service. It may take a minute on the first run. The script creates only the cluster named <strong>interview-lab</strong>.</p>
+<p><strong>When you complete any Kubernetes question:</strong> type <code>./lab reset</code> to restore the healthy app before starting a different question. For Docker questions, <code>./lab prepare DCK-001</code> (with the ID you want) also restores a healthy baseline.</p>
+<h3>Six commands to remember</h3>
+<ul><li><strong>docker ps -a</strong>: Which containers stopped or restarted?</li>
+<li><strong>docker logs NAME</strong>: What did the application print?</li>
+<li><strong>kubectl get pods</strong>: Running, Pending, or CrashLoopBackOff?</li>
+<li><strong>kubectl describe pod</strong>: Why is Kubernetes unhappy? Read Events.</li>
+<li><strong>kubectl logs</strong>: What error did the process produce?</li>
+<li><strong>kubectl rollout status</strong>: Did the repaired release become Ready?</li></ul>
+<p class="note"><strong>Safety:</strong> Do not run fault-injection commands against work, customer, AKS, EKS or production clusters. Before every Kubernetes exercise, type <code>kubectl config current-context</code> and confirm it says <code>kind-interview-lab</code>. All exercises except the clearly labeled extra CNI/VM cases are designed for that disposable cluster. A failed command in the "Break" section is often the expected symptom—continue with "Find".</p>
+</section>
+<h2>Part 2. Docker: Questions 1–10</h2>
+<p>Start here if you are new. Complete each question in order. Type <code>./lab prepare DCK-001</code>, then read just that question. The container should be healthy before you break it.</p>
+<article class="scenario" id="DCK-001">
+        <h3>Question 1. Container stops after starting <span class="sid">DCK-001</span></h3>
+        <p><strong>Interviewer:</strong> "Container stops after starting. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare DCK-001</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker rm -f practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>docker run -d --name practice-web --label practice.simple.lab=yes practice-web:1 python -c &#x27;import sys;sys.exit(1)&#x27;</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> STATUS=Exited; exit code 1.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>docker ps -a</code></div><div class="command"><span class="stepnum">2.</span><code>docker inspect practice-web --format &#x27;{{.State.ExitCode}}&#x27;</code></div><div class="command"><span class="stepnum">3.</span><code>docker logs practice-web</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker rm -f practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>docker run -d --name practice-web --label practice.simple.lab=yes -p 127.0.0.1:18080:8080 practice-web:1</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>docker ps</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Check exit code, examine logs, then start the container with its correct application command.</p>
+        
+    </article><article class="scenario" id="DCK-002">
+        <h3>Question 2. Container keeps restarting <span class="sid">DCK-002</span></h3>
+        <p><strong>Interviewer:</strong> "Container keeps restarting. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare DCK-002</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker rm -f practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>docker run -d --restart always --name practice-web --label practice.simple.lab=yes -e APP_MODE=crash practice-web:1</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> STATUS=Restarting repeatedly after a real process crash.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>docker ps -a</code></div><div class="command"><span class="stepnum">2.</span><code>docker inspect practice-web --format &#x27;{{.RestartCount}}&#x27;</code></div><div class="command"><span class="stepnum">3.</span><code>docker logs practice-web</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker rm -f practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>docker run -d --name practice-web --label practice.simple.lab=yes -p 127.0.0.1:18080:8080 practice-web:1</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>docker ps</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> A restart policy does not fix a crashing process; logs reveal the root cause.</p>
+        
+    </article><article class="scenario" id="DCK-003">
+        <h3>Question 3. Container running but website unreachable <span class="sid">DCK-003</span></h3>
+        <p><strong>Interviewer:</strong> "Container running but website unreachable. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare DCK-003</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker rm -f practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>docker run -d --name practice-web --label practice.simple.lab=yes -p 127.0.0.1:18080:8081 practice-web:1</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Container is Up, but curl fails because host port goes to the wrong container port.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>docker ps</code></div><div class="command"><span class="stepnum">2.</span><code>docker port practice-web</code></div><div class="command"><span class="stepnum">3.</span><code>docker inspect practice-web --format &#x27;{{json .NetworkSettings.Ports}}&#x27;</code></div><div class="command"><span class="stepnum">4.</span><code>curl -v --max-time 3 http://127.0.0.1:18080/</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker rm -f practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>docker run -d --name practice-web --label practice.simple.lab=yes -p 127.0.0.1:18080:8080 practice-web:1</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>docker port practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Check the port binding and application listening port, not just whether the process is Up.</p>
+        
+    </article><article class="scenario" id="DCK-004">
+        <h3>Question 4. Wrong environment variable crashes the app <span class="sid">DCK-004</span></h3>
+        <p><strong>Interviewer:</strong> "Wrong environment variable crashes the app. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare DCK-004</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker rm -f practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>docker run -d --name practice-web --label practice.simple.lab=yes -e APP_PORT=wrong practice-web:1</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> APP_PORT=wrong is not an integer; application exits.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>docker ps -a</code></div><div class="command"><span class="stepnum">2.</span><code>docker logs practice-web</code></div><div class="command"><span class="stepnum">3.</span><code>docker inspect practice-web --format &#x27;{{json .Config.Env}}&#x27;</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker rm -f practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>docker run -d --name practice-web --label practice.simple.lab=yes -p 127.0.0.1:18080:8080 practice-web:1</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>docker logs practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Read the configuration error before changing the environment variable.</p>
+        
+    </article><article class="scenario" id="DCK-005">
+        <h3>Question 5. Docker health check is unhealthy <span class="sid">DCK-005</span></h3>
+        <p><strong>Interviewer:</strong> "Docker health check is unhealthy. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare DCK-005</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker rm -f practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>docker run -d --name practice-web --label practice.simple.lab=yes -e APP_MODE=unhealthy --health-cmd=&#x27;wget -q -O /dev/null http://127.0.0.1:8080/healthz&#x27; --health-interval=5s --health-retries=2 practice-web:1</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> The process runs, but the configured /healthz returns 503.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>docker ps</code></div><div class="command"><span class="stepnum">2.</span><code>docker inspect practice-web --format &#x27;{{json .State.Health}}&#x27;</code></div><div class="command"><span class="stepnum">3.</span><code>docker logs practice-web</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker rm -f practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>docker run -d --name practice-web --label practice.simple.lab=yes -p 127.0.0.1:18080:8080 practice-web:1</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>docker ps</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Up means running; Healthy means the configured health check succeeds.</p>
+        <p class="note"><strong>Important:</strong> Wait about 15 seconds for Docker health status to change. The repaired baseline runs without a Docker HEALTHCHECK; its HTTP health endpoint is checked explicitly.</p>
+    </article><article class="scenario" id="DCK-006">
+        <h3>Question 6. Read-only filesystem prevents writes <span class="sid">DCK-006</span></h3>
+        <p><strong>Interviewer:</strong> "Read-only filesystem prevents writes. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare DCK-006</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker rm -f practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>docker run -d --name practice-web --label practice.simple.lab=yes --read-only -e APP_MODE=write practice-web:1</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Application exits with a read-only filesystem or permission error.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>docker ps -a</code></div><div class="command"><span class="stepnum">2.</span><code>docker logs practice-web</code></div><div class="command"><span class="stepnum">3.</span><code>docker inspect practice-web --format &#x27;{{.HostConfig.ReadonlyRootfs}}&#x27;</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker rm -f practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>docker run -d --name practice-web --label practice.simple.lab=yes --read-only --mount type=volume,source=practice-data-6,target=/data -e APP_MODE=write -p 127.0.0.1:18080:8080 practice-web:1</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>docker ps</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div><div class="command"><span class="stepnum">3.</span><code>curl -fsS http://127.0.0.1:18080/value</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Read-only root filesystems need explicit writable mounts for data.</p>
+        
+    </article><article class="scenario" id="DCK-007">
+        <h3>Question 7. Two containers cannot resolve each other <span class="sid">DCK-007</span></h3>
+        <p><strong>Interviewer:</strong> "Two containers cannot resolve each other. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare DCK-007</code></div><div class="command"><span class="stepnum">2.</span><code>docker network inspect practice-net</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker network disconnect practice-net practice-client</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Client loses the practice-net attachment, so Docker DNS cannot resolve practice-web.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>docker network inspect practice-net</code></div><div class="command"><span class="stepnum">2.</span><code>docker inspect practice-client --format &#x27;{{json .NetworkSettings.Networks}}&#x27;</code></div><div class="command"><span class="stepnum">3.</span><code>docker exec practice-client python -c &#x27;import socket;print(socket.gethostbyname(&quot;practice-web&quot;))&#x27;</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker network connect practice-net practice-client</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>docker network inspect practice-net</code></div><div class="command"><span class="stepnum">2.</span><code>docker exec practice-client python -c &#x27;import urllib.request;print(urllib.request.urlopen(&quot;http://practice-web:8080/healthz&quot;).status)&#x27;</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Compare network membership. Container names resolve only on appropriate user-defined networks.</p>
+        
+    </article><article class="scenario" id="DCK-008">
+        <h3>Question 8. Container is OOMKilled <span class="sid">DCK-008</span></h3>
+        <p><strong>Interviewer:</strong> "Container is OOMKilled. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare DCK-008</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker rm -f practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>docker run -d --name practice-web --label practice.simple.lab=yes --memory=48m -e APP_MODE=allocate -e ALLOC_MB=256 practice-web:1</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> OOMKilled=true and often exit code 137 after exceeding its enforced memory cgroup.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>docker ps -a</code></div><div class="command"><span class="stepnum">2.</span><code>docker inspect practice-web --format &#x27;{{.State.OOMKilled}} {{.State.ExitCode}}&#x27;</code></div><div class="command"><span class="stepnum">3.</span><code>docker logs practice-web</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker rm -f practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>docker run -d --name practice-web --label practice.simple.lab=yes -p 127.0.0.1:18080:8080 practice-web:1</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>docker ps</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Separate container memory limit kills from a general node or VM memory shortage.</p>
+        <p class="note"><strong>Important:</strong> Requires Docker memory cgroup enforcement. Memory allocation behavior may vary by OS and runtime.</p>
+    </article><article class="scenario" id="DCK-009">
+        <h3>Question 9. Image missing: container cannot be created <span class="sid">DCK-009</span></h3>
+        <p><strong>Interviewer:</strong> "Image missing: container cannot be created. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare DCK-009</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker rm -f practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>docker run --pull=never --name practice-web practice-web:does-not-exist</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Docker reports the image is not present; no container is created.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>docker images</code></div><div class="command"><span class="stepnum">2.</span><code>docker ps -a</code></div><div class="command"><span class="stepnum">3.</span><code>docker image inspect practice-web:does-not-exist</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker image inspect practice-web:1</code></div><div class="command"><span class="stepnum">2.</span><code>docker run -d --name practice-web --label practice.simple.lab=yes -p 127.0.0.1:18080:8080 practice-web:1</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>docker ps</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Check the exact repository and tag; distinguish pull/registry errors from application crashes.</p>
+        <p class="note"><strong>Important:</strong> The break command is expected to fail; continue with the next command.</p>
+    </article><article class="scenario" id="DCK-010">
+        <h3>Question 10. Bind mount source path does not exist <span class="sid">DCK-010</span></h3>
+        <p><strong>Interviewer:</strong> "Bind mount source path does not exist. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare DCK-010</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker rm -f practice-web</code></div><div class="command"><span class="stepnum">2.</span><code>docker run --name practice-web --label practice.simple.lab=yes --mount type=bind,source=&quot;$PWD/scratch/this-path-does-not-exist&quot;,target=/data practice-web:1</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Docker refuses to start because --mount requires an existing host path.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>docker ps -a</code></div><div class="command"><span class="stepnum">2.</span><code>ls -ld scratch</code></div><div class="command"><span class="stepnum">3.</span><code>docker volume ls</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>mkdir -p scratch/data-10</code></div><div class="command"><span class="stepnum">2.</span><code>docker run -d --name practice-web --label practice.simple.lab=yes --mount type=bind,source=&quot;$PWD/scratch/data-10&quot;,target=/data -p 127.0.0.1:18080:8080 practice-web:1</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>docker inspect practice-web --format &#x27;{json .Mounts}&#x27;</code></div><div class="command"><span class="stepnum">2.</span><code>curl -fsS http://127.0.0.1:18080/healthz</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Check whether the bind source exists and whether the container has permission to mount it.</p>
+        <p class="note"><strong>Important:</strong> The broken docker run returns an error immediately. If scratch/this-path-does-not-exist already exists, remove that practice-only folder before rerunning.</p>
+    </article>
+<h2>Part 3. Kubernetes: Questions 1–50</h2>
+<p>When Docker commands feel familiar, practise the Kubernetes questions. Each begins with <code>./lab prepare K8S-001</code> (change the ID), followed by <code>kubectl -n practice get pods</code>. The script rebuilds only the <code>practice</code> namespace; manual commands create the real fault and repair it.</p>
+<article class="scenario" id="K8S-001">
+        <h3>Question 1. Pod stuck Pending <span class="sid">K8S-001</span></h3>
+        <p><strong>Interviewer:</strong> "Pod stuck Pending. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-001</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment web -p &#x27;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;nodeSelector&quot;:{&quot;lab&quot;:&quot;missing&quot;}}}}}&#x27;</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Pod Pending, warning FailedScheduling; no node has label lab=missing.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pods -l app=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl get nodes --show-labels</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment web -p &#x27;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;nodeSelector&quot;:null}}}}&#x27;</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Pending with FailedScheduling points to scheduling constraints, not application logs.</p>
+        
+    </article><article class="scenario" id="K8S-002">
+        <h3>Question 2. CrashLoopBackOff <span class="sid">K8S-002</span></h3>
+        <p><strong>Interviewer:</strong> "CrashLoopBackOff. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-002</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=crash</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Restart count grows because the web application exits with an error.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pods -l app=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice logs deployment/web --previous</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=normal</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Use --previous to read logs from the crashed container.</p>
+        
+    </article><article class="scenario" id="K8S-003">
+        <h3>Question 3. ImagePullBackOff <span class="sid">K8S-003</span></h3>
+        <p><strong>Interviewer:</strong> "ImagePullBackOff. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-003</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set image deployment/web web=practice-web:missing</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> A nonexistent image tag causes Failed to pull and then ImagePullBackOff.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pods -l app=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get events --sort-by=.metadata.creationTimestamp</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set image deployment/web web=practice-web:1</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Check image name, registry access and pull events before restarting Pods.</p>
+        
+    </article><article class="scenario" id="K8S-004">
+        <h3>Question 4. ErrImagePull <span class="sid">K8S-004</span></h3>
+        <p><strong>Interviewer:</strong> "ErrImagePull. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-004</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set image deployment/web web=invalid.example.invalid/practice-web:v1</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Initial pull failure from a deliberately invalid registry; may turn into ImagePullBackOff.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pods -l app=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get events --sort-by=.metadata.creationTimestamp</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set image deployment/web web=practice-web:1</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> ErrImagePull and ImagePullBackOff describe stages of the same image retrieval failure.</p>
+        
+    </article><article class="scenario" id="K8S-005">
+        <h3>Question 5. Pod stuck ContainerCreating <span class="sid">K8S-005</span></h3>
+        <p><strong>Interviewer:</strong> "Pod stuck ContainerCreating. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-005</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment web --type=strategic -p &#x27;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;volumes&quot;:[{&quot;name&quot;:&quot;bad-secret&quot;,&quot;secret&quot;:{&quot;secretName&quot;:&quot;missing-secret&quot;}}],&quot;containers&quot;:[{&quot;name&quot;:&quot;web&quot;,&quot;volumeMounts&quot;:[{&quot;name&quot;:&quot;bad-secret&quot;,&quot;mountPath&quot;:&quot;/missing&quot;}]}]}}}}&#x27;</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> A required Secret volume does not exist; events show FailedMount.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pods -l app=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get events --sort-by=.metadata.creationTimestamp</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice create secret generic missing-secret --from-literal=token=dummy</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Read FailedMount events; image pulling is not the only reason for ContainerCreating.</p>
+        
+    </article><article class="scenario" id="K8S-006">
+        <h3>Question 6. Pod Running, HTTP application returns errors <span class="sid">K8S-006</span></h3>
+        <p><strong>Interviewer:</strong> "Pod Running, HTTP application returns errors. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-006</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=fail-http</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Pod is Ready but main URL gives 500: Kubernetes status is not an application test.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice logs deployment/web --tail=30</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;urllib.request.urlopen(&quot;http://127.0.0.1:8080/&quot;)&#x27;</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=normal</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;print(urllib.request.urlopen(&quot;http://127.0.0.1:8080/&quot;).status)&#x27;</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> An HTTP failure can occur while probes and Pod conditions look healthy.</p>
+        
+    </article><article class="scenario" id="K8S-007">
+        <h3>Question 7. Pod Running but not Ready <span class="sid">K8S-007</span></h3>
+        <p><strong>Interviewer:</strong> "Pod Running but not Ready. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-007</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=unready</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Readiness endpoint returns 503; Pod is Running with READY 0/1.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pods -l app=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get events --sort-by=.metadata.creationTimestamp</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=normal</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Readiness controls whether the Pod is included in Service endpoints.</p>
+        
+    </article><article class="scenario" id="K8S-008">
+        <h3>Question 8. Pod restarting repeatedly <span class="sid">K8S-008</span></h3>
+        <p><strong>Interviewer:</strong> "Pod restarting repeatedly. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-008</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=crash-after</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Process exits every 5 seconds, causing an increasing restart count.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice logs deployment/web --previous</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice describe pods -l app=web</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=normal</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Check restart count, last termination reason and previous logs.</p>
+        
+    </article><article class="scenario" id="K8S-009">
+        <h3>Question 9. Container OOMKilled <span class="sid">K8S-009</span></h3>
+        <p><strong>Interviewer:</strong> "Container OOMKilled. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-009</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=allocate ALLOC_MB=200</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> The app allocates more than its 128Mi memory limit and is killed.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pods -l app=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get pods -l app=web -o jsonpath=&#x27;{.items[0].status.containerStatuses[0].lastState.terminated.reason}&#x27;</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=normal ALLOC_MB-</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> OOMKilled is a reason for a terminated container; investigate limits and memory usage.</p>
+        <p class="note"><strong>Important:</strong> Workload allocation may vary across runtimes. This deliberately breaches the Pod container memory limit, not host memory.</p>
+    </article><article class="scenario" id="K8S-010">
+        <h3>Question 10. Pod stuck Terminating <span class="sid">K8S-010</span></h3>
+        <p><strong>Interviewer:</strong> "Pod stuck Terminating. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-010</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment web --type=strategic -p &#x27;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;terminationGracePeriodSeconds&quot;:120,&quot;containers&quot;:[{&quot;name&quot;:&quot;web&quot;,&quot;lifecycle&quot;:{&quot;preStop&quot;:{&quot;exec&quot;:{&quot;command&quot;:[&quot;sh&quot;,&quot;-c&quot;,&quot;sleep 90&quot;]}}}}]}}}}&#x27;</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice delete pod &quot;$(kubectl -n practice get pod -l app=web -o jsonpath=&#x27;{.items[0].metadata.name}&#x27;)&quot; --wait=false</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> A 90-second preStop hook delays termination.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pods -l app=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get events --sort-by=.metadata.creationTimestamp</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment web --type=json -p=&#x27;[{&quot;op&quot;:&quot;remove&quot;,&quot;path&quot;:&quot;/spec/template/spec/containers/0/lifecycle&quot;}]&#x27;</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Check lifecycle hooks and grace periods; wait for this isolated Pod to finish naturally.</p>
+        <p class="note"><strong>Important:</strong> The old Pod may remain Terminating for up to the grace period. Do not force-delete production Pods merely because they are slow.</p>
+    </article><article class="scenario" id="K8S-011">
+        <h3>Question 11. Application exits immediately with code 0 <span class="sid">K8S-011</span></h3>
+        <p><strong>Interviewer:</strong> "Application exits immediately with code 0. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-011</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=exit0</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> A Deployment restarts even a container that exits successfully.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pods -l app=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice logs deployment/web --previous</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=normal</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Deployments need long-running processes; one-shot work is usually a Job.</p>
+        
+    </article><article class="scenario" id="K8S-012">
+        <h3>Question 12. Pod logs show invalid application configuration <span class="sid">K8S-012</span></h3>
+        <p><strong>Interviewer:</strong> "Pod logs show invalid application configuration. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-012</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_PORT=wrong</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> APP_PORT is not numeric; Python terminates with ValueError.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice logs deployment/web --previous</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice describe pods -l app=web</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_PORT=8080</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Logs can identify misconfiguration faster than repeated restarts.</p>
+        
+    </article><article class="scenario" id="K8S-013">
+        <h3>Question 13. Service exists but application unreachable <span class="sid">K8S-013</span></h3>
+        <p><strong>Interviewer:</strong> "Service exists but application unreachable. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-013</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch service web -p &#x27;{&quot;spec&quot;:{&quot;ports&quot;:[{&quot;port&quot;:80,&quot;targetPort&quot;:9999}]}}&#x27;</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Service targetPort is wrong; Pod endpoint listens on 8080.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get service web</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get endpointslices -l kubernetes.io/service-name=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;print(urllib.request.urlopen(&quot;http://web/healthz&quot;).status)&#x27;</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch service web -p &#x27;{&quot;spec&quot;:{&quot;ports&quot;:[{&quot;port&quot;:80,&quot;targetPort&quot;:8080}]}}&#x27;</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;print(urllib.request.urlopen(&quot;http://web/healthz&quot;).status)&#x27;</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get service web</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Compare Service targetPort to the container listening port.</p>
+        
+    </article><article class="scenario" id="K8S-014">
+        <h3>Question 14. Service selector does not match Pod labels <span class="sid">K8S-014</span></h3>
+        <p><strong>Interviewer:</strong> "Service selector does not match Pod labels. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-014</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch service web -p &#x27;{&quot;spec&quot;:{&quot;selector&quot;:{&quot;app&quot;:&quot;wrong&quot;}}}&#x27;</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Service has zero backend endpoints.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods --show-labels</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get service web -o yaml</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get endpointslices -l kubernetes.io/service-name=web</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch service web -p &#x27;{&quot;spec&quot;:{&quot;selector&quot;:{&quot;app&quot;:&quot;web&quot;}}}&#x27;</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get endpointslices -l kubernetes.io/service-name=web</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;print(urllib.request.urlopen(&quot;http://web/healthz&quot;).status)&#x27;</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Service selectors must match the labels on healthy Pods.</p>
+        
+    </article><article class="scenario" id="K8S-015">
+        <h3>Question 15. ClusterIP reachable but server listens only on loopback <span class="sid">K8S-015</span></h3>
+        <p><strong>Interviewer:</strong> "ClusterIP reachable but server listens only on loopback. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-015</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_BIND=127.0.0.1</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> The app binds to 127.0.0.1, not its Pod IP; Service requests fail.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice logs deployment/web --tail=30</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice describe pods -l app=web</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_BIND=0.0.0.0</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;print(urllib.request.urlopen(&quot;http://web/healthz&quot;).status)&#x27;</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Check both Service routing and the address the application binds to.</p>
+        
+    </article><article class="scenario" id="K8S-016">
+        <h3>Question 16. NodePort returns connection refused <span class="sid">K8S-016</span></h3>
+        <p><strong>Interviewer:</strong> "NodePort returns connection refused. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-016</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice expose deployment web --name=web-node --type=NodePort --port=80 --target-port=8080</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice patch service web-node -p &#x27;{&quot;spec&quot;:{&quot;ports&quot;:[{&quot;port&quot;:80,&quot;targetPort&quot;:9999}]}}&#x27;</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> NodePort exists but maps to a nonexistent backend container port.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get service web-node</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe service web-node</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get endpointslices -l kubernetes.io/service-name=web-node</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch service web-node -p &#x27;{&quot;spec&quot;:{&quot;ports&quot;:[{&quot;port&quot;:80,&quot;targetPort&quot;:8080}]}}&#x27;</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get service web-node</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;print(urllib.request.urlopen(&quot;http://web-node/healthz&quot;).status)&#x27;</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> A NodePort may not be reachable directly from a Mac/Windows host without a Kind port mapping; investigate the in-cluster path first.</p>
+        <p class="note"><strong>Important:</strong> NodePort itself is inside the Docker node network. Verify the Service from inside the cluster; host-level NodePort access requires an explicit Kind mapping.</p>
+    </article><article class="scenario" id="K8S-017">
+        <h3>Question 17. Ingress HTTP 404 <span class="sid">K8S-017</span></h3>
+        <p><strong>Interviewer:</strong> "Ingress HTTP 404. How would you investigate and recover?"</p>
+        <p class="env">Where: Local Kind + optional Traefik</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-017</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice apply -f manifests/ingress-bad-host.yaml</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Ingress host is wrong, so Traefik has no matching route.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get ingress</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe ingress web-ingress</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;u=urllib.request.Request(&quot;http://traefik.traefik.svc.cluster.local&quot;,headers={&quot;Host&quot;:&quot;practice.test&quot;});print(urllib.request.urlopen(u).status)&#x27;</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice apply -f manifests/ingress.yaml</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get ingress</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;u=urllib.request.Request(&quot;http://traefik.traefik.svc.cluster.local&quot;,headers={&quot;Host&quot;:&quot;practice.test&quot;});print(urllib.request.urlopen(u).status)&#x27;</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> An HTTP 404 at the ingress controller often means no route matched the host/path.</p>
+        <p class="note"><strong>Important:</strong> Before prepare: install Helm and run ./lab addon ingress. This scenario changes a real Ingress object; controller image and chart are external dependencies.</p>
+    </article><article class="scenario" id="K8S-018">
+        <h3>Question 18. Ingress HTTP 502/503 <span class="sid">K8S-018</span></h3>
+        <p><strong>Interviewer:</strong> "Ingress HTTP 502/503. How would you investigate and recover?"</p>
+        <p class="env">Where: Local Kind + optional Traefik</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-018</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice apply -f manifests/ingress-bad-backend.yaml</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Route matches but refers to a nonexistent Service.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice describe ingress web-ingress</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get services</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get endpointslices</code></div><div class="command"><span class="stepnum">4.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;u=urllib.request.Request(&quot;http://traefik.traefik.svc.cluster.local&quot;,headers={&quot;Host&quot;:&quot;practice.test&quot;});urllib.request.urlopen(u)&#x27;</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice apply -f manifests/ingress.yaml</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;u=urllib.request.Request(&quot;http://traefik.traefik.svc.cluster.local&quot;,headers={&quot;Host&quot;:&quot;practice.test&quot;});print(urllib.request.urlopen(u).status)&#x27;</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Check that the Ingress points to a Service that exists and has ready endpoints.</p>
+        <p class="note"><strong>Important:</strong> Depending on controller version, a missing backend can return HTTP 502, 503 or another error status. The failure must be observed, not assumed.</p>
+    </article><article class="scenario" id="K8S-019">
+        <h3>Question 19. DNS resolution fails inside a Pod <span class="sid">K8S-019</span></h3>
+        <p><strong>Interviewer:</strong> "DNS resolution fails inside a Pod. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-019</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment web --type=merge -p &#x27;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;dnsPolicy&quot;:&quot;None&quot;,&quot;dnsConfig&quot;:{&quot;nameservers&quot;:[&quot;203.0.113.53&quot;]}}}}}&#x27;</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> The Pod uses a deliberately invalid DNS server address.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice exec deployment/web -- cat /etc/resolv.conf</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import socket;print(socket.gethostbyname(&quot;kubernetes.default.svc.cluster.local&quot;))&#x27;</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment web --type=merge -p &#x27;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;dnsPolicy&quot;:&quot;ClusterFirst&quot;,&quot;dnsConfig&quot;:null}}}}&#x27;</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import socket;print(socket.gethostbyname(&quot;kubernetes.default.svc.cluster.local&quot;))&#x27;</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Check /etc/resolv.conf before assuming CoreDNS itself is broken.</p>
+        
+    </article><article class="scenario" id="K8S-020">
+        <h3>Question 20. Pods cannot reach backend Pod <span class="sid">K8S-020</span></h3>
+        <p><strong>Interviewer:</strong> "Pods cannot reach backend Pod. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-020</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/backend APP_BIND=127.0.0.1</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> The backend binds only to localhost; frontend cannot connect to the backend Service.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice logs deployment/backend --tail=20</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;urllib.request.urlopen(&quot;http://backend/healthz&quot;,timeout=3)&#x27;</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/backend APP_BIND=0.0.0.0</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/backend --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;print(urllib.request.urlopen(&quot;http://backend/healthz&quot;).status)&#x27;</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Test connection from the client Pod and compare Service endpoints to the backend bind address.</p>
+        
+    </article><article class="scenario" id="K8S-021">
+        <h3>Question 21. Readiness probe uses the wrong URL <span class="sid">K8S-021</span></h3>
+        <p><strong>Interviewer:</strong> "Readiness probe uses the wrong URL. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-021</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment web --type=strategic -p &#x27;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;containers&quot;:[{&quot;name&quot;:&quot;web&quot;,&quot;readinessProbe&quot;:{&quot;httpGet&quot;:{&quot;path&quot;:&quot;/wrong&quot;,&quot;port&quot;:8080}}}]}}}}&#x27;</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> readinessProbe checks /wrong instead of /readyz; Pod is Running, not Ready.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pods -l app=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get events --sort-by=.metadata.creationTimestamp</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment web --type=strategic -p &#x27;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;containers&quot;:[{&quot;name&quot;:&quot;web&quot;,&quot;readinessProbe&quot;:{&quot;httpGet&quot;:{&quot;path&quot;:&quot;/readyz&quot;,&quot;port&quot;:8080}}}]}}}}&#x27;</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> A readiness failure removes endpoints without necessarily restarting the container.</p>
+        
+    </article><article class="scenario" id="K8S-022">
+        <h3>Question 22. Liveness probe repeatedly restarts a healthy app <span class="sid">K8S-022</span></h3>
+        <p><strong>Interviewer:</strong> "Liveness probe repeatedly restarts a healthy app. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-022</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment web --type=strategic -p &#x27;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;containers&quot;:[{&quot;name&quot;:&quot;web&quot;,&quot;livenessProbe&quot;:{&quot;httpGet&quot;:{&quot;path&quot;:&quot;/wrong&quot;,&quot;port&quot;:8080}}}]}}}}&#x27;</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Wrong liveness URL causes the kubelet to kill the container.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pods -l app=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get events --sort-by=.metadata.creationTimestamp</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment web --type=strategic -p &#x27;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;containers&quot;:[{&quot;name&quot;:&quot;web&quot;,&quot;livenessProbe&quot;:{&quot;httpGet&quot;:{&quot;path&quot;:&quot;/healthz&quot;,&quot;port&quot;:8080}}}]}}}}&#x27;</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Differentiate a process crash from a kubelet-initiated restart after liveness failures.</p>
+        <p class="note"><strong>Important:</strong> Wait 15–30 seconds to see repeated liveness failures and restarts.</p>
+    </article><article class="scenario" id="K8S-023">
+        <h3>Question 23. Application cannot contact its API dependency <span class="sid">K8S-023</span></h3>
+        <p><strong>Interviewer:</strong> "Application cannot contact its API dependency. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-023</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web EXTERNAL_URL=http://backend-does-not-exist/healthz</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> The frontend points to an invalid backend DNS name and returns HTTP 502.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get services</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice logs deployment/web --tail=25</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;urllib.request.urlopen(&quot;http://127.0.0.1:8080/external&quot;)&#x27;</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web EXTERNAL_URL=http://backend/healthz</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;print(urllib.request.urlopen(&quot;http://127.0.0.1:8080/external&quot;).status)&#x27;</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Verify the actual dependency URL, DNS and HTTP response before changing cluster networking.</p>
+        <p class="note"><strong>Important:</strong> The backend Service acts as a safe stand-in for an external API. Public internet egress and firewall behavior are different tests.</p>
+    </article><article class="scenario" id="K8S-024">
+        <h3>Question 24. NetworkPolicy blocks good traffic <span class="sid">K8S-024</span></h3>
+        <p><strong>Interviewer:</strong> "NetworkPolicy blocks good traffic. How would you investigate and recover?"</p>
+        <p class="env">Where: Separate Kind/VM cluster with Calico</p>
+        <h4>1. Start healthy</h4><p class="note">Extra setup is required: create a <strong>separate Calico-enabled Kind cluster</strong> using the official Calico guide. The default kindnet plugin does not enforce NetworkPolicy. Once a fresh namespace and the two example Deployments (web and tester) are present, the commands below become a practice checklist. Do not run this against a production cluster.</p>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice apply -f manifests/networkpolicy-deny.yaml</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Calico-enforced deny ingress policy blocks frontend-to-backend HTTP.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get networkpolicy</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe networkpolicy deny-web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get pods --show-labels</code></div><div class="command"><span class="stepnum">4.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;urllib.request.urlopen(&quot;http://web/healthz&quot;,timeout=3)&#x27;</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice delete networkpolicy deny-web</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get networkpolicy</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;print(urllib.request.urlopen(&quot;http://web/healthz&quot;).status)&#x27;</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> NetworkPolicy is enforced by the CNI, not by the Kubernetes API object itself.</p>
+        <p class="note"><strong>Important:</strong> Create a tester Deployment first (kubectl -n practice create deployment tester --image=practice-web:1). NOT EXECUTABLE on the default Kind kindnet CNI. Follow official Calico-on-Kind setup in a SEPARATE disposable cluster, build/load the app there, and deploy manifests/base.yaml in namespace practice. The local ./lab prepare intentionally refuses this ID rather than pretending a policy was enforced.</p>
+    </article><article class="scenario" id="K8S-025">
+        <h3>Question 25. Worker node NotReady <span class="sid">K8S-025</span></h3>
+        <p><strong>Interviewer:</strong> "Worker node NotReady. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-025</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker stop interview-lab-worker</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> The named worker is stopped as a Docker container; after a delay Kubernetes marks it NotReady.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl get nodes -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl describe node interview-lab-worker</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl get pods -A -o wide</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker start interview-lab-worker</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl wait --for=condition=Ready node/interview-lab-worker --timeout=180s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl get nodes</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Distinguish a node failure from a single application Pod failure.</p>
+        <p class="note"><strong>Important:</strong> Use ONLY the named disposable Kind worker. This can take 40–120 seconds to show NotReady. Web may remain available if it runs on the other worker.</p>
+    </article><article class="scenario" id="K8S-026">
+        <h3>Question 26. Pod cannot schedule: insufficient CPU <span class="sid">K8S-026</span></h3>
+        <p><strong>Interviewer:</strong> "Pod cannot schedule: insufficient CPU. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-026</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set resources deployment web --requests=cpu=10 --limits=cpu=10</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> A Pod that requests 10 CPU cores exceeds the Kind worker node capacity.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pods -l app=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl describe nodes</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set resources deployment web --requests=cpu=20m --limits=cpu=200m</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> FailedScheduling and node Allocatable values reveal oversized CPU requests.</p>
+        
+    </article><article class="scenario" id="K8S-027">
+        <h3>Question 27. Pod cannot schedule: insufficient memory <span class="sid">K8S-027</span></h3>
+        <p><strong>Interviewer:</strong> "Pod cannot schedule: insufficient memory. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-027</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set resources deployment web --requests=memory=100Gi --limits=memory=100Gi</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> A 100Gi memory request cannot fit in the disposable Kind workers.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pods -l app=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl describe nodes</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set resources deployment web --requests=memory=32Mi --limits=memory=128Mi</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Requests influence scheduling; limits influence runtime enforcement.</p>
+        
+    </article><article class="scenario" id="K8S-028">
+        <h3>Question 28. Node taint blocks Pod scheduling <span class="sid">K8S-028</span></h3>
+        <p><strong>Interviewer:</strong> "Node taint blocks Pod scheduling. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-028</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl taint nodes interview-lab-worker interview=blocked:NoSchedule</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl taint nodes interview-lab-worker2 interview=blocked:NoSchedule</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice rollout restart deployment/web</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> All worker nodes have NoSchedule taint; a new Pod remains Pending.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pods -l app=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl describe nodes</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl taint nodes interview-lab-worker interview:NoSchedule-</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl taint nodes interview-lab-worker2 interview:NoSchedule-</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> NoSchedule is checked for new Pods. Existing Pods are not evicted by that taint alone.</p>
+        <p class="note"><strong>Important:</strong> Changes ONLY the two disposable Kind workers. ./lab reset also removes these specific lab taints.</p>
+    </article><article class="scenario" id="K8S-029">
+        <h3>Question 29. Required node affinity matches no worker <span class="sid">K8S-029</span></h3>
+        <p><strong>Interviewer:</strong> "Required node affinity matches no worker. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-029</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment web --type=merge -p &#x27;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;affinity&quot;:{&quot;nodeAffinity&quot;:{&quot;requiredDuringSchedulingIgnoredDuringExecution&quot;:{&quot;nodeSelectorTerms&quot;:[{&quot;matchExpressions&quot;:[{&quot;key&quot;:&quot;lab&quot;,&quot;operator&quot;:&quot;In&quot;,&quot;values&quot;:[&quot;no-such-node&quot;]}]}]}}}}}}}&#x27;</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> A required node affinity rule asks for a label no Kind node has.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pods -l app=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl get nodes --show-labels</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment web --type=merge -p &#x27;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;affinity&quot;:null}}}}&#x27;</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Required affinity blocks scheduling when no node matches.</p>
+        
+    </article><article class="scenario" id="K8S-030">
+        <h3>Question 30. PVC stuck Pending <span class="sid">K8S-030</span></h3>
+        <p><strong>Interviewer:</strong> "PVC stuck Pending. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-030</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice apply -f manifests/pvc-bad.yaml</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> PVC refers to a StorageClass that does not exist.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pvc</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pvc broken-data</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl get storageclass</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice delete pvc broken-data</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice apply -f manifests/pvc-good.yaml</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice apply -f manifests/consumer.yaml</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pvc</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice wait --for=condition=Ready pod/volume-check --timeout=150s</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Check StorageClass, volume binding mode and provisioner events.</p>
+        <p class="note"><strong>Important:</strong> Kind typically installs a default local-path StorageClass; check kubectl get storageclass first. A WaitForFirstConsumer claim may remain Pending until a Pod uses it.</p>
+    </article><article class="scenario" id="K8S-031">
+        <h3>Question 31. Pod cannot mount the requested PVC <span class="sid">K8S-031</span></h3>
+        <p><strong>Interviewer:</strong> "Pod cannot mount the requested PVC. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-031</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment storage-app --type=strategic -p &#x27;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;volumes&quot;:[{&quot;name&quot;:&quot;data&quot;,&quot;persistentVolumeClaim&quot;:{&quot;claimName&quot;:&quot;does-not-exist&quot;}}]}}}}&#x27;</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> storage-app refers to an absent PVC and stays Pending with FailedMount.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe deployment storage-app</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice describe pods -l app=storage-app</code></div><div class="command"><span class="stepnum">4.</span><code>kubectl -n practice get pvc</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment storage-app --type=strategic -p &#x27;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;volumes&quot;:[{&quot;name&quot;:&quot;data&quot;,&quot;persistentVolumeClaim&quot;:{&quot;claimName&quot;:&quot;lab-data&quot;}}]}}}}&#x27;</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/storage-app --timeout=150s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pvc</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Compare Pod claimName to existing PVCs, then inspect Pod mount events.</p>
+        <p class="note"><strong>Important:</strong> Requires Kind local-path provisioning; ./lab prepare checks that a good PVC-mounted Pod starts.</p>
+    </article><article class="scenario" id="K8S-032">
+        <h3>Question 32. Container cannot write to persistent volume <span class="sid">K8S-032</span></h3>
+        <p><strong>Interviewer:</strong> "Container cannot write to persistent volume. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-032</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment storage-app --type=strategic -p &#x27;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;containers&quot;:[{&quot;name&quot;:&quot;storage-app&quot;,&quot;volumeMounts&quot;:[{&quot;name&quot;:&quot;data&quot;,&quot;mountPath&quot;:&quot;/data&quot;,&quot;readOnly&quot;:true}]}]}}}}&#x27;</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> A read-only volumeMount breaks the web app that writes to /data at startup.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice logs deployment/storage-app --previous</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice describe pods -l app=storage-app</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment storage-app --type=strategic -p &#x27;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;containers&quot;:[{&quot;name&quot;:&quot;storage-app&quot;,&quot;volumeMounts&quot;:[{&quot;name&quot;:&quot;data&quot;,&quot;mountPath&quot;:&quot;/data&quot;,&quot;readOnly&quot;:false}]}]}}}}&#x27;</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/storage-app --timeout=150s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice exec deployment/storage-app -- cat /data/ready.txt</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Check mount readOnly flag and filesystem permissions instead of assuming the volume is absent.</p>
+        
+    </article><article class="scenario" id="K8S-033">
+        <h3>Question 33. Deployment rolling update cannot complete <span class="sid">K8S-033</span></h3>
+        <p><strong>Interviewer:</strong> "Deployment rolling update cannot complete. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-033</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set image deployment/web web=practice-web:broken-release</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> New ReplicaSet uses an unavailable image; old Pod often stays Ready.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get deployments</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get replicasets</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">4.</span><code>kubectl -n practice describe deployment web</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set image deployment/web web=practice-web:1</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get replicasets</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Check rollout status and new ReplicaSet rather than deleting the old healthy Pods.</p>
+        
+    </article><article class="scenario" id="K8S-034">
+        <h3>Question 34. Bad release needs rollback <span class="sid">K8S-034</span></h3>
+        <p><strong>Interviewer:</strong> "Bad release needs rollback. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-034</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=unready</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> An unhealthy new revision cannot become Ready.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice rollout history deployment/web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice describe pods -l app=web</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout undo deployment/web</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice rollout history deployment/web</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Rollback to the last known-good ReplicaSet when recovery is faster and safer than a hot fix.</p>
+        
+    </article><article class="scenario" id="K8S-035">
+        <h3>Question 35. HPA does not scale because it cannot read metrics <span class="sid">K8S-035</span></h3>
+        <p><strong>Interviewer:</strong> "HPA does not scale because it cannot read metrics. How would you investigate and recover?"</p>
+        <p class="env">Where: Local Kind + optional Metrics Server</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-035</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice autoscale deployment web --cpu=50% --min=1 --max=3</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> HPA reports unknown CPU utilization until metrics-server is installed.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get hpa</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe hpa web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl top pods -n practice</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>./lab addon metrics</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl top pods -n practice</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get hpa</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> HPA requires the metrics API and a meaningful CPU request; scaling also requires sustained load.</p>
+        <p class="note"><strong>Important:</strong> Run BEFORE installing the metrics addon if you want to observe missing metrics. With the addon installed, the failure will no longer occur. A healthy HPA with metrics does NOT automatically scale unless there is sufficient load.</p>
+    </article><article class="scenario" id="K8S-036">
+        <h3>Question 36. PodDisruptionBudget blocks a node drain <span class="sid">K8S-036</span></h3>
+        <p><strong>Interviewer:</strong> "PodDisruptionBudget blocks a node drain. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-036</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl drain interview-lab-worker --ignore-daemonsets --delete-emptydir-data --timeout=20s</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> One web replica with minAvailable=1 cannot be evicted voluntarily.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl get nodes</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get poddisruptionbudgets</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice describe poddisruptionbudget web-pdb</code></div><div class="command"><span class="stepnum">4.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice delete poddisruptionbudget web-pdb</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl uncordon interview-lab-worker</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl get nodes</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> PDB is a voluntary disruption safety control. Plan additional capacity before a real production drain.</p>
+        <p class="note"><strong>Important:</strong> The drain is EXPECTED to time out and leave the worker cordoned. ./lab reset uncordons this worker.</p>
+    </article><article class="scenario" id="K8S-037">
+        <h3>Question 37. StatefulSet Pod fails to start <span class="sid">K8S-037</span></h3>
+        <p><strong>Interviewer:</strong> "StatefulSet Pod fails to start. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-037</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env statefulset/database APP_PORT=wrong</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> StatefulSet database-0 crashes because APP_PORT is not numeric.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get statefulsets</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice logs database-0 --previous</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env statefulset/database APP_PORT=8080</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status statefulset/database --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> StatefulSet Pod names are stable; inspect database-0 and the StatefulSet update.</p>
+        <p class="note"><strong>Important:</strong> This isolates StatefulSet process recovery; it does not require a real SQL server.</p>
+    </article><article class="scenario" id="K8S-038">
+        <h3>Question 38. ConfigMap change is not reflected <span class="sid">K8S-038</span></h3>
+        <p><strong>Interviewer:</strong> "ConfigMap change is not reflected. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-038</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch configmap lab-config -p &#x27;{&quot;data&quot;:{&quot;APP_MESSAGE&quot;:&quot;NEW VALUE&quot;}}&#x27;</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Environment variables in an existing container remain unchanged after ConfigMap edit.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get configmap lab-config -o yaml</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice exec deployment/web -- printenv APP_MESSAGE</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get pods</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout restart deployment/web</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice exec deployment/web -- printenv APP_MESSAGE</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> ConfigMap changes do not automatically refresh env vars in existing containers.</p>
+        
+    </article><article class="scenario" id="K8S-039">
+        <h3>Question 39. Secret key is missing: CreateContainerConfigError <span class="sid">K8S-039</span></h3>
+        <p><strong>Interviewer:</strong> "Secret key is missing: CreateContainerConfigError. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-039</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch deployment web --type=strategic -p &#x27;{&quot;spec&quot;:{&quot;template&quot;:{&quot;spec&quot;:{&quot;containers&quot;:[{&quot;name&quot;:&quot;web&quot;,&quot;env&quot;:[{&quot;name&quot;:&quot;API_KEY&quot;,&quot;valueFrom&quot;:{&quot;secretKeyRef&quot;:{&quot;name&quot;:&quot;lab-secret&quot;,&quot;key&quot;:&quot;missing&quot;}}}]}]}}}}&#x27;</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Pod requires missing key from lab-secret; it cannot create the container.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pods -l app=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get secret lab-secret</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice patch secret lab-secret -p &#x27;{&quot;data&quot;:{&quot;missing&quot;:&quot;ZHVtbXk=&quot;}}&#x27;</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice exec deployment/web -- printenv API_KEY</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> The Pod event names the missing Secret/key; fix the key rather than repeatedly deleting Pods.</p>
+        <p class="note"><strong>Important:</strong> All values are dummy practice credentials. Do not paste real secrets into shell history.</p>
+    </article><article class="scenario" id="K8S-040">
+        <h3>Question 40. Kubernetes Job fails <span class="sid">K8S-040</span></h3>
+        <p><strong>Interviewer:</strong> "Kubernetes Job fails. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-040</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice apply -f manifests/secret-bad-job.yaml</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Job exits 7 and becomes Failed after retries.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get jobs</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice logs job/broken-job</code></div><div class="command"><span class="stepnum">4.</span><code>kubectl -n practice describe job broken-job</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice delete job broken-job</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice apply -f manifests/job-good.yaml</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice wait --for=condition=complete job/recovered-job --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice logs job/recovered-job</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Check exit code, Job backoffLimit and completed/failed counts. Jobs are for finite tasks.</p>
+        
+    </article><article class="scenario" id="K8S-041">
+        <h3>Question 41. Intermittent frontend timeouts <span class="sid">K8S-041</span></h3>
+        <p><strong>Interviewer:</strong> "Intermittent frontend timeouts. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-041</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=slow</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> The app becomes slow when APP_MODE=slow; a 2-second client timeout fails.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;urllib.request.urlopen(&quot;http://web/slow&quot;,timeout=2)&#x27;</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice logs deployment/web --tail=30</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=normal</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;print(urllib.request.urlopen(&quot;http://web/slow&quot;,timeout=2).status)&#x27;</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Separate app response time from DNS resolution, connection setup and Pod health.</p>
+        <p class="note"><strong>Important:</strong> Real microservice timeouts can also involve network saturation and dependencies; this lab demonstrates a genuine timeout with one simple app.</p>
+    </article><article class="scenario" id="K8S-042">
+        <h3>Question 42. Node DiskPressure causes evictions <span class="sid">K8S-042</span></h3>
+        <p><strong>Interviewer:</strong> "Node DiskPressure causes evictions. How would you investigate and recover?"</p>
+        <p class="env">Where: Dedicated disposable Ubuntu/VM only</p>
+        <h4>1. Start healthy</h4><p class="note">This question is <strong>VM-only diagnosis practice</strong>, not a promised local failure. Real node DiskPressure involves node filesystem capacity and is not safe to induce by filling your laptop disk. Study the commands below and practise on a completely disposable test VM with a separately limited disk.</p>
+        <h4>2. Break it — type each command</h4><p class="notice">No safe one-line disk-fill injection is provided for a shared Mac/Windows Docker disk.</p>
+        <p class="expect"><strong>What should go wrong:</strong> Observe DiskPressure=True and Evicted only on a disposable VM with a dedicated test filesystem.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl get nodes</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl describe nodes</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl get pods -A --field-selector=status.phase=Failed</code></div><div class="command"><span class="stepnum">4.</span><code>kubectl get events -A --sort-by=.metadata.creationTimestamp</code></div>
+        <h4>4. Fix it — type each command</h4><p class="notice">On a dedicated VM: remove only your test fill file, restore free space, and restart the affected workload if required.</p>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl get nodes</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl get pods -A</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Confirm actual node pressure and filesystem usage; avoid deleting random data or blindly restarting Pods.</p>
+        <p class="note"><strong>Important:</strong> NOT a supported automatic failure on local Kind: filling the host disk can damage other work. For a real experiment, use a dedicated VM/test disk with a size limit and a documented snapshot rollback. These are diagnosis prompts, NOT a falsely claimed executed failure.</p>
+    </article><article class="scenario" id="K8S-043">
+        <h3>Question 43. Memory pressure causes application instability <span class="sid">K8S-043</span></h3>
+        <p><strong>Interviewer:</strong> "Memory pressure causes application instability. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-043</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice scale deployment/web --replicas=3</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice set env deployment/web APP_MODE=allocate ALLOC_MB=200</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Several over-limit app containers enter OOMKilled/restart states; this is a safe proxy, NOT genuine Node MemoryPressure.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice describe pods -l app=web</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl top nodes</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=normal ALLOC_MB-</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice scale deployment/web --replicas=1</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods -o wide</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Check container OOM, node MemoryPressure condition and resource requests separately.</p>
+        <p class="note"><strong>Important:</strong> This experiment creates real container OOMs. It does not reliably push the node into MemoryPressure; that requires a separate disposable VM and careful capacity controls.</p>
+    </article><article class="scenario" id="K8S-044">
+        <h3>Question 44. Service has no healthy EndpointSlices <span class="sid">K8S-044</span></h3>
+        <p><strong>Interviewer:</strong> "Service has no healthy EndpointSlices. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-044</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=unready</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> A failing readiness check removes the Pod from ready Service endpoints.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get endpointslices -l kubernetes.io/service-name=web -o yaml</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice describe pods -l app=web</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/web APP_MODE=normal</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get endpointslices -l kubernetes.io/service-name=web</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> A Service object existing does not guarantee it has ready backends.</p>
+        
+    </article><article class="scenario" id="K8S-045">
+        <h3>Question 45. Kubernetes API server is unreachable <span class="sid">K8S-045</span></h3>
+        <p><strong>Interviewer:</strong> "Kubernetes API server is unreachable. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-045</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker pause interview-lab-control-plane</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Pausing only the disposable Kind control-plane container stops API responses.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl --request-timeout=5s get nodes</code></div><div class="command"><span class="stepnum">2.</span><code>docker ps -a --filter name=interview-lab-control-plane</code></div><div class="command"><span class="stepnum">3.</span><code>docker inspect interview-lab-control-plane --format &#x27;{{.State.Paused}}&#x27;</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker unpause interview-lab-control-plane</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl --request-timeout=20s get nodes</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> If kubectl cannot connect, check kubeconfig, API endpoint and the control-plane process first.</p>
+        <p class="note"><strong>Important:</strong> Only on named disposable Kind control plane; commands targeting the API will fail while it is paused. ./lab reset recovers the paused container.</p>
+    </article><article class="scenario" id="K8S-046">
+        <h3>Question 46. kubelet on a worker stops responding <span class="sid">K8S-046</span></h3>
+        <p><strong>Interviewer:</strong> "kubelet on a worker stops responding. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-046</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker exec interview-lab-worker systemctl stop kubelet</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> The real kubelet service inside a disposable Kind worker is stopped.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>docker exec interview-lab-worker systemctl is-active kubelet</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl get nodes</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl describe node interview-lab-worker</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>docker exec interview-lab-worker systemctl start kubelet</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>docker exec interview-lab-worker systemctl is-active kubelet</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl wait --for=condition=Ready node/interview-lab-worker --timeout=180s</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> kubelet failure is a node-agent problem, not necessarily a control-plane outage.</p>
+        <p class="note"><strong>Important:</strong> Requires a Kind node image with systemd/kubelet service. If the command is unsupported, run this scenario on a dedicated Ubuntu kubeadm VM instead; do not claim it happened.</p>
+    </article><article class="scenario" id="K8S-047">
+        <h3>Question 47. CoreDNS failure breaks name resolution <span class="sid">K8S-047</span></h3>
+        <p><strong>Interviewer:</strong> "CoreDNS failure breaks name resolution. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-047</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n kube-system scale deployment/coredns --replicas=0</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Scaling CoreDNS to zero stops new cluster DNS responses.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n kube-system get deployments</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n kube-system get pods -l k8s-app=kube-dns</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import socket;print(socket.gethostbyname(&quot;kubernetes.default.svc.cluster.local&quot;))&#x27;</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n kube-system scale deployment/coredns --replicas=2</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n kube-system rollout status deployment/coredns --timeout=150s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import socket;print(socket.gethostbyname(&quot;kubernetes.default.svc.cluster.local&quot;))&#x27;</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Investigate DNS deployment health before changing application Services.</p>
+        <p class="note"><strong>Important:</strong> This changes a CORE cluster component, but ONLY in the disposable named Kind cluster. ./lab reset restores CoreDNS replicas to 2.</p>
+    </article><article class="scenario" id="K8S-048">
+        <h3>Question 48. TLS trust / Kubernetes kubeconfig error <span class="sid">K8S-048</span></h3>
+        <p><strong>Interviewer:</strong> "TLS trust / Kubernetes kubeconfig error. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-048</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl config view --raw &gt; scratch/trust-broken.yaml</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl --kubeconfig scratch/trust-broken.yaml config unset clusters.kind-interview-lab.certificate-authority-data</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl --kubeconfig scratch/trust-broken.yaml config set-cluster kind-interview-lab --certificate-authority=&quot;$PWD/manifests/not-the-real-ca.pem&quot; --embed-certs</code></div><div class="command"><span class="stepnum">4.</span><code>kubectl --kubeconfig scratch/trust-broken.yaml get nodes</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> A COPIED kubeconfig uses the wrong CA, producing an x509 trust error.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl --kubeconfig scratch/trust-broken.yaml config view --minify</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl --kubeconfig scratch/trust-broken.yaml get nodes</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl --context kind-interview-lab get nodes</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>rm -f scratch/trust-broken.yaml</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl --context kind-interview-lab get nodes</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Keep the real kubeconfig untouched and compare its CA trust with the broken copy.</p>
+        <p class="note"><strong>Important:</strong> This reproduces a REAL client TLS trust mismatch, not actual certificate expiration. Requires curl etc? No; the public wrong-CA PEM is included in manifests/.</p>
+    </article><article class="scenario" id="K8S-049">
+        <h3>Question 49. RBAC Forbidden for a ServiceAccount <span class="sid">K8S-049</span></h3>
+        <p><strong>Interviewer:</strong> "RBAC Forbidden for a ServiceAccount. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-049</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl --as=system:serviceaccount:practice:reader -n practice get pods</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> An unprivileged practice ServiceAccount cannot list Pods.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl auth can-i list pods --as=system:serviceaccount:practice:reader -n practice</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get serviceaccount reader</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get rolebindings</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice create role pod-reader --verb=get,list,watch --resource=pods</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice create rolebinding pod-reader-binding --role=pod-reader --serviceaccount=practice:reader</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl auth can-i list pods --as=system:serviceaccount:practice:reader -n practice</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl --as=system:serviceaccount:practice:reader -n practice get pods</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Use kubectl auth can-i, then grant the smallest necessary namespaced Role.</p>
+        <p class="note"><strong>Important:</strong> The initial kubectl get is EXPECTED to show Forbidden; this lab does not require any real cloud IAM permissions.</p>
+    </article><article class="scenario" id="K8S-050">
+        <h3>Question 50. Three cascading failures: backend, Service and frontend <span class="sid">K8S-050</span></h3>
+        <p><strong>Interviewer:</strong> "Three cascading failures: backend, Service and frontend. How would you investigate and recover?"</p>
+        <p class="env">Where: Local lab</p>
+        <h4>1. Start healthy</h4><div class="command"><span class="stepnum">1.</span><code>./lab prepare K8S-050</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get pods</code></div>
+        <h4>2. Break it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/backend APP_MODE=crash</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice patch service backend -p &#x27;{&quot;spec&quot;:{&quot;selector&quot;:{&quot;app&quot;:&quot;wrong&quot;}}}&#x27;</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice set env deployment/web EXTERNAL_URL=http://missing-backend/healthz</code></div>
+        <p class="expect"><strong>What should go wrong:</strong> Backend crashes, its Service selector is wrong, and frontend points at a missing dependency.</p>
+        <h4>3. Find the problem — type these in order</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice get pods -o wide</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice get services</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice get endpointslices</code></div><div class="command"><span class="stepnum">4.</span><code>kubectl -n practice logs deployment/backend --previous</code></div><div class="command"><span class="stepnum">5.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;urllib.request.urlopen(&quot;http://127.0.0.1:8080/external&quot;)&#x27;</code></div>
+        <h4>4. Fix it — type each command</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice set env deployment/backend APP_MODE=normal</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice patch service backend -p &#x27;{&quot;spec&quot;:{&quot;selector&quot;:{&quot;app&quot;:&quot;backend&quot;}}}&#x27;</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice set env deployment/web EXTERNAL_URL=http://backend/healthz</code></div>
+        <h4>5. Check recovery</h4><div class="command"><span class="stepnum">1.</span><code>kubectl -n practice rollout status deployment/backend --timeout=120s</code></div><div class="command"><span class="stepnum">2.</span><code>kubectl -n practice rollout status deployment/web --timeout=120s</code></div><div class="command"><span class="stepnum">3.</span><code>kubectl -n practice exec deployment/web -- python -c &#x27;import urllib.request;print(urllib.request.urlopen(&quot;http://127.0.0.1:8080/external&quot;).status)&#x27;</code></div>
+        <p class="remember"><strong>Say in the interview:</strong> Start at the user-visible symptom, trace frontend-to-backend, fix each proven fault and verify the full traffic path.</p>
+        
+    </article>
+<h2>Last step: what to say in an interview</h2>
+<p>Use this short answer for almost every outage: <strong>“I check the failing resource and its events first. Then I check application logs and the network or storage path. I identify the exact root cause, change only what is needed, and verify the Pod and the user-facing service are healthy.”</strong></p>
+<p>For each question, write your own five-line note: <strong>Symptoms → Command → Evidence → Root cause → Verification.</strong> Practise without looking at the answer a second time.</p>
+<h2>Stop and clean up</h2>
+<p>The cluster is intentionally disposable. When you are completely finished:</p>
+<div class="command"><span class="stepnum">1.</span><code>./lab reset</code></div>
+<div class="command"><span class="stepnum">2.</span><code>./lab cleanup --yes</code></div>
+<p>This deletes only the named Kind practice cluster and lab-labeled Docker containers. It does not wipe your other Docker objects.</p>
+<p class="small"><strong>Official references:</strong> <a href="https://kind.sigs.k8s.io/docs/user/quick-start/">Kind Quick Start</a>; <a href="https://docs.docker.com/desktop/features/wsl/">Docker + WSL2</a>; <a href="https://kubernetes.io/docs/tasks/debug/">Kubernetes Debugging</a>; <a href="https://docs.tigera.io/calico/latest/getting-started/kubernetes/kind">Calico on Kind (optional)</a>. The guide was built in October 2026; Kubernetes behavior and add-on installation can be version-sensitive.</p>
+</main></body></html>

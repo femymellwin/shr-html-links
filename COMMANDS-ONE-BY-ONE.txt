@@ -1,0 +1,2092 @@
+SIMPLE DOCKER + KUBERNETES PRACTICE: START HERE
+
+FIRST: Install Docker and Kind (Mac: Docker Desktop + brew install kind kubectl; Windows: Docker Desktop WSL2 + ./install-linux-tools.sh; Ubuntu VM: Docker Engine + ./install-linux-tools.sh).
+
+Then type each line in order:
+./lab setup
+kubectl get nodes
+kubectl -n practice get pods
+
+Every scenario: START HEALTHY -> BREAK -> FIND -> FIX -> VERIFY. Commands are one per line.
+
+
+================================================================
+QUESTION 1. Container stops after starting (DCK-001)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare DCK-001
+
+docker ps -a
+
+
+2. BREAK
+docker rm -f practice-web
+docker run -d --name practice-web --label practice.simple.lab=yes practice-web:1 python -c 'import sys;sys.exit(1)'
+
+
+3. FIND
+docker ps -a
+docker inspect practice-web --format '{{.State.ExitCode}}'
+docker logs practice-web
+
+
+4. FIX
+docker rm -f practice-web
+docker run -d --name practice-web --label practice.simple.lab=yes -p 127.0.0.1:18080:8080 practice-web:1
+
+
+5. VERIFY
+docker ps
+curl -fsS http://127.0.0.1:18080/healthz
+
+
+EXPECT: STATUS=Exited; exit code 1.
+INTERVIEW: Check exit code, examine logs, then start the container with its correct application command.
+
+
+================================================================
+QUESTION 2. Container keeps restarting (DCK-002)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare DCK-002
+
+docker ps -a
+
+
+2. BREAK
+docker rm -f practice-web
+docker run -d --restart always --name practice-web --label practice.simple.lab=yes -e APP_MODE=crash practice-web:1
+
+
+3. FIND
+docker ps -a
+docker inspect practice-web --format '{{.RestartCount}}'
+docker logs practice-web
+
+
+4. FIX
+docker rm -f practice-web
+docker run -d --name practice-web --label practice.simple.lab=yes -p 127.0.0.1:18080:8080 practice-web:1
+
+
+5. VERIFY
+docker ps
+curl -fsS http://127.0.0.1:18080/healthz
+
+
+EXPECT: STATUS=Restarting repeatedly after a real process crash.
+INTERVIEW: A restart policy does not fix a crashing process; logs reveal the root cause.
+
+
+================================================================
+QUESTION 3. Container running but website unreachable (DCK-003)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare DCK-003
+
+docker ps -a
+
+
+2. BREAK
+docker rm -f practice-web
+docker run -d --name practice-web --label practice.simple.lab=yes -p 127.0.0.1:18080:8081 practice-web:1
+
+
+3. FIND
+docker ps
+docker port practice-web
+docker inspect practice-web --format '{{json .NetworkSettings.Ports}}'
+curl -v --max-time 3 http://127.0.0.1:18080/
+
+
+4. FIX
+docker rm -f practice-web
+docker run -d --name practice-web --label practice.simple.lab=yes -p 127.0.0.1:18080:8080 practice-web:1
+
+
+5. VERIFY
+docker port practice-web
+curl -fsS http://127.0.0.1:18080/healthz
+
+
+EXPECT: Container is Up, but curl fails because host port goes to the wrong container port.
+INTERVIEW: Check the port binding and application listening port, not just whether the process is Up.
+
+
+================================================================
+QUESTION 4. Wrong environment variable crashes the app (DCK-004)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare DCK-004
+
+docker ps -a
+
+
+2. BREAK
+docker rm -f practice-web
+docker run -d --name practice-web --label practice.simple.lab=yes -e APP_PORT=wrong practice-web:1
+
+
+3. FIND
+docker ps -a
+docker logs practice-web
+docker inspect practice-web --format '{{json .Config.Env}}'
+
+
+4. FIX
+docker rm -f practice-web
+docker run -d --name practice-web --label practice.simple.lab=yes -p 127.0.0.1:18080:8080 practice-web:1
+
+
+5. VERIFY
+docker logs practice-web
+curl -fsS http://127.0.0.1:18080/healthz
+
+
+EXPECT: APP_PORT=wrong is not an integer; application exits.
+INTERVIEW: Read the configuration error before changing the environment variable.
+
+
+================================================================
+QUESTION 5. Docker health check is unhealthy (DCK-005)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare DCK-005
+
+docker ps -a
+
+
+2. BREAK
+docker rm -f practice-web
+docker run -d --name practice-web --label practice.simple.lab=yes -e APP_MODE=unhealthy --health-cmd='wget -q -O /dev/null http://127.0.0.1:8080/healthz' --health-interval=5s --health-retries=2 practice-web:1
+
+
+3. FIND
+docker ps
+docker inspect practice-web --format '{{json .State.Health}}'
+docker logs practice-web
+
+
+4. FIX
+docker rm -f practice-web
+docker run -d --name practice-web --label practice.simple.lab=yes -p 127.0.0.1:18080:8080 practice-web:1
+
+
+5. VERIFY
+docker ps
+curl -fsS http://127.0.0.1:18080/healthz
+
+
+EXPECT: The process runs, but the configured /healthz returns 503.
+INTERVIEW: Up means running; Healthy means the configured health check succeeds.
+
+NOTE: Wait about 15 seconds for Docker health status to change. The repaired baseline runs without a Docker HEALTHCHECK; its HTTP health endpoint is checked explicitly.
+
+
+================================================================
+QUESTION 6. Read-only filesystem prevents writes (DCK-006)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare DCK-006
+
+docker ps -a
+
+
+2. BREAK
+docker rm -f practice-web
+docker run -d --name practice-web --label practice.simple.lab=yes --read-only -e APP_MODE=write practice-web:1
+
+
+3. FIND
+docker ps -a
+docker logs practice-web
+docker inspect practice-web --format '{{.HostConfig.ReadonlyRootfs}}'
+
+
+4. FIX
+docker rm -f practice-web
+docker run -d --name practice-web --label practice.simple.lab=yes --read-only --mount type=volume,source=practice-data-6,target=/data -e APP_MODE=write -p 127.0.0.1:18080:8080 practice-web:1
+
+
+5. VERIFY
+docker ps
+curl -fsS http://127.0.0.1:18080/healthz
+curl -fsS http://127.0.0.1:18080/value
+
+
+EXPECT: Application exits with a read-only filesystem or permission error.
+INTERVIEW: Read-only root filesystems need explicit writable mounts for data.
+
+
+================================================================
+QUESTION 7. Two containers cannot resolve each other (DCK-007)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare DCK-007
+
+docker ps -a
+
+
+2. BREAK
+docker network disconnect practice-net practice-client
+
+
+3. FIND
+docker network inspect practice-net
+docker inspect practice-client --format '{{json .NetworkSettings.Networks}}'
+docker exec practice-client python -c 'import socket;print(socket.gethostbyname("practice-web"))'
+
+
+4. FIX
+docker network connect practice-net practice-client
+
+
+5. VERIFY
+docker network inspect practice-net
+docker exec practice-client python -c 'import urllib.request;print(urllib.request.urlopen("http://practice-web:8080/healthz").status)'
+
+
+EXPECT: Client loses the practice-net attachment, so Docker DNS cannot resolve practice-web.
+INTERVIEW: Compare network membership. Container names resolve only on appropriate user-defined networks.
+
+
+================================================================
+QUESTION 8. Container is OOMKilled (DCK-008)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare DCK-008
+
+docker ps -a
+
+
+2. BREAK
+docker rm -f practice-web
+docker run -d --name practice-web --label practice.simple.lab=yes --memory=48m -e APP_MODE=allocate -e ALLOC_MB=256 practice-web:1
+
+
+3. FIND
+docker ps -a
+docker inspect practice-web --format '{{.State.OOMKilled}} {{.State.ExitCode}}'
+docker logs practice-web
+
+
+4. FIX
+docker rm -f practice-web
+docker run -d --name practice-web --label practice.simple.lab=yes -p 127.0.0.1:18080:8080 practice-web:1
+
+
+5. VERIFY
+docker ps
+curl -fsS http://127.0.0.1:18080/healthz
+
+
+EXPECT: OOMKilled=true and often exit code 137 after exceeding its enforced memory cgroup.
+INTERVIEW: Separate container memory limit kills from a general node or VM memory shortage.
+
+NOTE: Requires Docker memory cgroup enforcement. Memory allocation behavior may vary by OS and runtime.
+
+
+================================================================
+QUESTION 9. Image missing: container cannot be created (DCK-009)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare DCK-009
+
+docker ps -a
+
+
+2. BREAK
+docker rm -f practice-web
+docker run --pull=never --name practice-web practice-web:does-not-exist
+
+
+3. FIND
+docker images
+docker ps -a
+docker image inspect practice-web:does-not-exist
+
+
+4. FIX
+docker image inspect practice-web:1
+docker run -d --name practice-web --label practice.simple.lab=yes -p 127.0.0.1:18080:8080 practice-web:1
+
+
+5. VERIFY
+docker ps
+curl -fsS http://127.0.0.1:18080/healthz
+
+
+EXPECT: Docker reports the image is not present; no container is created.
+INTERVIEW: Check the exact repository and tag; distinguish pull/registry errors from application crashes.
+
+NOTE: The break command is expected to fail; continue with the next command.
+
+
+================================================================
+QUESTION 10. Bind mount source path does not exist (DCK-010)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare DCK-010
+
+docker ps -a
+
+
+2. BREAK
+docker rm -f practice-web
+docker run --name practice-web --label practice.simple.lab=yes --mount type=bind,source="$PWD/scratch/this-path-does-not-exist",target=/data practice-web:1
+
+
+3. FIND
+docker ps -a
+ls -ld scratch
+docker volume ls
+
+
+4. FIX
+mkdir -p scratch/data-10
+docker run -d --name practice-web --label practice.simple.lab=yes --mount type=bind,source="$PWD/scratch/data-10",target=/data -p 127.0.0.1:18080:8080 practice-web:1
+
+
+5. VERIFY
+docker inspect practice-web --format '{json .Mounts}'
+curl -fsS http://127.0.0.1:18080/healthz
+
+
+EXPECT: Docker refuses to start because --mount requires an existing host path.
+INTERVIEW: Check whether the bind source exists and whether the container has permission to mount it.
+
+NOTE: The broken docker run returns an error immediately. If scratch/this-path-does-not-exist already exists, remove that practice-only folder before rerunning.
+
+
+================================================================
+QUESTION 1. Pod stuck Pending (K8S-001)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-001
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice patch deployment web -p '{"spec":{"template":{"spec":{"nodeSelector":{"lab":"missing"}}}}}'
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice describe pods -l app=web
+kubectl get nodes --show-labels
+
+
+4. FIX
+kubectl -n practice patch deployment web -p '{"spec":{"template":{"spec":{"nodeSelector":null}}}}'
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: Pod Pending, warning FailedScheduling; no node has label lab=missing.
+INTERVIEW: Pending with FailedScheduling points to scheduling constraints, not application logs.
+
+
+================================================================
+QUESTION 2. CrashLoopBackOff (K8S-002)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-002
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set env deployment/web APP_MODE=crash
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice describe pods -l app=web
+kubectl -n practice logs deployment/web --previous
+
+
+4. FIX
+kubectl -n practice set env deployment/web APP_MODE=normal
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: Restart count grows because the web application exits with an error.
+INTERVIEW: Use --previous to read logs from the crashed container.
+
+
+================================================================
+QUESTION 3. ImagePullBackOff (K8S-003)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-003
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set image deployment/web web=practice-web:missing
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice describe pods -l app=web
+kubectl -n practice get events --sort-by=.metadata.creationTimestamp
+
+
+4. FIX
+kubectl -n practice set image deployment/web web=practice-web:1
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: A nonexistent image tag causes Failed to pull and then ImagePullBackOff.
+INTERVIEW: Check image name, registry access and pull events before restarting Pods.
+
+
+================================================================
+QUESTION 4. ErrImagePull (K8S-004)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-004
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set image deployment/web web=invalid.example.invalid/practice-web:v1
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice describe pods -l app=web
+kubectl -n practice get events --sort-by=.metadata.creationTimestamp
+
+
+4. FIX
+kubectl -n practice set image deployment/web web=practice-web:1
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: Initial pull failure from a deliberately invalid registry; may turn into ImagePullBackOff.
+INTERVIEW: ErrImagePull and ImagePullBackOff describe stages of the same image retrieval failure.
+
+
+================================================================
+QUESTION 5. Pod stuck ContainerCreating (K8S-005)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-005
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice patch deployment web --type=strategic -p '{"spec":{"template":{"spec":{"volumes":[{"name":"bad-secret","secret":{"secretName":"missing-secret"}}],"containers":[{"name":"web","volumeMounts":[{"name":"bad-secret","mountPath":"/missing"}]}]}}}}'
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice describe pods -l app=web
+kubectl -n practice get events --sort-by=.metadata.creationTimestamp
+
+
+4. FIX
+kubectl -n practice create secret generic missing-secret --from-literal=token=dummy
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: A required Secret volume does not exist; events show FailedMount.
+INTERVIEW: Read FailedMount events; image pulling is not the only reason for ContainerCreating.
+
+
+================================================================
+QUESTION 6. Pod Running, HTTP application returns errors (K8S-006)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-006
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set env deployment/web APP_MODE=fail-http
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice logs deployment/web --tail=30
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;urllib.request.urlopen("http://127.0.0.1:8080/")'
+
+
+4. FIX
+kubectl -n practice set env deployment/web APP_MODE=normal
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;print(urllib.request.urlopen("http://127.0.0.1:8080/").status)'
+
+
+EXPECT: Pod is Ready but main URL gives 500: Kubernetes status is not an application test.
+INTERVIEW: An HTTP failure can occur while probes and Pod conditions look healthy.
+
+
+================================================================
+QUESTION 7. Pod Running but not Ready (K8S-007)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-007
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set env deployment/web APP_MODE=unready
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice describe pods -l app=web
+kubectl -n practice get events --sort-by=.metadata.creationTimestamp
+
+
+4. FIX
+kubectl -n practice set env deployment/web APP_MODE=normal
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: Readiness endpoint returns 503; Pod is Running with READY 0/1.
+INTERVIEW: Readiness controls whether the Pod is included in Service endpoints.
+
+
+================================================================
+QUESTION 8. Pod restarting repeatedly (K8S-008)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-008
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set env deployment/web APP_MODE=crash-after
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice logs deployment/web --previous
+kubectl -n practice describe pods -l app=web
+
+
+4. FIX
+kubectl -n practice set env deployment/web APP_MODE=normal
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: Process exits every 5 seconds, causing an increasing restart count.
+INTERVIEW: Check restart count, last termination reason and previous logs.
+
+
+================================================================
+QUESTION 9. Container OOMKilled (K8S-009)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-009
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set env deployment/web APP_MODE=allocate ALLOC_MB=200
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice describe pods -l app=web
+kubectl -n practice get pods -l app=web -o jsonpath='{.items[0].status.containerStatuses[0].lastState.terminated.reason}'
+
+
+4. FIX
+kubectl -n practice set env deployment/web APP_MODE=normal ALLOC_MB-
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: The app allocates more than its 128Mi memory limit and is killed.
+INTERVIEW: OOMKilled is a reason for a terminated container; investigate limits and memory usage.
+
+NOTE: Workload allocation may vary across runtimes. This deliberately breaches the Pod container memory limit, not host memory.
+
+
+================================================================
+QUESTION 10. Pod stuck Terminating (K8S-010)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-010
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice patch deployment web --type=strategic -p '{"spec":{"template":{"spec":{"terminationGracePeriodSeconds":120,"containers":[{"name":"web","lifecycle":{"preStop":{"exec":{"command":["sh","-c","sleep 90"]}}}}]}}}}'
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice delete pod "$(kubectl -n practice get pod -l app=web -o jsonpath='{.items[0].metadata.name}')" --wait=false
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice describe pods -l app=web
+kubectl -n practice get events --sort-by=.metadata.creationTimestamp
+
+
+4. FIX
+kubectl -n practice patch deployment web --type=json -p='[{"op":"remove","path":"/spec/template/spec/containers/0/lifecycle"}]'
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: A 90-second preStop hook delays termination.
+INTERVIEW: Check lifecycle hooks and grace periods; wait for this isolated Pod to finish naturally.
+
+NOTE: The old Pod may remain Terminating for up to the grace period. Do not force-delete production Pods merely because they are slow.
+
+
+================================================================
+QUESTION 11. Application exits immediately with code 0 (K8S-011)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-011
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set env deployment/web APP_MODE=exit0
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice describe pods -l app=web
+kubectl -n practice logs deployment/web --previous
+
+
+4. FIX
+kubectl -n practice set env deployment/web APP_MODE=normal
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: A Deployment restarts even a container that exits successfully.
+INTERVIEW: Deployments need long-running processes; one-shot work is usually a Job.
+
+
+================================================================
+QUESTION 12. Pod logs show invalid application configuration (K8S-012)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-012
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set env deployment/web APP_PORT=wrong
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice logs deployment/web --previous
+kubectl -n practice describe pods -l app=web
+
+
+4. FIX
+kubectl -n practice set env deployment/web APP_PORT=8080
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: APP_PORT is not numeric; Python terminates with ValueError.
+INTERVIEW: Logs can identify misconfiguration faster than repeated restarts.
+
+
+================================================================
+QUESTION 13. Service exists but application unreachable (K8S-013)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-013
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice patch service web -p '{"spec":{"ports":[{"port":80,"targetPort":9999}]}}'
+
+
+3. FIND
+kubectl -n practice get service web
+kubectl -n practice get endpointslices -l kubernetes.io/service-name=web
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;print(urllib.request.urlopen("http://web/healthz").status)'
+
+
+4. FIX
+kubectl -n practice patch service web -p '{"spec":{"ports":[{"port":80,"targetPort":8080}]}}'
+
+
+5. VERIFY
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;print(urllib.request.urlopen("http://web/healthz").status)'
+kubectl -n practice get service web
+
+
+EXPECT: Service targetPort is wrong; Pod endpoint listens on 8080.
+INTERVIEW: Compare Service targetPort to the container listening port.
+
+
+================================================================
+QUESTION 14. Service selector does not match Pod labels (K8S-014)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-014
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice patch service web -p '{"spec":{"selector":{"app":"wrong"}}}'
+
+
+3. FIND
+kubectl -n practice get pods --show-labels
+kubectl -n practice get service web -o yaml
+kubectl -n practice get endpointslices -l kubernetes.io/service-name=web
+
+
+4. FIX
+kubectl -n practice patch service web -p '{"spec":{"selector":{"app":"web"}}}'
+
+
+5. VERIFY
+kubectl -n practice get endpointslices -l kubernetes.io/service-name=web
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;print(urllib.request.urlopen("http://web/healthz").status)'
+
+
+EXPECT: Service has zero backend endpoints.
+INTERVIEW: Service selectors must match the labels on healthy Pods.
+
+
+================================================================
+QUESTION 15. ClusterIP reachable but server listens only on loopback (K8S-015)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-015
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set env deployment/web APP_BIND=127.0.0.1
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice logs deployment/web --tail=30
+kubectl -n practice describe pods -l app=web
+
+
+4. FIX
+kubectl -n practice set env deployment/web APP_BIND=0.0.0.0
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;print(urllib.request.urlopen("http://web/healthz").status)'
+
+
+EXPECT: The app binds to 127.0.0.1, not its Pod IP; Service requests fail.
+INTERVIEW: Check both Service routing and the address the application binds to.
+
+
+================================================================
+QUESTION 16. NodePort returns connection refused (K8S-016)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-016
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice expose deployment web --name=web-node --type=NodePort --port=80 --target-port=8080
+kubectl -n practice patch service web-node -p '{"spec":{"ports":[{"port":80,"targetPort":9999}]}}'
+
+
+3. FIND
+kubectl -n practice get service web-node
+kubectl -n practice describe service web-node
+kubectl -n practice get endpointslices -l kubernetes.io/service-name=web-node
+
+
+4. FIX
+kubectl -n practice patch service web-node -p '{"spec":{"ports":[{"port":80,"targetPort":8080}]}}'
+
+
+5. VERIFY
+kubectl -n practice get service web-node
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;print(urllib.request.urlopen("http://web-node/healthz").status)'
+
+
+EXPECT: NodePort exists but maps to a nonexistent backend container port.
+INTERVIEW: A NodePort may not be reachable directly from a Mac/Windows host without a Kind port mapping; investigate the in-cluster path first.
+
+NOTE: NodePort itself is inside the Docker node network. Verify the Service from inside the cluster; host-level NodePort access requires an explicit Kind mapping.
+
+
+================================================================
+QUESTION 17. Ingress HTTP 404 (K8S-017)
+Where: Local Kind + optional Traefik
+
+1. START HEALTHY
+./lab prepare K8S-017
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice apply -f manifests/ingress-bad-host.yaml
+
+
+3. FIND
+kubectl -n practice get ingress
+kubectl -n practice describe ingress web-ingress
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;u=urllib.request.Request("http://traefik.traefik.svc.cluster.local",headers={"Host":"practice.test"});print(urllib.request.urlopen(u).status)'
+
+
+4. FIX
+kubectl -n practice apply -f manifests/ingress.yaml
+
+
+5. VERIFY
+kubectl -n practice get ingress
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;u=urllib.request.Request("http://traefik.traefik.svc.cluster.local",headers={"Host":"practice.test"});print(urllib.request.urlopen(u).status)'
+
+
+EXPECT: Ingress host is wrong, so Traefik has no matching route.
+INTERVIEW: An HTTP 404 at the ingress controller often means no route matched the host/path.
+
+NOTE: Before prepare: install Helm and run ./lab addon ingress. This scenario changes a real Ingress object; controller image and chart are external dependencies.
+
+
+================================================================
+QUESTION 18. Ingress HTTP 502/503 (K8S-018)
+Where: Local Kind + optional Traefik
+
+1. START HEALTHY
+./lab prepare K8S-018
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice apply -f manifests/ingress-bad-backend.yaml
+
+
+3. FIND
+kubectl -n practice describe ingress web-ingress
+kubectl -n practice get services
+kubectl -n practice get endpointslices
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;u=urllib.request.Request("http://traefik.traefik.svc.cluster.local",headers={"Host":"practice.test"});urllib.request.urlopen(u)'
+
+
+4. FIX
+kubectl -n practice apply -f manifests/ingress.yaml
+
+
+5. VERIFY
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;u=urllib.request.Request("http://traefik.traefik.svc.cluster.local",headers={"Host":"practice.test"});print(urllib.request.urlopen(u).status)'
+
+
+EXPECT: Route matches but refers to a nonexistent Service.
+INTERVIEW: Check that the Ingress points to a Service that exists and has ready endpoints.
+
+NOTE: Depending on controller version, a missing backend can return HTTP 502, 503 or another error status. The failure must be observed, not assumed.
+
+
+================================================================
+QUESTION 19. DNS resolution fails inside a Pod (K8S-019)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-019
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice patch deployment web --type=merge -p '{"spec":{"template":{"spec":{"dnsPolicy":"None","dnsConfig":{"nameservers":["203.0.113.53"]}}}}}'
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice exec deployment/web -- cat /etc/resolv.conf
+kubectl -n practice exec deployment/web -- python -c 'import socket;print(socket.gethostbyname("kubernetes.default.svc.cluster.local"))'
+
+
+4. FIX
+kubectl -n practice patch deployment web --type=merge -p '{"spec":{"template":{"spec":{"dnsPolicy":"ClusterFirst","dnsConfig":null}}}}'
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice exec deployment/web -- python -c 'import socket;print(socket.gethostbyname("kubernetes.default.svc.cluster.local"))'
+
+
+EXPECT: The Pod uses a deliberately invalid DNS server address.
+INTERVIEW: Check /etc/resolv.conf before assuming CoreDNS itself is broken.
+
+
+================================================================
+QUESTION 20. Pods cannot reach backend Pod (K8S-020)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-020
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set env deployment/backend APP_BIND=127.0.0.1
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice logs deployment/backend --tail=20
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;urllib.request.urlopen("http://backend/healthz",timeout=3)'
+
+
+4. FIX
+kubectl -n practice set env deployment/backend APP_BIND=0.0.0.0
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/backend --timeout=120s
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;print(urllib.request.urlopen("http://backend/healthz").status)'
+
+
+EXPECT: The backend binds only to localhost; frontend cannot connect to the backend Service.
+INTERVIEW: Test connection from the client Pod and compare Service endpoints to the backend bind address.
+
+
+================================================================
+QUESTION 21. Readiness probe uses the wrong URL (K8S-021)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-021
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice patch deployment web --type=strategic -p '{"spec":{"template":{"spec":{"containers":[{"name":"web","readinessProbe":{"httpGet":{"path":"/wrong","port":8080}}}]}}}}'
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice describe pods -l app=web
+kubectl -n practice get events --sort-by=.metadata.creationTimestamp
+
+
+4. FIX
+kubectl -n practice patch deployment web --type=strategic -p '{"spec":{"template":{"spec":{"containers":[{"name":"web","readinessProbe":{"httpGet":{"path":"/readyz","port":8080}}}]}}}}'
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: readinessProbe checks /wrong instead of /readyz; Pod is Running, not Ready.
+INTERVIEW: A readiness failure removes endpoints without necessarily restarting the container.
+
+
+================================================================
+QUESTION 22. Liveness probe repeatedly restarts a healthy app (K8S-022)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-022
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice patch deployment web --type=strategic -p '{"spec":{"template":{"spec":{"containers":[{"name":"web","livenessProbe":{"httpGet":{"path":"/wrong","port":8080}}}]}}}}'
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice describe pods -l app=web
+kubectl -n practice get events --sort-by=.metadata.creationTimestamp
+
+
+4. FIX
+kubectl -n practice patch deployment web --type=strategic -p '{"spec":{"template":{"spec":{"containers":[{"name":"web","livenessProbe":{"httpGet":{"path":"/healthz","port":8080}}}]}}}}'
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: Wrong liveness URL causes the kubelet to kill the container.
+INTERVIEW: Differentiate a process crash from a kubelet-initiated restart after liveness failures.
+
+NOTE: Wait 15–30 seconds to see repeated liveness failures and restarts.
+
+
+================================================================
+QUESTION 23. Application cannot contact its API dependency (K8S-023)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-023
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set env deployment/web EXTERNAL_URL=http://backend-does-not-exist/healthz
+
+
+3. FIND
+kubectl -n practice get services
+kubectl -n practice logs deployment/web --tail=25
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;urllib.request.urlopen("http://127.0.0.1:8080/external")'
+
+
+4. FIX
+kubectl -n practice set env deployment/web EXTERNAL_URL=http://backend/healthz
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;print(urllib.request.urlopen("http://127.0.0.1:8080/external").status)'
+
+
+EXPECT: The frontend points to an invalid backend DNS name and returns HTTP 502.
+INTERVIEW: Verify the actual dependency URL, DNS and HTTP response before changing cluster networking.
+
+NOTE: The backend Service acts as a safe stand-in for an external API. Public internet egress and firewall behavior are different tests.
+
+
+================================================================
+QUESTION 24. NetworkPolicy blocks good traffic (K8S-024)
+Where: Separate Kind/VM cluster with Calico
+
+1. OPTIONAL SETUP (read note below; not runnable on ordinary Kind)
+
+
+2. BREAK
+kubectl -n practice apply -f manifests/networkpolicy-deny.yaml
+
+
+3. FIND
+kubectl -n practice get networkpolicy
+kubectl -n practice describe networkpolicy deny-web
+kubectl -n practice get pods --show-labels
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;urllib.request.urlopen("http://web/healthz",timeout=3)'
+
+
+4. FIX
+kubectl -n practice delete networkpolicy deny-web
+
+
+5. VERIFY
+kubectl -n practice get networkpolicy
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;print(urllib.request.urlopen("http://web/healthz").status)'
+
+
+EXPECT: Calico-enforced deny ingress policy blocks frontend-to-backend HTTP.
+INTERVIEW: NetworkPolicy is enforced by the CNI, not by the Kubernetes API object itself.
+
+NOTE: Create a tester Deployment first (kubectl -n practice create deployment tester --image=practice-web:1). NOT EXECUTABLE on the default Kind kindnet CNI. Follow official Calico-on-Kind setup in a SEPARATE disposable cluster, build/load the app there, and deploy manifests/base.yaml in namespace practice. The local ./lab prepare intentionally refuses this ID rather than pretending a policy was enforced.
+
+
+================================================================
+QUESTION 25. Worker node NotReady (K8S-025)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-025
+
+kubectl -n practice get pods
+
+
+2. BREAK
+docker stop interview-lab-worker
+
+
+3. FIND
+kubectl get nodes -o wide
+kubectl describe node interview-lab-worker
+kubectl get pods -A -o wide
+
+
+4. FIX
+docker start interview-lab-worker
+
+
+5. VERIFY
+kubectl wait --for=condition=Ready node/interview-lab-worker --timeout=180s
+kubectl get nodes
+
+
+EXPECT: The named worker is stopped as a Docker container; after a delay Kubernetes marks it NotReady.
+INTERVIEW: Distinguish a node failure from a single application Pod failure.
+
+NOTE: Use ONLY the named disposable Kind worker. This can take 40–120 seconds to show NotReady. Web may remain available if it runs on the other worker.
+
+
+================================================================
+QUESTION 26. Pod cannot schedule: insufficient CPU (K8S-026)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-026
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set resources deployment web --requests=cpu=10 --limits=cpu=10
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice describe pods -l app=web
+kubectl describe nodes
+
+
+4. FIX
+kubectl -n practice set resources deployment web --requests=cpu=20m --limits=cpu=200m
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: A Pod that requests 10 CPU cores exceeds the Kind worker node capacity.
+INTERVIEW: FailedScheduling and node Allocatable values reveal oversized CPU requests.
+
+
+================================================================
+QUESTION 27. Pod cannot schedule: insufficient memory (K8S-027)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-027
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set resources deployment web --requests=memory=100Gi --limits=memory=100Gi
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice describe pods -l app=web
+kubectl describe nodes
+
+
+4. FIX
+kubectl -n practice set resources deployment web --requests=memory=32Mi --limits=memory=128Mi
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: A 100Gi memory request cannot fit in the disposable Kind workers.
+INTERVIEW: Requests influence scheduling; limits influence runtime enforcement.
+
+
+================================================================
+QUESTION 28. Node taint blocks Pod scheduling (K8S-028)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-028
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl taint nodes interview-lab-worker interview=blocked:NoSchedule
+kubectl taint nodes interview-lab-worker2 interview=blocked:NoSchedule
+kubectl -n practice rollout restart deployment/web
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice describe pods -l app=web
+kubectl describe nodes
+
+
+4. FIX
+kubectl taint nodes interview-lab-worker interview:NoSchedule-
+kubectl taint nodes interview-lab-worker2 interview:NoSchedule-
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: All worker nodes have NoSchedule taint; a new Pod remains Pending.
+INTERVIEW: NoSchedule is checked for new Pods. Existing Pods are not evicted by that taint alone.
+
+NOTE: Changes ONLY the two disposable Kind workers. ./lab reset also removes these specific lab taints.
+
+
+================================================================
+QUESTION 29. Required node affinity matches no worker (K8S-029)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-029
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice patch deployment web --type=merge -p '{"spec":{"template":{"spec":{"affinity":{"nodeAffinity":{"requiredDuringSchedulingIgnoredDuringExecution":{"nodeSelectorTerms":[{"matchExpressions":[{"key":"lab","operator":"In","values":["no-such-node"]}]}]}}}}}}}'
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice describe pods -l app=web
+kubectl get nodes --show-labels
+
+
+4. FIX
+kubectl -n practice patch deployment web --type=merge -p '{"spec":{"template":{"spec":{"affinity":null}}}}'
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: A required node affinity rule asks for a label no Kind node has.
+INTERVIEW: Required affinity blocks scheduling when no node matches.
+
+
+================================================================
+QUESTION 30. PVC stuck Pending (K8S-030)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-030
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice apply -f manifests/pvc-bad.yaml
+
+
+3. FIND
+kubectl -n practice get pvc
+kubectl -n practice describe pvc broken-data
+kubectl get storageclass
+
+
+4. FIX
+kubectl -n practice delete pvc broken-data
+kubectl -n practice apply -f manifests/pvc-good.yaml
+kubectl -n practice apply -f manifests/consumer.yaml
+
+
+5. VERIFY
+kubectl -n practice get pvc
+kubectl -n practice wait --for=condition=Ready pod/volume-check --timeout=150s
+
+
+EXPECT: PVC refers to a StorageClass that does not exist.
+INTERVIEW: Check StorageClass, volume binding mode and provisioner events.
+
+NOTE: Kind typically installs a default local-path StorageClass; check kubectl get storageclass first. A WaitForFirstConsumer claim may remain Pending until a Pod uses it.
+
+
+================================================================
+QUESTION 31. Pod cannot mount the requested PVC (K8S-031)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-031
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice patch deployment storage-app --type=strategic -p '{"spec":{"template":{"spec":{"volumes":[{"name":"data","persistentVolumeClaim":{"claimName":"does-not-exist"}}]}}}}'
+
+
+3. FIND
+kubectl -n practice get pods
+kubectl -n practice describe deployment storage-app
+kubectl -n practice describe pods -l app=storage-app
+kubectl -n practice get pvc
+
+
+4. FIX
+kubectl -n practice patch deployment storage-app --type=strategic -p '{"spec":{"template":{"spec":{"volumes":[{"name":"data","persistentVolumeClaim":{"claimName":"lab-data"}}]}}}}'
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/storage-app --timeout=150s
+kubectl -n practice get pvc
+
+
+EXPECT: storage-app refers to an absent PVC and stays Pending with FailedMount.
+INTERVIEW: Compare Pod claimName to existing PVCs, then inspect Pod mount events.
+
+NOTE: Requires Kind local-path provisioning; ./lab prepare checks that a good PVC-mounted Pod starts.
+
+
+================================================================
+QUESTION 32. Container cannot write to persistent volume (K8S-032)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-032
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice patch deployment storage-app --type=strategic -p '{"spec":{"template":{"spec":{"containers":[{"name":"storage-app","volumeMounts":[{"name":"data","mountPath":"/data","readOnly":true}]}]}}}}'
+
+
+3. FIND
+kubectl -n practice get pods
+kubectl -n practice logs deployment/storage-app --previous
+kubectl -n practice describe pods -l app=storage-app
+
+
+4. FIX
+kubectl -n practice patch deployment storage-app --type=strategic -p '{"spec":{"template":{"spec":{"containers":[{"name":"storage-app","volumeMounts":[{"name":"data","mountPath":"/data","readOnly":false}]}]}}}}'
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/storage-app --timeout=150s
+kubectl -n practice exec deployment/storage-app -- cat /data/ready.txt
+
+
+EXPECT: A read-only volumeMount breaks the web app that writes to /data at startup.
+INTERVIEW: Check mount readOnly flag and filesystem permissions instead of assuming the volume is absent.
+
+
+================================================================
+QUESTION 33. Deployment rolling update cannot complete (K8S-033)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-033
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set image deployment/web web=practice-web:broken-release
+
+
+3. FIND
+kubectl -n practice get deployments
+kubectl -n practice get replicasets
+kubectl -n practice get pods -o wide
+kubectl -n practice describe deployment web
+
+
+4. FIX
+kubectl -n practice set image deployment/web web=practice-web:1
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get replicasets
+
+
+EXPECT: New ReplicaSet uses an unavailable image; old Pod often stays Ready.
+INTERVIEW: Check rollout status and new ReplicaSet rather than deleting the old healthy Pods.
+
+
+================================================================
+QUESTION 34. Bad release needs rollback (K8S-034)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-034
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set env deployment/web APP_MODE=unready
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice rollout history deployment/web
+kubectl -n practice describe pods -l app=web
+
+
+4. FIX
+kubectl -n practice rollout undo deployment/web
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+kubectl -n practice rollout history deployment/web
+
+
+EXPECT: An unhealthy new revision cannot become Ready.
+INTERVIEW: Rollback to the last known-good ReplicaSet when recovery is faster and safer than a hot fix.
+
+
+================================================================
+QUESTION 35. HPA does not scale because it cannot read metrics (K8S-035)
+Where: Local Kind + optional Metrics Server
+
+1. START HEALTHY
+./lab prepare K8S-035
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice autoscale deployment web --cpu=50% --min=1 --max=3
+
+
+3. FIND
+kubectl -n practice get hpa
+kubectl -n practice describe hpa web
+kubectl top pods -n practice
+
+
+4. FIX
+./lab addon metrics
+
+
+5. VERIFY
+kubectl top pods -n practice
+kubectl -n practice get hpa
+
+
+EXPECT: HPA reports unknown CPU utilization until metrics-server is installed.
+INTERVIEW: HPA requires the metrics API and a meaningful CPU request; scaling also requires sustained load.
+
+NOTE: Run BEFORE installing the metrics addon if you want to observe missing metrics. With the addon installed, the failure will no longer occur. A healthy HPA with metrics does NOT automatically scale unless there is sufficient load.
+
+
+================================================================
+QUESTION 36. PodDisruptionBudget blocks a node drain (K8S-036)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-036
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl drain interview-lab-worker --ignore-daemonsets --delete-emptydir-data --timeout=20s
+
+
+3. FIND
+kubectl get nodes
+kubectl -n practice get poddisruptionbudgets
+kubectl -n practice describe poddisruptionbudget web-pdb
+kubectl -n practice get pods -o wide
+
+
+4. FIX
+kubectl -n practice delete poddisruptionbudget web-pdb
+kubectl uncordon interview-lab-worker
+
+
+5. VERIFY
+kubectl get nodes
+kubectl -n practice get pods
+
+
+EXPECT: One web replica with minAvailable=1 cannot be evicted voluntarily.
+INTERVIEW: PDB is a voluntary disruption safety control. Plan additional capacity before a real production drain.
+
+NOTE: The drain is EXPECTED to time out and leave the worker cordoned. ./lab reset uncordons this worker.
+
+
+================================================================
+QUESTION 37. StatefulSet Pod fails to start (K8S-037)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-037
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set env statefulset/database APP_PORT=wrong
+
+
+3. FIND
+kubectl -n practice get statefulsets
+kubectl -n practice get pods
+kubectl -n practice logs database-0 --previous
+
+
+4. FIX
+kubectl -n practice set env statefulset/database APP_PORT=8080
+
+
+5. VERIFY
+kubectl -n practice rollout status statefulset/database --timeout=120s
+kubectl -n practice get pods
+
+
+EXPECT: StatefulSet database-0 crashes because APP_PORT is not numeric.
+INTERVIEW: StatefulSet Pod names are stable; inspect database-0 and the StatefulSet update.
+
+NOTE: This isolates StatefulSet process recovery; it does not require a real SQL server.
+
+
+================================================================
+QUESTION 38. ConfigMap change is not reflected (K8S-038)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-038
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice patch configmap lab-config -p '{"data":{"APP_MESSAGE":"NEW VALUE"}}'
+
+
+3. FIND
+kubectl -n practice get configmap lab-config -o yaml
+kubectl -n practice exec deployment/web -- printenv APP_MESSAGE
+kubectl -n practice get pods
+
+
+4. FIX
+kubectl -n practice rollout restart deployment/web
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice exec deployment/web -- printenv APP_MESSAGE
+
+
+EXPECT: Environment variables in an existing container remain unchanged after ConfigMap edit.
+INTERVIEW: ConfigMap changes do not automatically refresh env vars in existing containers.
+
+
+================================================================
+QUESTION 39. Secret key is missing: CreateContainerConfigError (K8S-039)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-039
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice patch deployment web --type=strategic -p '{"spec":{"template":{"spec":{"containers":[{"name":"web","env":[{"name":"API_KEY","valueFrom":{"secretKeyRef":{"name":"lab-secret","key":"missing"}}}]}]}}}}'
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice describe pods -l app=web
+kubectl -n practice get secret lab-secret
+
+
+4. FIX
+kubectl -n practice patch secret lab-secret -p '{"data":{"missing":"ZHVtbXk="}}'
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice exec deployment/web -- printenv API_KEY
+
+
+EXPECT: Pod requires missing key from lab-secret; it cannot create the container.
+INTERVIEW: The Pod event names the missing Secret/key; fix the key rather than repeatedly deleting Pods.
+
+NOTE: All values are dummy practice credentials. Do not paste real secrets into shell history.
+
+
+================================================================
+QUESTION 40. Kubernetes Job fails (K8S-040)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-040
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice apply -f manifests/secret-bad-job.yaml
+
+
+3. FIND
+kubectl -n practice get jobs
+kubectl -n practice get pods
+kubectl -n practice logs job/broken-job
+kubectl -n practice describe job broken-job
+
+
+4. FIX
+kubectl -n practice delete job broken-job
+kubectl -n practice apply -f manifests/job-good.yaml
+
+
+5. VERIFY
+kubectl -n practice wait --for=condition=complete job/recovered-job --timeout=120s
+kubectl -n practice logs job/recovered-job
+
+
+EXPECT: Job exits 7 and becomes Failed after retries.
+INTERVIEW: Check exit code, Job backoffLimit and completed/failed counts. Jobs are for finite tasks.
+
+
+================================================================
+QUESTION 41. Intermittent frontend timeouts (K8S-041)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-041
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set env deployment/web APP_MODE=slow
+
+
+3. FIND
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;urllib.request.urlopen("http://web/slow",timeout=2)'
+kubectl -n practice logs deployment/web --tail=30
+
+
+4. FIX
+kubectl -n practice set env deployment/web APP_MODE=normal
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;print(urllib.request.urlopen("http://web/slow",timeout=2).status)'
+
+
+EXPECT: The app becomes slow when APP_MODE=slow; a 2-second client timeout fails.
+INTERVIEW: Separate app response time from DNS resolution, connection setup and Pod health.
+
+NOTE: Real microservice timeouts can also involve network saturation and dependencies; this lab demonstrates a genuine timeout with one simple app.
+
+
+================================================================
+QUESTION 42. Node DiskPressure causes evictions (K8S-042)
+Where: Dedicated disposable Ubuntu/VM only
+
+1. OPTIONAL SETUP (read note below; not runnable on ordinary Kind)
+
+
+2. BREAK
+# No safe one-line disk-fill injection is provided for a shared Mac/Windows Docker disk.
+
+
+3. FIND
+kubectl get nodes
+kubectl describe nodes
+kubectl get pods -A --field-selector=status.phase=Failed
+kubectl get events -A --sort-by=.metadata.creationTimestamp
+
+
+4. FIX
+# On a dedicated VM: remove only your test fill file, restore free space, and restart the affected workload if required.
+
+
+5. VERIFY
+kubectl get nodes
+kubectl get pods -A
+
+
+EXPECT: Observe DiskPressure=True and Evicted only on a disposable VM with a dedicated test filesystem.
+INTERVIEW: Confirm actual node pressure and filesystem usage; avoid deleting random data or blindly restarting Pods.
+
+NOTE: NOT a supported automatic failure on local Kind: filling the host disk can damage other work. For a real experiment, use a dedicated VM/test disk with a size limit and a documented snapshot rollback. These are diagnosis prompts, NOT a falsely claimed executed failure.
+
+
+================================================================
+QUESTION 43. Memory pressure causes application instability (K8S-043)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-043
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice scale deployment/web --replicas=3
+kubectl -n practice set env deployment/web APP_MODE=allocate ALLOC_MB=200
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice describe pods -l app=web
+kubectl top nodes
+
+
+4. FIX
+kubectl -n practice set env deployment/web APP_MODE=normal ALLOC_MB-
+kubectl -n practice scale deployment/web --replicas=1
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get pods -o wide
+
+
+EXPECT: Several over-limit app containers enter OOMKilled/restart states; this is a safe proxy, NOT genuine Node MemoryPressure.
+INTERVIEW: Check container OOM, node MemoryPressure condition and resource requests separately.
+
+NOTE: This experiment creates real container OOMs. It does not reliably push the node into MemoryPressure; that requires a separate disposable VM and careful capacity controls.
+
+
+================================================================
+QUESTION 44. Service has no healthy EndpointSlices (K8S-044)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-044
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set env deployment/web APP_MODE=unready
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice get endpointslices -l kubernetes.io/service-name=web -o yaml
+kubectl -n practice describe pods -l app=web
+
+
+4. FIX
+kubectl -n practice set env deployment/web APP_MODE=normal
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice get endpointslices -l kubernetes.io/service-name=web
+
+
+EXPECT: A failing readiness check removes the Pod from ready Service endpoints.
+INTERVIEW: A Service object existing does not guarantee it has ready backends.
+
+
+================================================================
+QUESTION 45. Kubernetes API server is unreachable (K8S-045)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-045
+
+kubectl -n practice get pods
+
+
+2. BREAK
+docker pause interview-lab-control-plane
+
+
+3. FIND
+kubectl --request-timeout=5s get nodes
+docker ps -a --filter name=interview-lab-control-plane
+docker inspect interview-lab-control-plane --format '{{.State.Paused}}'
+
+
+4. FIX
+docker unpause interview-lab-control-plane
+
+
+5. VERIFY
+kubectl --request-timeout=20s get nodes
+kubectl -n practice get pods
+
+
+EXPECT: Pausing only the disposable Kind control-plane container stops API responses.
+INTERVIEW: If kubectl cannot connect, check kubeconfig, API endpoint and the control-plane process first.
+
+NOTE: Only on named disposable Kind control plane; commands targeting the API will fail while it is paused. ./lab reset recovers the paused container.
+
+
+================================================================
+QUESTION 46. kubelet on a worker stops responding (K8S-046)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-046
+
+kubectl -n practice get pods
+
+
+2. BREAK
+docker exec interview-lab-worker systemctl stop kubelet
+
+
+3. FIND
+docker exec interview-lab-worker systemctl is-active kubelet
+kubectl get nodes
+kubectl describe node interview-lab-worker
+
+
+4. FIX
+docker exec interview-lab-worker systemctl start kubelet
+
+
+5. VERIFY
+docker exec interview-lab-worker systemctl is-active kubelet
+kubectl wait --for=condition=Ready node/interview-lab-worker --timeout=180s
+
+
+EXPECT: The real kubelet service inside a disposable Kind worker is stopped.
+INTERVIEW: kubelet failure is a node-agent problem, not necessarily a control-plane outage.
+
+NOTE: Requires a Kind node image with systemd/kubelet service. If the command is unsupported, run this scenario on a dedicated Ubuntu kubeadm VM instead; do not claim it happened.
+
+
+================================================================
+QUESTION 47. CoreDNS failure breaks name resolution (K8S-047)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-047
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n kube-system scale deployment/coredns --replicas=0
+
+
+3. FIND
+kubectl -n kube-system get deployments
+kubectl -n kube-system get pods -l k8s-app=kube-dns
+kubectl -n practice exec deployment/web -- python -c 'import socket;print(socket.gethostbyname("kubernetes.default.svc.cluster.local"))'
+
+
+4. FIX
+kubectl -n kube-system scale deployment/coredns --replicas=2
+
+
+5. VERIFY
+kubectl -n kube-system rollout status deployment/coredns --timeout=150s
+kubectl -n practice exec deployment/web -- python -c 'import socket;print(socket.gethostbyname("kubernetes.default.svc.cluster.local"))'
+
+
+EXPECT: Scaling CoreDNS to zero stops new cluster DNS responses.
+INTERVIEW: Investigate DNS deployment health before changing application Services.
+
+NOTE: This changes a CORE cluster component, but ONLY in the disposable named Kind cluster. ./lab reset restores CoreDNS replicas to 2.
+
+
+================================================================
+QUESTION 48. TLS trust / Kubernetes kubeconfig error (K8S-048)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-048
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl config view --raw > scratch/trust-broken.yaml
+kubectl --kubeconfig scratch/trust-broken.yaml config unset clusters.kind-interview-lab.certificate-authority-data
+kubectl --kubeconfig scratch/trust-broken.yaml config set-cluster kind-interview-lab --certificate-authority="$PWD/manifests/not-the-real-ca.pem" --embed-certs
+kubectl --kubeconfig scratch/trust-broken.yaml get nodes
+
+
+3. FIND
+kubectl --kubeconfig scratch/trust-broken.yaml config view --minify
+kubectl --kubeconfig scratch/trust-broken.yaml get nodes
+kubectl --context kind-interview-lab get nodes
+
+
+4. FIX
+rm -f scratch/trust-broken.yaml
+
+
+5. VERIFY
+kubectl --context kind-interview-lab get nodes
+
+
+EXPECT: A COPIED kubeconfig uses the wrong CA, producing an x509 trust error.
+INTERVIEW: Keep the real kubeconfig untouched and compare its CA trust with the broken copy.
+
+NOTE: This reproduces a REAL client TLS trust mismatch, not actual certificate expiration. Requires curl etc? No; the public wrong-CA PEM is included in manifests/.
+
+
+================================================================
+QUESTION 49. RBAC Forbidden for a ServiceAccount (K8S-049)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-049
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl --as=system:serviceaccount:practice:reader -n practice get pods
+
+
+3. FIND
+kubectl auth can-i list pods --as=system:serviceaccount:practice:reader -n practice
+kubectl -n practice get serviceaccount reader
+kubectl -n practice get rolebindings
+
+
+4. FIX
+kubectl -n practice create role pod-reader --verb=get,list,watch --resource=pods
+kubectl -n practice create rolebinding pod-reader-binding --role=pod-reader --serviceaccount=practice:reader
+
+
+5. VERIFY
+kubectl auth can-i list pods --as=system:serviceaccount:practice:reader -n practice
+kubectl --as=system:serviceaccount:practice:reader -n practice get pods
+
+
+EXPECT: An unprivileged practice ServiceAccount cannot list Pods.
+INTERVIEW: Use kubectl auth can-i, then grant the smallest necessary namespaced Role.
+
+NOTE: The initial kubectl get is EXPECTED to show Forbidden; this lab does not require any real cloud IAM permissions.
+
+
+================================================================
+QUESTION 50. Three cascading failures: backend, Service and frontend (K8S-050)
+Where: Local lab
+
+1. START HEALTHY
+./lab prepare K8S-050
+
+kubectl -n practice get pods
+
+
+2. BREAK
+kubectl -n practice set env deployment/backend APP_MODE=crash
+kubectl -n practice patch service backend -p '{"spec":{"selector":{"app":"wrong"}}}'
+kubectl -n practice set env deployment/web EXTERNAL_URL=http://missing-backend/healthz
+
+
+3. FIND
+kubectl -n practice get pods -o wide
+kubectl -n practice get services
+kubectl -n practice get endpointslices
+kubectl -n practice logs deployment/backend --previous
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;urllib.request.urlopen("http://127.0.0.1:8080/external")'
+
+
+4. FIX
+kubectl -n practice set env deployment/backend APP_MODE=normal
+kubectl -n practice patch service backend -p '{"spec":{"selector":{"app":"backend"}}}'
+kubectl -n practice set env deployment/web EXTERNAL_URL=http://backend/healthz
+
+
+5. VERIFY
+kubectl -n practice rollout status deployment/backend --timeout=120s
+kubectl -n practice rollout status deployment/web --timeout=120s
+kubectl -n practice exec deployment/web -- python -c 'import urllib.request;print(urllib.request.urlopen("http://127.0.0.1:8080/external").status)'
+
+
+EXPECT: Backend crashes, its Service selector is wrong, and frontend points at a missing dependency.
+INTERVIEW: Start at the user-visible symptom, trace frontend-to-backend, fix each proven fault and verify the full traffic path.
+
+
+DONE: ./lab reset ; ./lab cleanup --yes
