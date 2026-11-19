@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="A practice flight that explains DevSecOps as an airport journey. Quick trip and Full tour views.">
+<title>DevSecOps Flightpath</title>
+<style>
+:root{
+  --ink:#0f2440;--muted:#5f7189;--line:#e3eaf2;--sky:#eef6ff;--air:#4b6b8a;--soft:#f3f6fa;
+  --crew:#2167d8;--crew-soft:#e8f1ff;
+  --secu:#0d8f86;--secu-soft:#dff5f2;
+  --both:#6f55d6;--both-soft:#f0ecff;
+}
+/* the two modes get their own look */
+body.simple{--mode:#2167d8;--bar-bg:#fff;--bar-ink:#0f2440;--bar-line:#e3eaf2;--hero-bg:linear-gradient(180deg,#fff,#e6f1ff);--hero-ink:#0f2440;--hero-muted:#5f7189;--chip:#f3f6fa}
+body.detailed{--mode:#1b2f57;--bar-bg:#14284d;--bar-ink:#fff;--bar-line:#14284d;--hero-bg:linear-gradient(120deg,#14284d,#1f4a86);--hero-ink:#fff;--hero-muted:#c9d9ee;--chip:rgba(255,255,255,.12)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#fff;color:var(--ink);font:15px/1.55 Inter,ui-sans-serif,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+a{color:inherit;text-decoration:none}
+button{font:inherit;cursor:pointer}
+svg.i{width:24px;height:24px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.wrap{max-width:1200px;margin:0 auto;padding:0 28px}
+body.simple .d,body.detailed .s{display:none!important}
+.devops{--t:var(--crew);--ts:var(--crew-soft)}
+.secops{--t:var(--secu);--ts:var(--secu-soft)}
+.shared{--t:var(--both);--ts:var(--both-soft)}
+button:focus-visible,a:focus-visible{outline:3px solid #8cc4ff;outline-offset:2px}
+
+/* slim sticky bar */
+.top{background:var(--bar-bg);color:var(--bar-ink);border-bottom:1px solid var(--bar-line);position:sticky;top:0;z-index:20;transition:background .35s,color .35s}
+.top .wrap{height:54px;display:flex;align-items:center;gap:16px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:800;letter-spacing:-.3px;white-space:nowrap}
+.brand .logo{width:30px;height:30px;border-radius:9px;background:var(--crew);color:#fff;display:grid;place-items:center}
+.brand .logo svg{width:18px;height:18px}
+.chips{display:flex;gap:2px;margin:0 auto;overflow-x:auto;scrollbar-width:none}
+.chips a{font-size:12.5px;font-weight:600;padding:6px 10px;border-radius:8px;opacity:.72;white-space:nowrap}
+.chips a:hover,.chips a.cur{opacity:1;background:var(--chip)}
+.seg{display:flex;background:var(--chip);border-radius:11px;padding:3px;gap:2px;margin-left:auto}
+.chips + .seg{margin-left:0}
+.seg button{border:0;background:transparent;border-radius:8px;padding:6px 12px;font-size:12.5px;font-weight:700;color:inherit;opacity:.75;display:flex;align-items:center;gap:6px;white-space:nowrap}
+.seg button svg{width:15px;height:15px}
+body.simple .seg button.on{background:var(--crew);color:#fff;opacity:1}
+body.detailed .seg button.on{background:#fff;color:#14284d;opacity:1}
+
+/* compact hero */
+.hero{background:var(--hero-bg);color:var(--hero-ink);transition:background .35s,color .35s;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1fr 400px;gap:36px;align-items:center;padding-top:24px;padding-bottom:10px}
+.mode-badge{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:800;letter-spacing:1.2px;text-transform:uppercase;border-radius:99px;padding:5px 13px 5px 9px}
+body.simple .mode-badge{background:var(--crew);color:#fff}
+body.detailed .mode-badge{background:#fff;color:#14284d}
+.mode-badge svg{width:16px;height:16px}
+.hero h1{font-size:clamp(26px,3.2vw,36px);line-height:1.12;letter-spacing:-1px;margin:10px 0 8px}
+.hero p{margin:0;color:var(--hero-muted);font-size:15px;max-width:560px}
+.hero .swap{margin-top:12px;border:1.5px solid currentColor;background:transparent;color:inherit;border-radius:10px;padding:7px 13px;font-size:13px;font-weight:700;display:inline-flex;gap:7px;align-items:center}
+.hero .swap svg{width:16px;height:16px}
+.bp{display:grid;grid-template-columns:1fr 96px;background:#fff;color:var(--ink);border-radius:16px;box-shadow:0 12px 30px rgba(10,30,70,.18);transform:rotate(-1.5deg)}
+.bp-main{padding:12px 16px;border-right:2px dashed #d5e1ee}
+.bp-head{display:flex;justify-content:space-between;font-size:9.5px;font-weight:800;letter-spacing:1.3px;color:var(--muted)}
+.bp-head b{color:var(--crew)}
+.bp-route{display:flex;align-items:center;gap:10px;margin:4px 0 6px}
+.bp-route .code{font-size:24px;font-weight:800;letter-spacing:-1px;line-height:1.1}
+.bp-route .fly{flex:1;display:flex;align-items:center;gap:6px;color:var(--crew)}
+.bp-route .fly:before,.bp-route .fly:after{content:"";flex:1;border-top:2px dashed #b9cde2}
+.bp-route .fly svg{width:18px;height:18px;transform:rotate(90deg);fill:currentColor;stroke:none}
+.bp-fields{display:flex;justify-content:space-between;gap:10px}
+.bp-fields small{display:block;font-size:8.5px;font-weight:800;letter-spacing:1px;color:var(--muted)}
+.bp-fields b{font-size:12.5px}
+.bp-stub{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px}
+.bp-stub svg{width:44px;height:44px}
+.bp-stub .ok{font-size:9px;font-weight:800;letter-spacing:1px;color:var(--secu);background:var(--secu-soft);border-radius:99px;padding:2px 8px}
+.runway{position:relative;height:34px;margin-top:8px}
+.runway:before{content:"";position:absolute;left:44px;right:52px;top:16px;border-top:2px dashed currentColor;opacity:.3}
+.runway b{position:absolute;top:7px;font-size:11px;letter-spacing:1px;opacity:.7}
+.runway b:last-of-type{right:0}
+.runway .jet{position:absolute;top:5px;left:44px;animation:fly 11s linear infinite}
+.runway .jet svg{width:22px;height:22px;transform:rotate(90deg);fill:currentColor;stroke:none}
+@keyframes fly{from{left:44px}to{left:calc(100% - 78px)}}
+
+/* bands = clear separation between sections */
+.band{padding:34px 0 38px;border-top:1px solid var(--line);scroll-margin-top:54px}
+.b-white{background:#fff}.b-sky{background:#eef6ff}.b-mint{background:#eefaf7}.b-lav{background:#f5f2ff}.b-grey{background:#f6f8fb}
+.sh{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.sh-ic{width:46px;height:46px;border-radius:14px;background:var(--mode);color:#fff;display:grid;place-items:center;flex:none;transition:background .35s}
+.sh small{font-size:11px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted)}
+.sh h2{margin:0;font-size:23px;letter-spacing:-.6px;line-height:1.2}
+.sh p{margin:2px 0 0;color:var(--muted);font-size:13.5px;max-width:720px}
+.swapfx{animation:fadeUp .45s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* briefing */
+.brief{display:flex;gap:14px;align-items:center;background:var(--crew-soft);border-radius:16px;padding:12px 18px;margin-bottom:20px}
+.brief .b-ic{width:40px;height:40px;border-radius:50%;background:#fff;color:var(--crew);display:grid;place-items:center;flex:none}
+.brief p{margin:0;font-size:13.5px;color:#34506e}
+.brief b{color:var(--ink)}
+
+/* staff legend */
+.legend{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.legend button{text-align:left;background:#fff;border:2px solid var(--line);border-radius:16px;padding:0;overflow:hidden;color:var(--ink);display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;transition:border-color .15s,box-shadow .15s}
+.legend button.on{border-color:var(--t);box-shadow:0 0 0 3px var(--ts)}
+.legend .lg{padding:11px 13px;display:flex;gap:10px;align-items:center}
+.legend .lg.r{background:var(--ts)}
+.legend .lg i{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;flex:none}
+.legend .lg.l i{background:var(--t);color:#fff}
+.legend .lg.r i{background:#fff;color:var(--t)}
+.legend .lg i svg{width:20px;height:20px}
+.legend small{display:block;font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;color:var(--muted)}
+.legend b{font-size:14px}
+.legend .is{display:grid;place-items:center;font-weight:800;color:var(--t);padding:0 2px}
+.hint{font-size:12.5px;color:var(--muted);margin:10px 2px 0}
+
+/* four parts */
+.parts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.part{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;position:relative}
+.part .p-ic{width:40px;height:40px;border-radius:12px;background:var(--sky);color:var(--crew);display:grid;place-items:center}
+.part b{display:block;font-size:15px;margin-top:8px}
+.part em{font-style:normal;font-size:12px;font-weight:700;color:var(--crew)}
+.part p{margin:4px 0 0;font-size:12.5px;color:var(--muted)}
+.part:not(:last-child):after{content:"›";position:absolute;right:-11px;top:50%;transform:translateY(-50%);font-size:22px;font-weight:800;color:#9bb0c6;z-index:1}
+
+/* ticket cards */
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.cp{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 3px 10px rgba(20,50,90,.05);scroll-margin-top:70px;transition:transform .18s,box-shadow .18s,opacity .2s}
+.cp:hover{transform:translateY(-4px);box-shadow:0 16px 32px rgba(20,50,90,.12)}
+.cp:target{box-shadow:0 0 0 4px var(--ts),0 0 0 6px var(--t)}
+.cp.dim{opacity:.18}
+.cp-head{background:var(--t);color:#fff;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 14px}
+.cp-head .no{font-size:24px;font-weight:800;line-height:1;letter-spacing:-.5px;display:flex;align-items:baseline;gap:6px}
+.cp-head .no small{font-size:9.5px;font-weight:800;letter-spacing:1.4px;opacity:.85}
+.cp-head .who{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;background:rgba(255,255,255,.18);border-radius:99px;padding:4px 11px 4px 8px}
+.cp-head .who svg{width:15px;height:15px}
+.rowx{display:grid;grid-template-columns:50px 1fr;gap:12px;align-items:center;padding:13px 14px}
+.rowx.air{background:var(--sky)}.rowx.tech{background:var(--ts)}
+.rowx .ic{width:50px;height:50px;border-radius:14px;background:#fff;display:grid;place-items:center;box-shadow:0 2px 6px rgba(20,50,90,.07)}
+.rowx.air .ic{color:var(--air)}.rowx.tech .ic{color:var(--t)}
+.rowx .ic svg{width:28px;height:28px}
+.rowx small{font-size:9.5px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:5px}
+.rowx small svg{width:12px;height:12px}
+.rowx.tech small{color:var(--t)}
+.rowx h3{margin:1px 0 0;font-size:16px;line-height:1.25;letter-spacing:-.2px}
+.eq{height:0;position:relative;z-index:1}
+.eq span{position:absolute;left:26px;top:-13px;width:26px;height:26px;border-radius:50%;background:#fff;border:2px solid var(--t);color:var(--t);display:grid;place-items:center}
+.eq svg{width:14px;height:14px;stroke-width:2.4}
+.say{margin:0;padding:12px 14px 4px;font-size:13.5px;color:#405670}
+.facts{padding:6px 14px 0;display:flex;flex-direction:column;gap:5px}
+.fact{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;color:#3d536d}
+.fact svg{width:15px;height:15px;color:var(--t);margin-top:2px}
+.fact b{color:var(--ink)}
+.tools{margin-top:auto;padding:12px 14px 14px}
+.tools:before{content:"";display:block;border-top:2px dashed var(--line);margin-bottom:10px}
+.tools small{font-size:9.5px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:5px;margin-bottom:6px}
+.tools small svg{width:13px;height:13px}
+.tools div{display:flex;flex-wrap:wrap;gap:5px}
+.tools span{font-size:11.5px;font-weight:600;background:var(--soft);border:1px solid var(--line);border-radius:7px;padding:2px 8px;color:#2f4763}
+.inflight{grid-column:span 2;border-radius:18px;background:linear-gradient(135deg,#fff,#dcecff);border:1px solid #cfe0f5;padding:22px 24px;display:flex;flex-direction:column;justify-content:center;gap:12px}
+.inflight h3{margin:0;font-size:18px}
+.inflight p{margin:0;font-size:14px;color:#405670;max-width:520px}
+.doors{display:grid;grid-template-columns:1fr 2fr 4fr;gap:6px;max-width:520px}
+.doors span{text-align:center;font-size:11.5px;font-weight:800;border-radius:8px;padding:8px 4px;background:var(--crew);color:#fff}
+.doors span:nth-child(1){opacity:.55}.doors span:nth-child(2){opacity:.78}
+
+/* full itinerary */
+.itin{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px 22px 22px}
+.row{display:grid;grid-template-columns:84px repeat(9,minmax(0,1fr))}
+.row + .row{margin-top:22px;padding-top:18px;border-top:1px dashed var(--line)}
+.head{grid-row:1;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:800;margin:0 3px 10px;padding:6px 10px;border-radius:9px;background:var(--soft);white-space:nowrap;overflow:hidden}
+.head svg{width:17px;height:17px;color:var(--crew)}
+.lane-l{grid-column:1;font-size:10px;font-weight:800;letter-spacing:.9px;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:5px;padding-right:6px}
+.lane-l svg{width:15px;height:15px}
+.lane-bg{grid-row:2;border-radius:14px;background:var(--sky)}
+.track{grid-row:3;align-self:center;border-top:2px dashed #c3d3e4;margin:0 44px}
+.stop{display:contents}
+.stop>*{grid-column:var(--c);z-index:1;transition:opacity .2s}
+.stop.dim>*{opacity:.16}
+.stop .a,.stop .p{display:flex;flex-direction:column;align-items:center;text-align:center;gap:5px;font-size:12px;font-weight:600;line-height:1.25;padding:10px 4px}
+.stop .a{grid-row:2;justify-content:flex-end}.stop .a svg{color:var(--air)}
+.stop .p{grid-row:4;justify-content:flex-start;background:var(--ts);border-radius:12px;margin:0 3px}.stop .p svg{color:var(--t)}
+.node{grid-row:3;justify-self:center;width:34px;height:34px;border-radius:50%;background:var(--t);color:#fff;font-weight:800;font-size:13px;display:grid;place-items:center;margin:8px 0;box-shadow:0 0 0 4px #fff;transition:transform .15s}
+.node:hover{transform:scale(1.15)}
+.span,.where{margin:0 3px;border-radius:8px;padding:6px 10px;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:6px}
+.span svg,.where svg{width:14px;height:14px;flex:none}
+.span{grid-row:5;margin-top:10px;background:#1b2f57;color:#fff;font-weight:700}
+.span.alt{background:#40587a}
+.where{grid-row:6;margin-top:5px;color:#44596f;border:1px solid var(--line);background:var(--soft);font-weight:600}
+.again{grid-row:2/7;grid-column:9/11;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;margin-left:10px;border:2px dashed #b9cde2;border-radius:16px;background:var(--sky);color:var(--crew);padding:12px;font-size:12px;font-weight:700}
+.again svg{width:30px;height:30px}
+.again small{font-weight:600;color:var(--muted)}
+.mhead,.mtag{display:none}
+
+/* airport map */
+.terms{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.term{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}
+.term .t-ic{width:44px;height:44px;border-radius:13px;background:var(--both-soft);color:var(--both);display:grid;place-items:center}
+.term h3{margin:10px 0 2px;font-size:17px}
+.term .real{font-size:12px;font-weight:700;color:var(--both)}
+.term p{margin:8px 0 0;font-size:13px;color:var(--muted)}
+.term p b{color:var(--ink)}
+.panel{background:#fff;border:1px solid var(--line);border-radius:20px;padding:20px 22px;margin-top:14px}
+.panel h3{margin:0 0 4px;font-size:17px}
+.panel > p{margin:0 0 14px;font-size:13.5px;color:var(--muted)}
+.git{overflow-x:auto}
+.git svg{min-width:640px;width:100%;height:auto;display:block}
+.ladder{display:grid;grid-template-columns:1fr 88px 1fr 88px 1fr 88px 1.15fr;align-items:stretch}
+.env{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fcfdfe;display:flex;flex-direction:column;gap:5px}
+.env .e-ic{width:40px;height:40px;border-radius:12px;background:var(--sky);color:var(--crew);display:grid;place-items:center}
+.env b{font-size:14px}
+.env em{font-style:normal;font-size:11.5px;font-weight:700;color:var(--crew)}
+.env p{margin:0;font-size:12.5px;color:var(--muted)}
+.hop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10.5px;font-weight:700;color:var(--muted);text-align:center;padding:0 6px}
+.hop svg{color:#9bb0c6}
+.rule{margin-top:14px;display:flex;gap:12px;align-items:center;background:var(--sky);border-radius:14px;padding:12px 16px;font-size:13.5px;color:#34506e}
+.rule svg{color:var(--crew)}
+.rule b{color:var(--ink)}
+
+/* stopped + tower */
+.fail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.fc{border:1px solid var(--line);border-radius:16px;padding:18px;background:#fff}
+.fc .badge{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:var(--sky);color:var(--crew)}
+.fc h3{margin:10px 0 8px;font-size:15px}
+.fc p{margin:0 0 6px;font-size:13px;color:#405670}
+.fc p b{color:var(--ink)}
+.tower{display:grid;grid-template-columns:auto 1fr auto;gap:20px;align-items:center}
+.tower .big{width:60px;height:60px;border-radius:18px;background:#fff;color:var(--secu);display:grid;place-items:center}
+.tower .big svg{width:32px;height:32px}
+.tower h3{margin:0 0 4px;font-size:18px}
+.tower p{margin:0;color:#3f6660;font-size:14px}
+.tower button{border:0;background:var(--mode);color:#fff;font-weight:700;border-radius:12px;padding:12px 18px;display:flex;gap:9px;align-items:center;white-space:nowrap}
+.tower button svg{width:18px;height:18px}
+footer{background:#fff;border-top:1px solid var(--line);padding:16px 0 28px;color:var(--muted);font-size:12px}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+/* toast = the "you have switched" sign */
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,30px);opacity:0;pointer-events:none;background:var(--mode);color:#fff;border:2px solid #fff;border-radius:99px;padding:12px 22px 12px 16px;font-size:14px;font-weight:700;display:flex;gap:10px;align-items:center;box-shadow:0 14px 34px rgba(10,30,70,.3);transition:opacity .3s,transform .3s;z-index:50}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media(max-width:1000px){
+  .chips{display:none}
+  .hero .wrap{grid-template-columns:1fr}
+  .bp{max-width:420px}
+  .legend{grid-template-columns:1fr}
+  .parts{grid-template-columns:1fr 1fr}.part:after{display:none}
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .fail-grid,.terms{grid-template-columns:1fr}
+  .tower{grid-template-columns:auto 1fr}.tower button{grid-column:1/-1;justify-content:center}
+  .row{display:block}
+  .row>.lane-l,.row>.lane-bg,.row>.track,.row>.span,.row>.where{display:none}
+  .head{display:inline-flex;margin:14px 0 8px}
+  .mhead{display:grid;grid-template-columns:1fr 46px 1fr;font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:8px}
+  .mhead span:first-child{text-align:right}.mhead span:last-child{grid-column:3}
+  .stop{display:grid;grid-template-columns:1fr 46px 1fr;align-items:center;position:relative;padding:5px 0}
+  .stop>*{grid-column:auto;grid-row:auto!important}
+  .stop:before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:2px dashed #c9d7e6}
+  .stop .a,.stop .p{padding:6px 8px;gap:8px;font-size:13px;margin:0}
+  .stop .a{flex-direction:row-reverse;justify-content:flex-start;text-align:right}
+  .stop .p{flex-direction:row;text-align:left}
+  .node{margin:0}
+  .mtag{display:block;font-style:normal;font-size:10px;font-weight:700;color:var(--muted)}
+  .again{margin:14px 0 0;flex-direction:row;justify-content:flex-start;text-align:left}
+  .ladder{grid-template-columns:1fr}
+  .hop{flex-direction:row;padding:8px 0}.hop svg{transform:rotate(90deg)}
+}
+@media(max-width:720px){
+  .wrap{padding:0 16px}
+  .brand span.name{display:none}
+  .grid,.parts{grid-template-columns:1fr}
+  .inflight{grid-column:auto}
+  .band{padding:26px 0 30px}
+  .itin{padding:14px}
+}
+@media(prefers-reduced-motion:reduce){.runway .jet,.swapfx{animation:none}html{scroll-behavior:auto}}
+@media print{
+  @page{size:A4;margin:12mm}
+  body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .top,.toast,.hero .swap,.tower button{display:none}
+  .cp,.fc,.itin,.panel,.term,.part{break-inside:avoid;box-shadow:none}
+  .bp{transform:none;box-shadow:none;border:1px solid var(--line)}
+}
+</style>
+</head>
+<body class="simple">
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="logo" data-icon="plane"></span><span class="name">DevSecOps Flightpath</span></a>
+    <nav class="chips" aria-label="Jump to a section">
+      <a href="#staff">Airport staff</a>
+      <a class="s" href="#parts">Trip in 4 parts</a>
+      <a class="d" href="#route">Itinerary</a>
+      <a class="d" href="#map">Airport map</a>
+      <a href="#leg1">Departure</a>
+      <a href="#leg2">Flight</a>
+      <a href="#leg3">Arrival</a>
+      <a href="#stopped">If stopped</a>
+    </nav>
+    <div class="seg" role="group" aria-label="Choose your view">
+      <button class="on" data-mode="simple" aria-pressed="true"><i data-icon="ticket"></i>Quick trip</button>
+      <button data-mode="detailed" aria-pressed="false"><i data-icon="globe"></i>Full tour</button>
+    </div>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <span class="mode-badge"><i data-icon="ticket" id="modeIcon"></i><span id="modeBadge">Quick trip · simple view</span></span>
+      <h1>Every release needs a boarding pass.</h1>
+      <p id="modeText">Software reaches its users the way a passenger gets through an airport. Here are the 16 stops in plain words.</p>
+      <button class="swap" id="modeSwap"><i data-icon="arrow"></i><span>Switch to the Full tour</span></button>
+    </div>
+    <div class="bp" aria-label="Boarding pass for the demo passenger">
+      <div class="bp-main">
+        <div class="bp-head"><span>BOARDING PASS</span><b>DEMO AIRLINES</b></div>
+        <div class="bp-route"><div class="code">DEV</div><div class="fly" data-icon="plane"></div><div class="code">PRD</div></div>
+        <div class="bp-fields">
+          <div><small>PASSENGER</small><b>my-app</b></div><div><small>FLIGHT NO.</small><b>v1.4.0</b></div>
+          <div><small>STOPS</small><b>16</b></div><div><small>TICKET</small><b id="bpClass">Quick trip</b></div>
+        </div>
+      </div>
+      <div class="bp-stub">
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M18 14v-4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v4" fill="none" stroke="#2167d8" stroke-width="2.4" stroke-linecap="round"/>
+          <rect x="7" y="14" width="34" height="26" rx="7" fill="#e8f1ff" stroke="#2167d8" stroke-width="2.4"/>
+          <circle cx="18.5" cy="25" r="2.2" fill="#0f2440"/><circle cx="29.5" cy="25" r="2.2" fill="#0f2440"/>
+          <path d="M19.5 31.5c2.5 3 6.5 3 9 0" fill="none" stroke="#0f2440" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M14 40v3M34 40v3" stroke="#2167d8" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+        <span class="ok">CLEARED</span>
+      </div>
+    </div>
+  </div>
+  <div class="wrap" style="display:block;padding-top:0;padding-bottom:6px">
+    <div class="runway" aria-hidden="true"><b>DEV</b><span class="jet" data-icon="plane"></span><b>PROD</b></div>
+  </div>
+</section>
+
+<main id="main">
+
+<!-- STAFF -->
+<section class="band b-white" id="staff">
+  <div class="wrap">
+    <div class="brief"><span class="b-ic" data-icon="megaphone"></span>
+      <p><b>Pre-flight briefing:</b> this is a practice flight. We use an airport trip as a picture of how software travels safely to its users. Every airline plans its route a little differently — and so does every software team.</p></div>
+    <div class="sh"><span class="sh-ic" data-icon="users"></span><div><small>Start here</small><h2>Meet the airport staff</h2>
+      <p>Three kinds of staff, three colours. Every stop on this page wears the colour of whoever is in charge of it.</p></div></div>
+    <div class="legend" role="group" aria-label="Spotlight stops by staff">
+      <button class="devops" data-f="devops" aria-pressed="false">
+        <span class="lg l"><i data-icon="plane"></i><span><small>At the airport</small><b>Flight crew</b></span></span><span class="is">=</span>
+        <span class="lg r"><i data-icon="code"></i><span><small>In DevSecOps</small><b>DevOps team</b></span></span></button>
+      <button class="secops" data-f="secops" aria-pressed="false">
+        <span class="lg l"><i data-icon="shield"></i><span><small>At the airport</small><b>Security officers</b></span></span><span class="is">=</span>
+        <span class="lg r"><i data-icon="key"></i><span><small>In DevSecOps</small><b>SecOps team</b></span></span></button>
+      <button class="shared" data-f="shared" aria-pressed="false">
+        <span class="lg l"><i data-icon="users"></i><span><small>At the airport</small><b>Crew + security</b></span></span><span class="is">=</span>
+        <span class="lg r"><i data-icon="stamp"></i><span><small>In DevSecOps</small><b>Both teams</b></span></span></button>
+    </div>
+    <p class="hint">Tap a staff card to spotlight their stops. Tap it again to see everyone.</p>
+  </div>
+</section>
+
+<!-- SIMPLE: four parts -->
+<section class="band b-sky s" id="parts">
+  <div class="wrap">
+    <div class="sh"><span class="sh-ic" data-icon="pin"></span><div><small>The big picture</small><h2>The whole trip in four parts</h2>
+      <p>Before the details, here is the route from your front door to the destination.</p></div></div>
+    <div class="parts">
+      <div class="part"><span class="p-ic" data-icon="home"></span><b>At home</b><em>Stops 1–2 · Plan and code</em><p>Book the trip and pack the bag.</p></div>
+      <div class="part"><span class="p-ic" data-icon="desk"></span><b>Check-in hall</b><em>Stops 3–6 · CI</em><p>The bag is scanned and you get a boarding pass.</p></div>
+      <div class="part"><span class="p-ic" data-icon="takeoff"></span><b>Gates and flight</b><em>Stops 7–13 · CD</em><p>Passport, boarding, flying and landing.</p></div>
+      <div class="part"><span class="p-ic" data-icon="tower"></span><b>At the destination</b><em>Stops 14–16 · Operate</em><p>Out of the airport, with the tower still watching.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- DETAILED: itinerary -->
+<section class="band b-sky d" id="route">
+  <div class="wrap">
+    <div class="sh"><span class="sh-ic" data-icon="pin"></span><div><small>The big picture</small><h2>Your full itinerary — airport on top, DevSecOps below</h2>
+      <p>Read each column downwards: the airport stop, its number, then the matching DevSecOps step. The two bars show which airport area you are in and where the passenger is standing. Tap a number to open its ticket.</p></div></div>
+    <div class="itin"><div id="itin"></div></div>
+  </div>
+</section>
+
+<!-- DETAILED: airport map -->
+<section class="band b-lav d" id="map">
+  <div class="wrap">
+    <div class="sh"><span class="sh-ic" data-icon="globe"></span><div><small>Airport map</small><h2>The halls, the roads and the connecting airports</h2>
+      <p>Three parts of the airport explain the famous terms CI, CD, branches and promotion.</p></div></div>
+    <div class="terms">
+      <div class="term"><span class="t-ic" data-icon="desk"></span><h3>The check-in hall</h3><span class="real">CI · Continuous Integration · stops 3–6</span>
+        <p>Every bag is scanned and tagged the moment it arrives. <b>In DevSecOps:</b> every code change is scanned, built and tested automatically. You leave the hall holding a boarding pass — one tested release package.</p></div>
+      <div class="term"><span class="t-ic" data-icon="takeoff"></span><h3>Gates, flight and landing</h3><span class="real">CD · Continuous Delivery · stops 7–13</span>
+        <p>Passport control, boarding, the flight and touchdown. <b>In DevSecOps:</b> the release package passes its approvals and is flown to where users are. A person still says "cleared for take-off".</p></div>
+      <div class="term"><span class="t-ic" data-icon="board"></span><h3>Automatic e-gates</h3><span class="real">Continuous Deployment</span>
+        <p>No officer at the desk — any passenger who passed every check walks straight through. <b>In DevSecOps:</b> every release that passes all checks goes live by itself.</p></div>
+    </div>
+    <div class="panel">
+      <h3>Roads to the terminal · branches</h3>
+      <p>Each traveller takes their own road so nobody blocks anyone else. At the check-in desk they join the main terminal, and the trip gets its flight number.</p>
+      <div class="git">
+        <svg viewBox="0 0 700 190" role="img" aria-label="A private road leaves the main terminal line, rejoins at the check-in desk, gets flight number v1.4.0 and becomes one sealed suitcase">
+          <g font-family="Arial,sans-serif" font-size="12">
+            <path d="M40 130H520" stroke="#0f2440" stroke-width="3" stroke-linecap="round"/>
+            <path d="M90 130C120 130 120 60 160 60H280C320 60 320 130 350 130" fill="none" stroke="#2167d8" stroke-width="3" stroke-linecap="round"/>
+            <g fill="#fff" stroke="#0f2440" stroke-width="3"><circle cx="90" cy="130" r="7"/><circle cx="460" cy="130" r="7"/></g>
+            <g fill="#fff" stroke="#2167d8" stroke-width="3"><circle cx="170" cy="60" r="7"/><circle cx="220" cy="60" r="7"/><circle cx="270" cy="60" r="7"/></g>
+            <circle cx="350" cy="130" r="9" fill="#6f55d6"/>
+            <text x="40" y="156" font-weight="700" fill="#0f2440">Main terminal line (main branch)</text>
+            <text x="160" y="36" font-weight="700" fill="#2167d8">Your own road (feature branch)</text>
+            <text x="160" y="88" fill="#5f7189">pack · X-ray · stops 1–3</text>
+            <text x="350" y="106" text-anchor="middle" font-weight="700" fill="#6f55d6">Check-in desk</text>
+            <text x="350" y="174" text-anchor="middle" fill="#5f7189">(pull request · stop 4)</text>
+            <g transform="translate(408 78)"><rect width="104" height="24" rx="6" fill="#e8f1ff"/><text x="52" y="16" text-anchor="middle" font-weight="700" fill="#2167d8">Flight no. v1.4.0</text><path d="M52 24v20" stroke="#2167d8" stroke-width="2"/></g>
+            <path d="M520 130h34m-7-6 7 6-7 6" fill="none" stroke="#9bb0c6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <g transform="translate(566 100)"><rect width="126" height="60" rx="12" fill="#eef6ff" stroke="#2167d8" stroke-width="1.5"/>
+              <text x="63" y="24" text-anchor="middle" font-weight="700" fill="#2167d8">Sealed suitcase</text>
+              <text x="63" y="42" text-anchor="middle" fill="#0f2440">(release package)</text></g>
+          </g>
+        </svg>
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Connecting airports · promotion</h3>
+      <p>The same passenger with the same sealed suitcase hops through a few airports before the final one. Moving on to the next airport is called <b>promotion</b>.</p>
+      <div class="ladder">
+        <div class="env"><span class="e-ic" data-icon="box"></span><b>Baggage hall</b><em>Build · stops 3–6</em><p>The suitcase is packed, sealed and tagged — once.</p></div>
+        <div class="hop"><span data-icon="arrow"></span>bag tagged</div>
+        <div class="env"><span class="e-ic" data-icon="flask"></span><b>Practice airfield</b><em>Dev / Test</em><p>A short automatic hop to check that nothing rattles.</p></div>
+        <div class="hop"><span data-icon="arrow"></span>smooth hop</div>
+        <div class="env"><span class="e-ic" data-icon="server"></span><b>Rehearsal airport</b><em>Staging · stops 7–9</em><p>Looks just like the destination. Final inspection and passport stamp.</p></div>
+        <div class="hop"><span data-icon="arrow"></span>stamped and sealed</div>
+        <div class="env"><span class="e-ic" data-icon="pin"></span><b>Destination</b><em>Production · stops 10–16</em><p>Doors open for a few passengers first, then everyone.</p></div>
+      </div>
+      <div class="rule"><span data-icon="suitcase"></span><div><b>One suitcase, sealed once.</b> It is never repacked between airports — only the local paperwork (settings) changes. Tools like Argo CD or Flux work like the departures board: put the new flight number on the board and the airport follows it.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- LEGS (cards) -->
+<div id="legs"></div>
+
+<!-- STOPPED -->
+<section class="band b-grey" id="stopped">
+  <div class="wrap">
+    <div class="sh"><span class="sh-ic" data-icon="door"></span><div><small>Not cleared yet</small><h2>Stopped at a stop? That is the airport doing its job.</h2>
+      <p>Nobody is punished. The passenger fixes the problem and joins the line again.</p></div></div>
+    <div class="fail-grid">
+      <div class="fc"><span class="badge" data-icon="suitcase"></span><h3>Something in the bag is not allowed</h3>
+        <p><b>In DevSecOps:</b> a password or an unsafe part was found.</p><p><b>Next:</b> take it out and scan the bag again.</p></div>
+      <div class="fc"><span class="badge" data-icon="passport"></span><h3>Travel papers are incomplete</h3>
+        <p><b>In DevSecOps:</b> an approval or proof is missing.</p><p><b>Next:</b> wait at the desk until the stamp is given.</p></div>
+      <div class="fc"><span class="badge" data-icon="rollback"></span><h3>A bumpy landing</h3>
+        <p><b>In DevSecOps:</b> the app is unhealthy after release.</p><p><b>Next:</b> go around — return to the last safe airport.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band b-mint">
+  <div class="wrap tower">
+    <span class="big" data-icon="tower"></span>
+    <div><h3>The control tower never sleeps.</h3>
+      <p>After you leave the airport, the tower keeps watching the skies. In DevSecOps, the team keeps watching the live app — and every trip makes the next one smoother.</p></div>
+    <button id="modeSwap2"><i data-icon="arrow"></i><span>Switch to the Full tour</span></button>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap"><span>Thank you for flying Demo Airlines · a practice flight for learning DevSecOps</span><span>Tools named on the tickets are common examples, not a required kit</span></div></footer>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+const I={
+ plane:'<path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5Z"/>',
+ calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M8 15h3"/>',
+ clipboard:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V3h6v1"/><path d="m9 13 2 2 4-4"/>',
+ suitcase:'<rect x="4" y="8" width="16" height="12" rx="2"/><path d="M9 8V5h6v3M8 20v1M16 20v1M4 13h16"/>',
+ code:'<path d="m8 8-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"/>',
+ xray:'<path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><rect x="7" y="9" width="10" height="8" rx="1.5"/><path d="M10 9V7h4v2"/>',
+ key:'<circle cx="8" cy="15" r="4"/><path d="m11 12 8-8M16 7l2 2M14 9l2 2"/>',
+ desk:'<circle cx="12" cy="6" r="2.5"/><path d="M8 13v-1a4 4 0 0 1 8 0v1M3 13h18M5 13v8M19 13v8M3 21h18"/>',
+ pr:'<circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M6 8.5v7M18 15.5V9a3 3 0 0 0-3-3h-4M13 4l-2 2 2 2"/>',
+ ticket:'<path d="M3 7h18v3a2 2 0 0 0 0 4v3H3v-3a2 2 0 0 0 0-4V7Z"/><path d="M15 8v2M15 12v1M15 15v1"/>',
+ box:'<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9L12 3Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/>',
+ walk:'<path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/><circle cx="12" cy="8" r="1.8"/><path d="M12 10v5m0 0-2 4m2-4 2 4M9.5 12h5"/>',
+ codescan:'<rect x="3" y="4" width="13" height="13" rx="2"/><path d="m7.5 8.5-1.5 2 1.5 2M11.5 8.5l1.5 2-1.5 2"/><circle cx="17.5" cy="17.5" r="3"/><path d="m19.7 19.7 1.8 1.8"/>',
+ passport:'<rect x="5" y="3" width="14" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M9 16h6"/>',
+ stamp:'<path d="M9.5 3h5l-1 6h-3l-1-6ZM5 13h14a1 1 0 0 1 1 1v3H4v-3a1 1 0 0 1 1-1ZM5 21h14M10.5 9v4M13.5 9v4"/>',
+ door:'<path d="M5 21V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v17M3 21h18"/><path d="M14 12h.01"/>',
+ shield:'<path d="M12 21s7-3.5 7-9V5.5L12 3 5 5.5V12c0 5.5 7 9 7 9Z"/><path d="m9 12 2 2 4-4"/>',
+ board:'<path d="M13 3h6v18h-6"/><path d="M3 12h11m-4-4 4 4-4 4"/>',
+ flag:'<path d="M5 21V4M5 4h12l-2.5 4L17 12H5"/>',
+ takeoff:'<path d="M2 21h20"/><path d="m3 14 3.5 3L21 10.5a1.8 1.8 0 0 0-1.6-3.2L15 9 8 5.5 6 6.5l4.5 4L7 12l-2.5-1.5L3 11.5l1.5 2.5"/>',
+ rollout:'<path d="M4 6h16M4 12h11M4 18h6"/><path d="m15 15 3 3-3 3"/>',
+ landing:'<path d="M2 21h20"/><path d="m3 5 2-.5 4 3.5L13 7 11 3l1.8-.4 5 5 3.3 1.5a1.7 1.7 0 0 1-1.2 3.2L5.5 9.5 3 5Z"/>',
+ health:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M6 12h3l2-4 2 8 2-4h3"/>',
+ usercheck:'<circle cx="9" cy="8" r="3.5"/><path d="M3 20a6 6 0 0 1 12 0"/><path d="m16 11 2 2 4-4"/>',
+ belt:'<rect x="7" y="4" width="10" height="11" rx="1.5"/><path d="M10 4V2.5h4V4M3 18h18M6 18v3M18 18v3"/>',
+ sliders:'<path d="M4 6h9M17 6h3M4 12h3M11 12h9M4 18h11M19 18h1"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',
+ customs:'<path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9l-6-6Z"/><path d="M14 3v6h6M8 13h8M8 17h5"/>',
+ radar:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><path d="m12 12 6-6"/>',
+ exit:'<path d="M10 4H5v16h5"/><path d="m14 8 4 4-4 4M18 12H9"/>',
+ users:'<circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16.5 14a5 5 0 0 1 4.5 5"/>',
+ globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+ pulse:'<path d="M3 12h4l3-7 4 14 3-7h4"/>',
+ tower:'<path d="M9 21l1-11h4l1 11M7 10h10l-1-4H8l-1 4ZM12 6V3M8 21h8"/>',
+ rollback:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
+ loop:'<path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/><path d="M3 12A9 9 0 0 1 18.5 5.8L21 8"/><path d="M21 3v5h-5"/>',
+ check:'<path d="m5 12 5 5 9-10"/>',
+ arrow:'<path d="M4 12h16m-6-6 6 6-6 6"/>',
+ down:'<path d="M12 4v16m-6-6 6 6 6-6"/>',
+ server:'<rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/>',
+ flask:'<path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V3M7.5 15h9"/>',
+ megaphone:'<path d="M4 10v4h3l7 4V6l-7 4H4Z"/><path d="M17.5 9a4 4 0 0 1 0 6M8 14v4h2.5"/>',
+ home:'<path d="m4 11 8-7 8 7M6 10v10h12V10M10 20v-5h4v5"/>',
+ pin:'<path d="M12 21s7-6 7-11a7 7 0 0 0-14 0c0 5 7 11 7 11Z"/><circle cx="12" cy="10" r="2.5"/>',
+ wrench:'<path d="M14.5 6.5a4 4 0 0 0 5 5L11 20a2.1 2.1 0 0 1-3-3l8.5-8.5a4 4 0 0 0-2-2Z"/>'
+};
+const svg=n=>`<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${I[n]}</svg>`;
+document.querySelectorAll('[data-icon]').forEach(e=>e.innerHTML=svg(e.dataset.icon));
+
+const OWN={devops:'Flight crew',secops:'Security officers',shared:'Crew + security'};
+const REAL={devops:'DevOps',secops:'SecOps',shared:'DevOps + SecOps'};
+const OWNI={devops:'plane',secops:'shield',shared:'users'};
+const PART={home:'At home',ci:'Check-in hall · CI',cd:'Gates and flight · CD',ops:'At the destination'};
+// owner, leg, airport stop, icon, DevSecOps step, icon, beginner sentence, tools, cleared-when, short label, part, where the passenger is
+const C=[
+ ['devops','dep','Book the trip','calendar','Plan the change','clipboard','You decide where you are going. The team writes down what to build.',['Jira','OpenProject'],'the work is agreed and has an owner','Plan the change','home','At home (the to-do list)'],
+ ['devops','dep','Pack your suitcase','suitcase','Write code & add dependencies','code','You pack what you need. The developer writes the code and adds the parts it needs.',['VS Code','Git','npm','Maven'],'the code is saved with its history','Write the code','home','Your own road (feature branch)'],
+ ['secops','dep','Bag X-ray','xray','Scan for secrets & risky packages','key','The scanner looks inside your bag. Tools look inside the code for passwords and unsafe parts.',['Gitleaks','Trivy','Dependency-Check'],'no passwords and no known-unsafe parts','Scan for secrets','ci','Your own road (feature branch)'],
+ ['devops','dep','Check-in counter','desk','Commit, push & peer review','pr','Staff check your booking. A teammate checks the code before it joins the rest.',['GitHub','GitLab','Bitbucket'],'a teammate has reviewed and agreed','Teammate review','ci','Check-in desk (pull request)'],
+ ['devops','dep','Boarding pass issued','ticket','Build & package the release','box','You receive your boarding pass. The code is packed into one release with its own ID.',['GitHub Actions','GitLab CI','Jenkins'],'it builds and its tests pass','Build the release','ci','Main terminal (main branch)'],
+ ['secops','dep','Body scanner','walk','Code & infrastructure scan','codescan','You walk through the scanner. The code itself is checked for weak spots.',['Semgrep','SonarQube','Checkov'],'no serious weak spots found','Scan the code','ci','Main terminal (main branch)'],
+ ['shared','dep','Passport control','passport','Compliance & approval','stamp','An officer stamps your passport. The release receives its official approval.',['OPA','Conftest','ServiceNow'],'the rules are met and it is signed off','Official approval','cd','Rehearsal airport (staging)'],
+ ['secops','dep','Final gate check','door','Live test & signature check','shield','One last look at the gate. A running copy is tested and the package seal is checked.',['OWASP ZAP','Cosign','Trivy'],'the live test passes and the seal is intact','Test a running copy','cd','Rehearsal airport (staging)'],
+ ['shared','dep','Board the plane','board','Green-light the promotion','flag','Only cleared passengers may board. Only approved releases may move forward.',['Argo CD','Flux','Jenkins'],'everything before this stop is cleared','Cleared to go','cd','On the jet bridge (staging → production)'],
+ ['devops','fly','Take off and fly','takeoff','Automated, gradual rollout','rollout','The plane climbs steadily. The release goes out a little at a time while the crew watches the dials.',['Argo CD','Helm','Kubernetes','Argo Rollouts'],'the dials stay healthy at each step','Gradual release','cd','In the air (production, first few users)'],
+ ['devops','arr','The plane lands','landing','App starts in production','health','Wheels touch the runway. The app starts up in the place where users are.',['Kubernetes','AWS ECS','Azure App Service'],'the app is up and answering','App starts up','cd','On the runway (production)'],
+ ['shared','arr','Arrival immigration','passport','Smoke tests & access check','usercheck','A quick check on arrival. Quick tests confirm the basics and the logins work.',['Playwright','Newman','Keycloak'],'key journeys and logins work','Quick arrival tests','cd','Arrival hall (production)'],
+ ['shared','arr','Collect your bags','belt','Confirm what was delivered','sliders','You make sure it is your bag. The team confirms the right version and settings arrived.',['Harbor','Cosign','Helm'],'the right version with the right settings','Check what arrived','cd','Baggage belt (production)'],
+ ['secops','arr','Customs','customs','Runtime protection','radar','Officers watch what enters the country. Guards watch the live app for odd behaviour.',['Falco','Wazuh','Kyverno'],'the guards are switched on and watching','Guard the live app','ops','Destination (production, live)'],
+ ['devops','arr','Leave the airport','exit','Open to users','users','You walk out into the city. Everyone can now use the release.',['Argo CD','Prometheus','Grafana'],'it runs well with everyone on board','Open to everyone','ops','Destination (production, live)'],
+ ['shared','arr','The journey continues','globe','Monitor & respond','pulse','You stay alert during your trip. The team keeps watching and learning for next time.',['Grafana','Falco','Wazuh','Trivy'],'always — this stop never closes','Keep watching','ops','Destination (production, live)']
+].map((c,i)=>({n:i+1,kind:c[0],leg:c[1],air:c[2],ai:c[3],tech:c[4],ti:c[5],easy:c[6],tools:c[7],gate:c[8],short:c[9],part:c[10],where:c[11]}));
+
+/* ----- ticket cards, grouped by leg ----- */
+const card=c=>`<article class="cp ${c.kind}" data-kind="${c.kind}" id="cp-${c.n}">
+  <div class="cp-head"><span class="no"><small>STOP</small>${String(c.n).padStart(2,'0')}</span>
+    <span class="who">${svg(OWNI[c.kind])}${OWN[c.kind]} = ${REAL[c.kind]}</span></div>
+  <div class="rowx air"><span class="ic">${svg(c.ai)}</span><div><small>${svg('plane')}At the airport</small><h3>${c.air}</h3></div></div>
+  <div class="eq"><span>${svg('down')}</span></div>
+  <div class="rowx tech"><span class="ic">${svg(c.ti)}</span><div><small>${svg('code')}In DevSecOps</small><h3><span class="s">${c.short}</span><span class="d">${c.tech}</span></h3></div></div>
+  <p class="say">${c.easy}</p>
+  <div class="facts d">
+    <div class="fact">${svg('pin')}<span><b>You are at:</b> ${c.where}</span></div>
+    <div class="fact">${svg('check')}<span><b>Cleared when:</b> ${c.gate}</span></div>
+    <div class="fact">${svg('desk')}<span><b>Airport area:</b> ${PART[c.part]}</span></div>
+  </div>
+  <div class="tools"><small>${svg('wrench')}Tools used at this stop</small><div>${c.tools.map(t=>`<span>${t}</span>`).join('')}</div></div>
+</article>`;
+const LEGS=[
+ {id:'leg1',key:'dep',band:'b-white',icon:'tower',k:'Leg 1 · Departure airport · stops 1–9',t:'Get cleared to fly',s:'Problems are cheapest to fix before the passenger boards.'},
+ {id:'leg2',key:'fly',band:'b-sky',icon:'plane',k:'Leg 2 · In the air · stop 10',t:'A smooth, steady flight',s:'The release is flown to its destination a little at a time.'},
+ {id:'leg3',key:'arr',band:'b-mint',icon:'landing',k:'Leg 3 · Arrival airport · stops 11–16',t:'Land, check and step out',s:'Touching down is not the end — the passenger still has to clear arrivals.'}
+];
+const inflight=`<div class="inflight"><h3>The only stop in the air</h3>
+  <p>The release is not handed to everyone at once. The doors open for a few users first, then more, then all. If the dials look wrong, the pilot turns back.</p>
+  <div class="doors"><span>10%</span><span>50% of users</span><span>100% — everyone on board</span></div></div>`;
+document.getElementById('legs').innerHTML=LEGS.map(p=>{
+  const cs=C.filter(c=>c.leg===p.key);
+  return `<section class="band ${p.band}" id="${p.id}"><div class="wrap">
+   <div class="sh"><span class="sh-ic">${svg(p.icon)}</span><div><small>${p.k}</small><h2>${p.t}</h2><p>${p.s}</p></div></div>
+   <div class="grid">${cs.map(card).join('')}${p.key==='fly'?inflight:''}</div></div></section>`;
+}).join('');
+
+/* ----- full itinerary ----- */
+const col=(from,len)=>`grid-column:${from+1}/span ${len}`;
+function row(stops,heads,spans,wheres,extra){
+  const n=stops.length;
+  return `<div class="row">
+   ${heads.map(h=>`<div class="head" style="${col(h[0],h[1])}">${svg(h[3])}${h[2]}</div>`).join('')}
+   <div class="mhead"><span>At the airport</span><span>In DevSecOps</span></div>
+   <div class="lane-l" style="grid-row:2">${svg('plane')}Airport</div>
+   <div class="lane-l" style="grid-row:4">${svg('code')}DevSecOps</div>
+   <div class="lane-l" style="grid-row:5">Airport area</div>
+   <div class="lane-l" style="grid-row:6">You are at</div>
+   <div class="lane-bg" style="${col(1,n)}"></div>
+   <div class="track" style="${col(1,n)}"></div>
+   ${stops.map((c,i)=>`<div class="stop ${c.kind}" data-kind="${c.kind}" style="--c:${i+2}">
+      <span class="a">${svg(c.ai)}<span>${c.air}</span></span>
+      <a class="node" href="#cp-${c.n}" title="Stop ${c.n}: ${c.air} = ${c.tech}">${c.n}</a>
+      <span class="p">${svg(c.ti)}<span>${c.short}<em class="mtag">${PART[c.part]}</em></span></span></div>`).join('')}
+   ${spans.map((s,i)=>`<div class="span ${i%2?'alt':''}" style="${col(s[0],s[1])}" title="${s[3]}">${svg(s[2])}${s[3]}</div>`).join('')}
+   ${wheres.map(w=>`<div class="where" style="${col(w[0],w[1])}" title="${w[2]}">${svg('pin')}${w[2]}</div>`).join('')}
+   ${extra||''}</div>`;
+}
+document.getElementById('itin').innerHTML=
+ row(C.slice(0,9),
+   [[1,9,'Leg 1 · Departure airport — get cleared to fly','tower']],
+   [[1,2,'home','At home · plan and pack'],[3,4,'desk','Check-in hall · CI — scan, build, test'],[7,3,'door','Gates · CD begins']],
+   [[1,3,'Home → your own road (feature branch)'],[4,3,'Check-in desk → main terminal (main branch)'],[7,3,'Rehearsal airport (staging)']])
++row(C.slice(9),
+   [[1,1,'Leg 2 · Flight','plane'],[2,6,'Leg 3 · Arrival airport — land, check, step out','landing']],
+   [[1,4,'takeoff','Flight and landing · CD — deliver and check'],[5,3,'tower','At the destination · keep watching']],
+   [[1,4,'Destination runway (production, few users first)'],[5,3,'Destination city (production, live)']],
+   `<a class="again" href="#cp-1">${svg('loop')}<span>Next trip<br><small>What stop 16 learns goes back to stop 1</small></span></a>`);
+
+/* ----- staff spotlight ----- */
+const lbtns=[...document.querySelectorAll('[data-f]')];let cur='all';
+lbtns.forEach(b=>b.addEventListener('click',()=>{
+  cur=(cur===b.dataset.f)?'all':b.dataset.f;
+  lbtns.forEach(x=>{const on=x.dataset.f===cur;x.classList.toggle('on',on);x.setAttribute('aria-pressed',on)});
+  document.querySelectorAll('.cp,.stop').forEach(el=>el.classList.toggle('dim',cur!=='all'&&el.dataset.kind!==cur));
+}));
+
+/* ----- quick trip / full tour switch, with a clear sign ----- */
+const M={
+ simple:{badge:'Quick trip · simple view',icon:'ticket',cls:'Quick trip',
+   text:'Software reaches its users the way a passenger gets through an airport. Here are the 16 stops in plain words.',
+   swap:'Switch to the Full tour',toast:'You are now on the Quick trip — the simple view'},
+ detailed:{badge:'Full tour · detailed view',icon:'globe',cls:'Full tour',
+   text:'The complete map: every stop, plus the airport halls (CI and CD), the roads (branches) and the connecting airports (promotion).',
+   swap:'Back to the Quick trip',toast:'You are now on the Full tour — the detailed view'}
+};
+const toast=document.getElementById('toast');let tt;
+function setMode(m,announce){
+  document.body.className=m;const x=M[m];
+  document.getElementById('modeBadge').textContent=x.badge;
+  document.getElementById('modeIcon').innerHTML=svg(x.icon);
+  document.getElementById('modeText').textContent=x.text;
+  document.getElementById('bpClass').textContent=x.cls;
+  document.querySelectorAll('#modeSwap span,#modeSwap2 span').forEach(s=>s.textContent=x.swap);
+  document.querySelectorAll('.seg [data-mode]').forEach(b=>{const on=b.dataset.mode===m;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on)});
+  if(announce){
+    window.scrollTo({top:0});
+    const main=document.getElementById('main');main.classList.remove('swapfx');void main.offsetWidth;main.classList.add('swapfx');
+    toast.innerHTML=svg(x.icon)+x.toast;toast.classList.add('show');
+    clearTimeout(tt);tt=setTimeout(()=>toast.classList.remove('show'),2800);
+  }
+}
+document.querySelectorAll('.seg [data-mode]').forEach(b=>b.addEventListener('click',()=>{if(!document.body.classList.contains(b.dataset.mode))setMode(b.dataset.mode,true)}));
+['modeSwap','modeSwap2'].forEach(id=>document.getElementById(id).addEventListener('click',()=>setMode(document.body.classList.contains('simple')?'detailed':'simple',true)));
+document.querySelectorAll('.node,.again').forEach(a=>a.addEventListener('click',()=>{}));
+if(location.hash==='#detailed') setMode('detailed',false);
+
+/* ----- highlight the current section in the bar ----- */
+const links=[...document.querySelectorAll('.chips a')];
+if('IntersectionObserver' in window){
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(l=>l.classList.toggle('cur',l.getAttribute('href')==='#'+e.target.id))}),{rootMargin:'-40% 0px -55% 0px'});
+  document.querySelectorAll('.band[id]').forEach(s=>io.observe(s));
+}
+})();
+</script>
+</body>
+</html>
